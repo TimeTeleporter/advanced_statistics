@@ -1,0 +1,669 @@
+\documentclass[11pt]{article}
+
+    \usepackage[breakable]{tcolorbox}
+    \usepackage{parskip} % Stop auto-indenting (to mimic markdown behaviour)
+    
+    \usepackage{iftex}
+    \ifPDFTeX
+    	\usepackage[T1]{fontenc}
+    	\usepackage{mathpazo}
+    \else
+    	\usepackage{fontspec}
+    \fi
+
+    % Basic figure setup, for now with no caption control since it's done
+    % automatically by Pandoc (which extracts ![](path) syntax from Markdown).
+    \usepackage{graphicx}
+    % Maintain compatibility with old templates. Remove in nbconvert 6.0
+    \let\Oldincludegraphics\includegraphics
+    % Ensure that by default, figures have no caption (until we provide a
+    % proper Figure object with a Caption API and a way to capture that
+    % in the conversion process - todo).
+    \usepackage{caption}
+    \DeclareCaptionFormat{nocaption}{}
+    \captionsetup{format=nocaption,aboveskip=0pt,belowskip=0pt}
+
+    \usepackage{float}
+    \floatplacement{figure}{H} % forces figures to be placed at the correct location
+    \usepackage{xcolor} % Allow colors to be defined
+    \usepackage{enumerate} % Needed for markdown enumerations to work
+    \usepackage{geometry} % Used to adjust the document margins
+    \usepackage{amsmath} % Equations
+    \usepackage{amssymb} % Equations
+    \usepackage{textcomp} % defines textquotesingle
+    % Hack from http://tex.stackexchange.com/a/47451/13684:
+    \AtBeginDocument{%
+        \def\PYZsq{\textquotesingle}% Upright quotes in Pygmentized code
+    }
+    \usepackage{upquote} % Upright quotes for verbatim code
+    \usepackage{eurosym} % defines \euro
+    \usepackage[mathletters]{ucs} % Extended unicode (utf-8) support
+    \usepackage{fancyvrb} % verbatim replacement that allows latex
+    \usepackage{grffile} % extends the file name processing of package graphics 
+                         % to support a larger range
+    \makeatletter % fix for old versions of grffile with XeLaTeX
+    \@ifpackagelater{grffile}{2019/11/01}
+    {
+      % Do nothing on new versions
+    }
+    {
+      \def\Gread@@xetex#1{%
+        \IfFileExists{"\Gin@base".bb}%
+        {\Gread@eps{\Gin@base.bb}}%
+        {\Gread@@xetex@aux#1}%
+      }
+    }
+    \makeatother
+    \usepackage[Export]{adjustbox} % Used to constrain images to a maximum size
+    \adjustboxset{max size={0.9\linewidth}{0.9\paperheight}}
+
+    % The hyperref package gives us a pdf with properly built
+    % internal navigation ('pdf bookmarks' for the table of contents,
+    % internal cross-reference links, web links for URLs, etc.)
+    \usepackage{hyperref}
+    % The default LaTeX title has an obnoxious amount of whitespace. By default,
+    % titling removes some of it. It also provides customization options.
+    \usepackage{titling}
+    \usepackage{longtable} % longtable support required by pandoc >1.10
+    \usepackage{booktabs}  % table support for pandoc > 1.12.2
+    \usepackage[inline]{enumitem} % IRkernel/repr support (it uses the enumerate* environment)
+    \usepackage[normalem]{ulem} % ulem is needed to support strikethroughs (\sout)
+                                % normalem makes italics be italics, not underlines
+    \usepackage{mathrsfs}
+    
+
+    
+    % Colors for the hyperref package
+    \definecolor{urlcolor}{rgb}{0,.145,.698}
+    \definecolor{linkcolor}{rgb}{.71,0.21,0.01}
+    \definecolor{citecolor}{rgb}{.12,.54,.11}
+
+    % ANSI colors
+    \definecolor{ansi-black}{HTML}{3E424D}
+    \definecolor{ansi-black-intense}{HTML}{282C36}
+    \definecolor{ansi-red}{HTML}{E75C58}
+    \definecolor{ansi-red-intense}{HTML}{B22B31}
+    \definecolor{ansi-green}{HTML}{00A250}
+    \definecolor{ansi-green-intense}{HTML}{007427}
+    \definecolor{ansi-yellow}{HTML}{DDB62B}
+    \definecolor{ansi-yellow-intense}{HTML}{B27D12}
+    \definecolor{ansi-blue}{HTML}{208FFB}
+    \definecolor{ansi-blue-intense}{HTML}{0065CA}
+    \definecolor{ansi-magenta}{HTML}{D160C4}
+    \definecolor{ansi-magenta-intense}{HTML}{A03196}
+    \definecolor{ansi-cyan}{HTML}{60C6C8}
+    \definecolor{ansi-cyan-intense}{HTML}{258F8F}
+    \definecolor{ansi-white}{HTML}{C5C1B4}
+    \definecolor{ansi-white-intense}{HTML}{A1A6B2}
+    \definecolor{ansi-default-inverse-fg}{HTML}{FFFFFF}
+    \definecolor{ansi-default-inverse-bg}{HTML}{000000}
+
+    % common color for the border for error outputs.
+    \definecolor{outerrorbackground}{HTML}{FFDFDF}
+
+    % commands and environments needed by pandoc snippets
+    % extracted from the output of `pandoc -s`
+    \providecommand{\tightlist}{%
+      \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+    \DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+    % Add ',fontsize=\small' for more characters per line
+    \newenvironment{Shaded}{}{}
+    \newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{{#1}}}
+    \newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{{#1}}}}
+    \newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{{#1}}}
+    \newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{{#1}}}
+    \newcommand{\RegionMarkerTok}[1]{{#1}}
+    \newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\NormalTok}[1]{{#1}}
+    
+    % Additional commands for more recent versions of Pandoc
+    \newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.53,0.00,0.00}{{#1}}}
+    \newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.73,0.40,0.53}{{#1}}}
+    \newcommand{\ImportTok}[1]{{#1}}
+    \newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.73,0.13,0.13}{\textit{{#1}}}}
+    \newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\VariableTok}[1]{\textcolor[rgb]{0.10,0.09,0.49}{{#1}}}
+    \newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.40,0.40,0.40}{{#1}}}
+    \newcommand{\BuiltInTok}[1]{{#1}}
+    \newcommand{\ExtensionTok}[1]{{#1}}
+    \newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.74,0.48,0.00}{{#1}}}
+    \newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.49,0.56,0.16}{{#1}}}
+    \newcommand{\InformationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\WarningTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    
+    
+    % Define a nice break command that doesn't care if a line doesn't already
+    % exist.
+    \def\br{\hspace*{\fill} \\* }
+    % Math Jax compatibility definitions
+    \def\gt{>}
+    \def\lt{<}
+    \let\Oldtex\TeX
+    \let\Oldlatex\LaTeX
+    \renewcommand{\TeX}{\textrm{\Oldtex}}
+    \renewcommand{\LaTeX}{\textrm{\Oldlatex}}
+    % Document parameters
+    % Document title
+    \title{exercise\_sheet\_7\_Immanuel\_Albrecht}
+    
+    
+    
+    
+    
+% Pygments definitions
+\makeatletter
+\def\PY@reset{\let\PY@it=\relax \let\PY@bf=\relax%
+    \let\PY@ul=\relax \let\PY@tc=\relax%
+    \let\PY@bc=\relax \let\PY@ff=\relax}
+\def\PY@tok#1{\csname PY@tok@#1\endcsname}
+\def\PY@toks#1+{\ifx\relax#1\empty\else%
+    \PY@tok{#1}\expandafter\PY@toks\fi}
+\def\PY@do#1{\PY@bc{\PY@tc{\PY@ul{%
+    \PY@it{\PY@bf{\PY@ff{#1}}}}}}}
+\def\PY#1#2{\PY@reset\PY@toks#1+\relax+\PY@do{#2}}
+
+\expandafter\def\csname PY@tok@w\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.73,0.73}{##1}}}
+\expandafter\def\csname PY@tok@c\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@cp\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.74,0.48,0.00}{##1}}}
+\expandafter\def\csname PY@tok@k\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@kp\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@kt\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.69,0.00,0.25}{##1}}}
+\expandafter\def\csname PY@tok@o\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@ow\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\expandafter\def\csname PY@tok@nb\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@nf\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\expandafter\def\csname PY@tok@nc\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\expandafter\def\csname PY@tok@nn\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\expandafter\def\csname PY@tok@ne\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.82,0.25,0.23}{##1}}}
+\expandafter\def\csname PY@tok@nv\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@no\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.53,0.00,0.00}{##1}}}
+\expandafter\def\csname PY@tok@nl\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.63,0.63,0.00}{##1}}}
+\expandafter\def\csname PY@tok@ni\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.60,0.60,0.60}{##1}}}
+\expandafter\def\csname PY@tok@na\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.49,0.56,0.16}{##1}}}
+\expandafter\def\csname PY@tok@nt\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@nd\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\expandafter\def\csname PY@tok@s\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sd\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@si\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.53}{##1}}}
+\expandafter\def\csname PY@tok@se\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sr\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.53}{##1}}}
+\expandafter\def\csname PY@tok@ss\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@sx\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@m\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@gh\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\expandafter\def\csname PY@tok@gu\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.50,0.00,0.50}{##1}}}
+\expandafter\def\csname PY@tok@gd\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.63,0.00,0.00}{##1}}}
+\expandafter\def\csname PY@tok@gi\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.63,0.00}{##1}}}
+\expandafter\def\csname PY@tok@gr\endcsname{\def\PY@tc##1{\textcolor[rgb]{1.00,0.00,0.00}{##1}}}
+\expandafter\def\csname PY@tok@ge\endcsname{\let\PY@it=\textit}
+\expandafter\def\csname PY@tok@gs\endcsname{\let\PY@bf=\textbf}
+\expandafter\def\csname PY@tok@gp\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\expandafter\def\csname PY@tok@go\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.53,0.53,0.53}{##1}}}
+\expandafter\def\csname PY@tok@gt\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.27,0.87}{##1}}}
+\expandafter\def\csname PY@tok@err\endcsname{\def\PY@bc##1{\setlength{\fboxsep}{0pt}\fcolorbox[rgb]{1.00,0.00,0.00}{1,1,1}{\strut ##1}}}
+\expandafter\def\csname PY@tok@kc\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@kd\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@kn\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@kr\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@bp\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@fm\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\expandafter\def\csname PY@tok@vc\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@vg\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@vi\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@vm\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@sa\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sb\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sc\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@dl\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@s2\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sh\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@s1\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@mb\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@mf\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@mh\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@mi\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@il\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@mo\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@ch\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@cm\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@cpf\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@c1\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@cs\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+
+\def\PYZbs{\char`\\}
+\def\PYZus{\char`\_}
+\def\PYZob{\char`\{}
+\def\PYZcb{\char`\}}
+\def\PYZca{\char`\^}
+\def\PYZam{\char`\&}
+\def\PYZlt{\char`\<}
+\def\PYZgt{\char`\>}
+\def\PYZsh{\char`\#}
+\def\PYZpc{\char`\%}
+\def\PYZdl{\char`\$}
+\def\PYZhy{\char`\-}
+\def\PYZsq{\char`\'}
+\def\PYZdq{\char`\"}
+\def\PYZti{\char`\~}
+% for compatibility with earlier versions
+\def\PYZat{@}
+\def\PYZlb{[}
+\def\PYZrb{]}
+\makeatother
+
+
+    % For linebreaks inside Verbatim environment from package fancyvrb. 
+    \makeatletter
+        \newbox\Wrappedcontinuationbox 
+        \newbox\Wrappedvisiblespacebox 
+        \newcommand*\Wrappedvisiblespace {\textcolor{red}{\textvisiblespace}} 
+        \newcommand*\Wrappedcontinuationsymbol {\textcolor{red}{\llap{\tiny$\m@th\hookrightarrow$}}} 
+        \newcommand*\Wrappedcontinuationindent {3ex } 
+        \newcommand*\Wrappedafterbreak {\kern\Wrappedcontinuationindent\copy\Wrappedcontinuationbox} 
+        % Take advantage of the already applied Pygments mark-up to insert 
+        % potential linebreaks for TeX processing. 
+        %        {, <, #, %, $, ' and ": go to next line. 
+        %        _, }, ^, &, >, - and ~: stay at end of broken line. 
+        % Use of \textquotesingle for straight quote. 
+        \newcommand*\Wrappedbreaksatspecials {% 
+            \def\PYGZus{\discretionary{\char`\_}{\Wrappedafterbreak}{\char`\_}}% 
+            \def\PYGZob{\discretionary{}{\Wrappedafterbreak\char`\{}{\char`\{}}% 
+            \def\PYGZcb{\discretionary{\char`\}}{\Wrappedafterbreak}{\char`\}}}% 
+            \def\PYGZca{\discretionary{\char`\^}{\Wrappedafterbreak}{\char`\^}}% 
+            \def\PYGZam{\discretionary{\char`\&}{\Wrappedafterbreak}{\char`\&}}% 
+            \def\PYGZlt{\discretionary{}{\Wrappedafterbreak\char`\<}{\char`\<}}% 
+            \def\PYGZgt{\discretionary{\char`\>}{\Wrappedafterbreak}{\char`\>}}% 
+            \def\PYGZsh{\discretionary{}{\Wrappedafterbreak\char`\#}{\char`\#}}% 
+            \def\PYGZpc{\discretionary{}{\Wrappedafterbreak\char`\%}{\char`\%}}% 
+            \def\PYGZdl{\discretionary{}{\Wrappedafterbreak\char`\$}{\char`\$}}% 
+            \def\PYGZhy{\discretionary{\char`\-}{\Wrappedafterbreak}{\char`\-}}% 
+            \def\PYGZsq{\discretionary{}{\Wrappedafterbreak\textquotesingle}{\textquotesingle}}% 
+            \def\PYGZdq{\discretionary{}{\Wrappedafterbreak\char`\"}{\char`\"}}% 
+            \def\PYGZti{\discretionary{\char`\~}{\Wrappedafterbreak}{\char`\~}}% 
+        } 
+        % Some characters . , ; ? ! / are not pygmentized. 
+        % This macro makes them "active" and they will insert potential linebreaks 
+        \newcommand*\Wrappedbreaksatpunct {% 
+            \lccode`\~`\.\lowercase{\def~}{\discretionary{\hbox{\char`\.}}{\Wrappedafterbreak}{\hbox{\char`\.}}}% 
+            \lccode`\~`\,\lowercase{\def~}{\discretionary{\hbox{\char`\,}}{\Wrappedafterbreak}{\hbox{\char`\,}}}% 
+            \lccode`\~`\;\lowercase{\def~}{\discretionary{\hbox{\char`\;}}{\Wrappedafterbreak}{\hbox{\char`\;}}}% 
+            \lccode`\~`\:\lowercase{\def~}{\discretionary{\hbox{\char`\:}}{\Wrappedafterbreak}{\hbox{\char`\:}}}% 
+            \lccode`\~`\?\lowercase{\def~}{\discretionary{\hbox{\char`\?}}{\Wrappedafterbreak}{\hbox{\char`\?}}}% 
+            \lccode`\~`\!\lowercase{\def~}{\discretionary{\hbox{\char`\!}}{\Wrappedafterbreak}{\hbox{\char`\!}}}% 
+            \lccode`\~`\/\lowercase{\def~}{\discretionary{\hbox{\char`\/}}{\Wrappedafterbreak}{\hbox{\char`\/}}}% 
+            \catcode`\.\active
+            \catcode`\,\active 
+            \catcode`\;\active
+            \catcode`\:\active
+            \catcode`\?\active
+            \catcode`\!\active
+            \catcode`\/\active 
+            \lccode`\~`\~ 	
+        }
+    \makeatother
+
+    \let\OriginalVerbatim=\Verbatim
+    \makeatletter
+    \renewcommand{\Verbatim}[1][1]{%
+        %\parskip\z@skip
+        \sbox\Wrappedcontinuationbox {\Wrappedcontinuationsymbol}%
+        \sbox\Wrappedvisiblespacebox {\FV@SetupFont\Wrappedvisiblespace}%
+        \def\FancyVerbFormatLine ##1{\hsize\linewidth
+            \vtop{\raggedright\hyphenpenalty\z@\exhyphenpenalty\z@
+                \doublehyphendemerits\z@\finalhyphendemerits\z@
+                \strut ##1\strut}%
+        }%
+        % If the linebreak is at a space, the latter will be displayed as visible
+        % space at end of first line, and a continuation symbol starts next line.
+        % Stretch/shrink are however usually zero for typewriter font.
+        \def\FV@Space {%
+            \nobreak\hskip\z@ plus\fontdimen3\font minus\fontdimen4\font
+            \discretionary{\copy\Wrappedvisiblespacebox}{\Wrappedafterbreak}
+            {\kern\fontdimen2\font}%
+        }%
+        
+        % Allow breaks at special characters using \PYG... macros.
+        \Wrappedbreaksatspecials
+        % Breaks at punctuation characters . , ; ? ! and / need catcode=\active 	
+        \OriginalVerbatim[#1,codes*=\Wrappedbreaksatpunct]%
+    }
+    \makeatother
+
+    % Exact colors from NB
+    \definecolor{incolor}{HTML}{303F9F}
+    \definecolor{outcolor}{HTML}{D84315}
+    \definecolor{cellborder}{HTML}{CFCFCF}
+    \definecolor{cellbackground}{HTML}{F7F7F7}
+    
+    % prompt
+    \makeatletter
+    \newcommand{\boxspacing}{\kern\kvtcb@left@rule\kern\kvtcb@boxsep}
+    \makeatother
+    \newcommand{\prompt}[4]{
+        {\ttfamily\llap{{\color{#2}[#3]:\hspace{3pt}#4}}\vspace{-\baselineskip}}
+    }
+    
+
+    
+    % Prevent overflowing lines due to hard-to-break entities
+    \sloppy 
+    % Setup hyperref package
+    \hypersetup{
+      breaklinks=true,  % so long urls are correctly broken across lines
+      colorlinks=true,
+      urlcolor=urlcolor,
+      linkcolor=linkcolor,
+      citecolor=citecolor,
+      }
+    % Slightly bigger margins than the latex defaults
+    
+    \geometry{verbose,tmargin=1in,bmargin=1in,lmargin=1in,rmargin=1in}
+    
+    
+
+\begin{document}
+    
+    \maketitle
+    
+    
+
+    
+    \hypertarget{exercise-sheet-7}{%
+\section{Exercise sheet 7}\label{exercise-sheet-7}}
+
+\hypertarget{exercise-1}{%
+\subsection{Exercise 1}\label{exercise-1}}
+
+For this exercise, you will need to load the dataset (milk) from the
+rethinking package that we discussed already in the class.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{1}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nf}{library}\PY{p}{(}\PY{n}{rethinking}\PY{p}{)}
+\PY{n+nf}{data}\PY{p}{(}\PY{n}{milk}\PY{p}{)}
+\PY{n}{d} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n}{milk}
+\PY{n+nf}{summary}\PY{p}{(}\PY{n}{d}\PY{p}{)}
+\PY{n+nf}{pairs}\PY{p}{(}\PY{n}{d}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Lade nötiges Paket: rstan
+
+Lade nötiges Paket: StanHeaders
+
+
+rstan version 2.26.16 (Stan version 2.26.1)
+
+
+For execution on a local, multicore CPU with excess RAM we recommend calling
+options(mc.cores = parallel::detectCores()).
+To avoid recompilation of unchanged Stan programs, we recommend calling
+rstan\_options(auto\_write = TRUE)
+For within-chain threading using `reduce\_sum()` or `map\_rect()` Stan functions,
+change `threads\_per\_chain` option:
+rstan\_options(threads\_per\_chain = 1)
+
+
+Do not specify '-march=native' in 'LOCAL\_CPPFLAGS' or a Makevars file
+
+Lade nötiges Paket: cmdstanr
+
+This is cmdstanr version 0.5.3
+
+- CmdStanR documentation and vignettes: mc-stan.org/cmdstanr
+
+- CmdStan path: D:/Users/Immanuel/Documents/.cmdstan/cmdstan-2.31.0
+
+- CmdStan version: 2.31.0
+
+Lade nötiges Paket: parallel
+
+rethinking (Version 2.31)
+
+
+Attache Paket: 'rethinking'
+
+
+Das folgende Objekt ist maskiert 'package:rstan':
+
+    stan
+
+
+Das folgende Objekt ist maskiert 'package:stats':
+
+    rstudent
+
+
+    \end{Verbatim}
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+              clade                 species     kcal.per.g        perc.fat    
+ Ape             :9   A palliata        : 1   Min.   :0.4600   Min.   : 3.93  
+ New World Monkey:9   Alouatta seniculus: 1   1st Qu.:0.4900   1st Qu.:21.22  
+ Old World Monkey:6   Callimico goeldii : 1   Median :0.6000   Median :36.84  
+ Strepsirrhine   :5   Callithrix jacchus: 1   Mean   :0.6417   Mean   :33.99  
+                      Cebuella pygmaea  : 1   3rd Qu.:0.7300   3rd Qu.:46.08  
+                      Cebus apella      : 1   Max.   :0.9700   Max.   :55.51  
+                      (Other)           :23                                   
+  perc.protein    perc.lactose        mass       neocortex.perc 
+ Min.   : 7.37   Min.   :27.09   Min.   : 0.12   Min.   :55.16  
+ 1st Qu.:13.00   1st Qu.:37.80   1st Qu.: 1.62   1st Qu.:64.54  
+ Median :15.80   Median :48.64   Median : 3.47   Median :68.85  
+ Mean   :16.40   Mean   :49.61   Mean   :14.73   Mean   :67.58  
+ 3rd Qu.:20.77   3rd Qu.:60.12   3rd Qu.:10.72   3rd Qu.:71.26  
+ Max.   :25.30   Max.   :71.91   Max.   :97.72   Max.   :76.30  
+                                                 NA's   :12     
+    \end{Verbatim}
+
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{exercise_sheet_7_Immanuel_Albrecht_files/exercise_sheet_7_Immanuel_Albrecht_1_2.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    In the class we treated all primates together. You can use categorical
+variables to characterise different sub-populations of a same sample. To
+this end, the following self-explanatory command can be used.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{2}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nf}{unique}\PY{p}{(}\PY{n}{d}\PY{o}{\PYZdl{}}\PY{n}{clade}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{enumerate*}
+\item Strepsirrhine
+\item New World Monkey
+\item Old World Monkey
+\item Ape
+\end{enumerate*}
+
+\emph{Levels}: \begin{enumerate*}
+\item 'Ape'
+\item 'New World Monkey'
+\item 'Old World Monkey'
+\item 'Strepsirrhine'
+\end{enumerate*}
+
+
+    
+    \begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Build a single model including all clades with an appropriate choice
+  of ``dummy'' variables (switching a predictor on and off). Compute the
+  average milk energy for each clade along with credible intervals of
+  your choice. Compare these values. How significant are the differences
+  between each clade?
+\end{enumerate}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{3}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{d}\PY{o}{\PYZdl{}}\PY{n}{clade.N} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{ifelse}\PY{p}{(}\PY{n}{d}\PY{o}{\PYZdl{}}\PY{n}{clade} \PY{o}{==} \PY{l+s}{\PYZdq{}}\PY{l+s}{New World Monkey\PYZdq{}}\PY{p}{,}\PY{l+m}{1}\PY{p}{,} \PY{n+nf}{ifelse}\PY{p}{(}\PY{n}{d}\PY{o}{\PYZdl{}}\PY{n}{clade} \PY{o}{==} \PY{l+s}{\PYZdq{}}\PY{l+s}{Ape\PYZdq{}}\PY{p}{,} \PY{l+m}{2}\PY{p}{,} \PY{n+nf}{ifelse}\PY{p}{(}\PY{n}{d}\PY{o}{\PYZdl{}}\PY{n}{clade} \PY{o}{==} \PY{l+s}{\PYZdq{}}\PY{l+s}{Old World Monkey\PYZdq{}}\PY{p}{,} \PY{l+m}{3}\PY{p}{,} \PY{n+nf}{ifelse}\PY{p}{(}\PY{n}{d}\PY{o}{\PYZdl{}}\PY{n}{clade} \PY{o}{==} \PY{l+s}{\PYZdq{}}\PY{l+s}{Strepsirrhine\PYZdq{}}\PY{p}{,} \PY{l+m}{4}\PY{p}{,} \PY{l+m}{0}\PY{p}{)}\PY{p}{)}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    We enumerate the clades by 1. New World Monkey, 2. Ape, 3. Old World
+Monkey and 4. Strepsirrhine. Next we build a model with categorical
+varuable \texttt{clade.N}.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{4}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{model} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{map}\PY{p}{(}
+	\PY{n+nf}{alist}\PY{p}{(}
+		\PY{n}{kcal.per.g} \PY{o}{\PYZti{}} \PY{n+nf}{dnorm}\PY{p}{(}\PY{n}{mu}\PY{p}{,} \PY{n}{sigma}\PY{p}{)}\PY{p}{,}
+		\PY{n}{mu} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n}{a}\PY{p}{[}\PY{n}{clade.N}\PY{p}{]}\PY{p}{,}
+		\PY{n}{a}\PY{p}{[}\PY{n}{clade.N}\PY{p}{]} \PY{o}{\PYZti{}} \PY{n+nf}{dnorm}\PY{p}{(}\PY{l+m}{0.5}\PY{p}{,} \PY{l+m}{0.5}\PY{p}{)}\PY{p}{,}
+		\PY{n}{sigma} \PY{o}{\PYZti{}} \PY{n+nf}{dunif}\PY{p}{(}\PY{l+m}{0}\PY{p}{,} \PY{l+m}{5}\PY{p}{)}
+	\PY{p}{)}\PY{p}{,}
+	\PY{n}{data} \PY{o}{=} \PY{n}{d}
+\PY{p}{)}
+\PY{n+nf}{plot}\PY{p}{(}\PY{n+nf}{coeftab}\PY{p}{(}\PY{n}{model}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{exercise_sheet_7_Immanuel_Albrecht_files/exercise_sheet_7_Immanuel_Albrecht_7_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    This plot shows that the differences are significant, as the means and
+their deviations do not always overlap.
+
+    \begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{1}
+\tightlist
+\item
+  Design a model that includes the perc.fat in the milk and the
+  log(mass) of the individual. Characterise the differences between the
+  clades.
+\end{enumerate}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{5}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{model} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{map}\PY{p}{(}
+	\PY{n+nf}{alist}\PY{p}{(}
+		\PY{n}{kcal.per.g} \PY{o}{\PYZti{}} \PY{n+nf}{dnorm}\PY{p}{(}\PY{n}{mu}\PY{p}{,} \PY{n}{sigma}\PY{p}{)}\PY{p}{,}
+		\PY{n}{mu} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n}{offset}\PY{p}{[}\PY{n}{clade.N}\PY{p}{]} \PY{o}{+} \PY{n}{fat\PYZus{}lin}\PY{p}{[}\PY{n}{clade.N}\PY{p}{]} \PY{o}{*} \PY{n}{perc.fat} \PY{o}{+} \PY{n}{mass\PYZus{}log\PYZus{}lin}\PY{p}{[}\PY{n}{clade.N}\PY{p}{]} \PY{o}{*} \PY{n+nf}{log}\PY{p}{(}\PY{n}{mass}\PY{p}{)}\PY{p}{,}
+		\PY{n}{offset}\PY{p}{[}\PY{n}{clade.N}\PY{p}{]} \PY{o}{\PYZti{}} \PY{n+nf}{dnorm}\PY{p}{(}\PY{l+m}{0.5}\PY{p}{,} \PY{l+m}{0.5}\PY{p}{)}\PY{p}{,}
+		\PY{n}{fat\PYZus{}lin}\PY{p}{[}\PY{n}{clade.N}\PY{p}{]} \PY{o}{\PYZti{}} \PY{n+nf}{dnorm}\PY{p}{(}\PY{l+m}{0}\PY{p}{,} \PY{l+m}{1}\PY{p}{)}\PY{p}{,}
+		\PY{n}{mass\PYZus{}log\PYZus{}lin}\PY{p}{[}\PY{n}{clade.N}\PY{p}{]} \PY{o}{\PYZti{}} \PY{n+nf}{dnorm}\PY{p}{(}\PY{l+m}{0}\PY{p}{,} \PY{l+m}{1}\PY{p}{)}\PY{p}{,}
+		\PY{n}{sigma} \PY{o}{\PYZti{}} \PY{n+nf}{dunif}\PY{p}{(}\PY{l+m}{0}\PY{p}{,} \PY{l+m}{5}\PY{p}{)}
+	\PY{p}{)}\PY{p}{,}
+	\PY{n}{data} \PY{o}{=} \PY{n}{d}
+\PY{p}{)}
+
+\PY{n}{post} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{extract.samples}\PY{p}{(}\PY{n}{model}\PY{p}{)}
+
+\PY{n+nf}{plot}\PY{p}{(}\PY{n+nf}{coeftab}\PY{p}{(}\PY{n}{model}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{exercise_sheet_7_Immanuel_Albrecht_files/exercise_sheet_7_Immanuel_Albrecht_10_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{9}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{credible\PYZus{}iterval} \PY{o}{\PYZlt{}\PYZhy{}} \PY{l+m}{0.91}
+
+\PY{n+nf}{for }\PY{p}{(}\PY{n}{monkey} \PY{n}{in} \PY{n+nf}{c}\PY{p}{(}\PY{l+m}{1}\PY{p}{,} \PY{l+m}{2}\PY{p}{,} \PY{l+m}{3}\PY{p}{,} \PY{l+m}{4}\PY{p}{)}\PY{p}{)} \PY{p}{\PYZob{}}
+\PY{n}{monkey\PYZus{}data} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n}{d}\PY{p}{[} \PY{n}{d}\PY{o}{\PYZdl{}}\PY{n}{clade.N} \PY{o}{==} \PY{n}{monkey}\PY{p}{,} \PY{p}{]}
+
+\PY{n}{mu.link} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{function}\PY{p}{(}\PY{n}{perc.fat}\PY{p}{,} \PY{n}{mass}\PY{p}{)} \PY{n}{post}\PY{o}{\PYZdl{}}\PY{n}{offset}\PY{p}{[}\PY{n}{monkey}\PY{p}{]} \PY{o}{+} \PY{n}{post}\PY{o}{\PYZdl{}}\PY{n}{fat\PYZus{}lin}\PY{p}{[}\PY{n}{monkey}\PY{p}{]} \PY{o}{*} \PY{n}{perc.fat} \PY{o}{+} \PY{n}{post}\PY{o}{\PYZdl{}}\PY{n}{mass\PYZus{}log\PYZus{}lin}\PY{p}{[}\PY{n}{monkey}\PY{p}{]} \PY{o}{*} \PY{n}{mass}
+
+\PY{n}{perc.fat.seq} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{seq}\PY{p}{(}\PY{n}{from} \PY{o}{=} \PY{n+nf}{min}\PY{p}{(}\PY{n}{monkey\PYZus{}data}\PY{o}{\PYZdl{}}\PY{n}{perc.fat}\PY{p}{)}\PY{p}{,} \PY{n}{to} \PY{o}{=} \PY{n+nf}{max}\PY{p}{(}\PY{n}{monkey\PYZus{}data}\PY{o}{\PYZdl{}}\PY{n}{perc.fat}\PY{p}{)}\PY{p}{,} \PY{n}{by} \PY{o}{=} \PY{l+m}{0.01}\PY{p}{)}
+\PY{n}{mass.seq} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{seq}\PY{p}{(}\PY{n}{from} \PY{o}{=} \PY{n+nf}{min}\PY{p}{(}\PY{n}{monkey\PYZus{}data}\PY{o}{\PYZdl{}}\PY{n}{mass}\PY{p}{)}\PY{p}{,} \PY{n}{to} \PY{o}{=} \PY{n+nf}{max}\PY{p}{(}\PY{n}{monkey\PYZus{}data}\PY{o}{\PYZdl{}}\PY{n}{mass}\PY{p}{)}\PY{p}{,} \PY{n}{by} \PY{o}{=} \PY{l+m}{0.01}\PY{p}{)}
+\PY{n}{perc.fat.mean} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{mean}\PY{p}{(}\PY{n}{monkey\PYZus{}data}\PY{o}{\PYZdl{}}\PY{n}{perc.fat}\PY{p}{)}
+\PY{n}{mass.mean} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{mean}\PY{p}{(}\PY{n}{monkey\PYZus{}data}\PY{o}{\PYZdl{}}\PY{n}{mass}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} For each weight value we calculate a 91 percent credible interval}
+\PY{n}{perc.fat.mu} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{sapply}\PY{p}{(}\PY{n}{perc.fat.seq}\PY{p}{,} \PY{n}{mu.link}\PY{p}{,} \PY{n}{mass} \PY{o}{=} \PY{n}{mass.mean}\PY{p}{)}
+\PY{n}{perc.fat.mu.mean} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{apply}\PY{p}{(}\PY{n}{perc.fat.mu}\PY{p}{,} \PY{l+m}{2}\PY{p}{,} \PY{n}{mean}\PY{p}{)}
+\PY{n}{perc.fat.mu.HPDI} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{apply}\PY{p}{(}\PY{n}{perc.fat.mu}\PY{p}{,} \PY{l+m}{2}\PY{p}{,} \PY{n}{HPDI}\PY{p}{,} \PY{n}{prob} \PY{o}{=} \PY{n}{credible\PYZus{}iterval}\PY{p}{)}
+\PY{n}{mass.mu} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{sapply}\PY{p}{(}\PY{n}{mass.seq}\PY{p}{,} \PY{n}{mu.link}\PY{p}{,} \PY{n}{perc.fat} \PY{o}{=} \PY{n}{perc.fat.mean}\PY{p}{)}
+\PY{n}{mass.mu.mean} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{apply}\PY{p}{(}\PY{n}{mass.mu}\PY{p}{,} \PY{l+m}{2}\PY{p}{,} \PY{n}{mean}\PY{p}{)}
+\PY{n}{mass.mu.HPDI} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{apply}\PY{p}{(}\PY{n}{mass.mu}\PY{p}{,} \PY{l+m}{2}\PY{p}{,} \PY{n}{HPDI}\PY{p}{,} \PY{n}{prob} \PY{o}{=} \PY{n}{credible\PYZus{}iterval}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Plotting kcal.per.g to perc.fat}
+\PY{n+nf}{plot}\PY{p}{(}\PY{n}{kcal.per.g} \PY{o}{\PYZti{}} \PY{n}{perc.fat}\PY{p}{,} \PY{n}{monkey\PYZus{}data}\PY{p}{)}
+\PY{n+nf}{lines}\PY{p}{(}\PY{n}{perc.fat.seq}\PY{p}{,} \PY{n}{perc.fat.mu.mean}\PY{p}{)}
+\PY{n+nf}{shade}\PY{p}{(}\PY{n}{perc.fat.mu.HPDI}\PY{p}{,} \PY{n}{perc.fat.seq}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} We calculate the 91 percent credible interval of the height variables by taking into account the uncertainty of the slope and the standard deviation}
+\PY{n}{perc.fat.sim.kcal.per.g} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{sim}\PY{p}{(}\PY{n}{model}\PY{p}{,} \PY{n}{data}\PY{o}{=}\PY{n+nf}{list}\PY{p}{(}\PY{n}{perc.fat} \PY{o}{=} \PY{n}{perc.fat.seq}\PY{p}{)}\PY{p}{)}
+\PY{n}{perc.fat.kcal.per.g.HPDI} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{apply}\PY{p}{(}\PY{n}{perc.fat.sim.kcal.per.g}\PY{p}{,} \PY{l+m}{2}\PY{p}{,} \PY{n}{HPDI}\PY{p}{,} \PY{n}{prob} \PY{o}{=} \PY{n}{credible\PYZus{}iterval}\PY{p}{)}
+\PY{n+nf}{shade}\PY{p}{(}\PY{n}{perc.fat.kcal.per.g.HPDI}\PY{p}{,} \PY{n}{perc.fat.seq}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Plotting kcal.per.g to mass}
+\PY{n+nf}{plot}\PY{p}{(}\PY{n}{kcal.per.g} \PY{o}{\PYZti{}} \PY{n}{mass}\PY{p}{,} \PY{n}{monkey\PYZus{}data}\PY{p}{)}
+\PY{n+nf}{lines}\PY{p}{(}\PY{n}{mass.seq}\PY{p}{,} \PY{n}{mass.mu.mean}\PY{p}{)}
+\PY{n+nf}{shade}\PY{p}{(}\PY{n}{mass.mu.HPDI}\PY{p}{,} \PY{n}{mass.seq}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} We calculate the 91 percent credible interval of the height variables by taking into account the uncertainty of the slope and the standard deviation}
+\PY{n}{mass.sim.kcal.per.g} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{sim}\PY{p}{(}\PY{n}{model}\PY{p}{,} \PY{n}{data}\PY{o}{=}\PY{n+nf}{list}\PY{p}{(}\PY{n}{mass} \PY{o}{=} \PY{n}{mass.seq}\PY{p}{)}\PY{p}{)}
+\PY{n}{mass.kcal.per.g.HPDI} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{apply}\PY{p}{(}\PY{n}{mass.sim.kcal.per.g}\PY{p}{,} \PY{l+m}{2}\PY{p}{,} \PY{n}{HPDI}\PY{p}{,} \PY{n}{prob} \PY{o}{=} \PY{n}{credible\PYZus{}iterval}\PY{p}{)}
+\PY{n+nf}{shade}\PY{p}{(}\PY{n}{mass.kcal.per.g.HPDI}\PY{p}{,} \PY{n}{mass.seq}\PY{p}{)}
+
+\PY{p}{\PYZcb{}}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}, frame=single, framerule=2mm, rulecolor=\color{outerrorbackground}]
+Error in apply(perc.fat.mu, 2, mean): dim(X) muss positive Länge haben
+Traceback:
+
+1. apply(perc.fat.mu, 2, mean)
+2. stop("dim(X) must have a positive length")
+    \end{Verbatim}
+
+    There was an attempt to produce counterfactual plots, but it seems that
+R did not intend for us to come that far.
+
+First we observe that the Strepsirrhine have a wide array of different
+correlations between their body mass and the energy in their milk. Next
+we can say that
+
+    \begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{2}
+\tightlist
+\item
+  The dataset provides for each individual the percentage of proteines
+  (perc.protein) in the milk, in addition to lactose and fat. Examine
+  the data and determine whether including this variable helps in better
+  constraining the source of milk energy for each clade.
+\end{enumerate}
+
+Looking at the data points, the lactose doesnt seem to be correlated to
+any of the predictors we considered. Thus I assume it is irrelevant to
+the discussion.
+
+
+    % Add a bibliography block to the postdoc
+    
+    
+    
+\end{document}
