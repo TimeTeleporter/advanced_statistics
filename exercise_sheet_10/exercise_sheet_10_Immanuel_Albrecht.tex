@@ -1,0 +1,849 @@
+\documentclass[11pt]{article}
+
+    \usepackage[breakable]{tcolorbox}
+    \usepackage{parskip} % Stop auto-indenting (to mimic markdown behaviour)
+    
+    \usepackage{iftex}
+    \ifPDFTeX
+    	\usepackage[T1]{fontenc}
+    	\usepackage{mathpazo}
+    \else
+    	\usepackage{fontspec}
+    \fi
+
+    % Basic figure setup, for now with no caption control since it's done
+    % automatically by Pandoc (which extracts ![](path) syntax from Markdown).
+    \usepackage{graphicx}
+    % Maintain compatibility with old templates. Remove in nbconvert 6.0
+    \let\Oldincludegraphics\includegraphics
+    % Ensure that by default, figures have no caption (until we provide a
+    % proper Figure object with a Caption API and a way to capture that
+    % in the conversion process - todo).
+    \usepackage{caption}
+    \DeclareCaptionFormat{nocaption}{}
+    \captionsetup{format=nocaption,aboveskip=0pt,belowskip=0pt}
+
+    \usepackage{float}
+    \floatplacement{figure}{H} % forces figures to be placed at the correct location
+    \usepackage{xcolor} % Allow colors to be defined
+    \usepackage{enumerate} % Needed for markdown enumerations to work
+    \usepackage{geometry} % Used to adjust the document margins
+    \usepackage{amsmath} % Equations
+    \usepackage{amssymb} % Equations
+    \usepackage{textcomp} % defines textquotesingle
+    % Hack from http://tex.stackexchange.com/a/47451/13684:
+    \AtBeginDocument{%
+        \def\PYZsq{\textquotesingle}% Upright quotes in Pygmentized code
+    }
+    \usepackage{upquote} % Upright quotes for verbatim code
+    \usepackage{eurosym} % defines \euro
+    \usepackage[mathletters]{ucs} % Extended unicode (utf-8) support
+    \usepackage{fancyvrb} % verbatim replacement that allows latex
+    \usepackage{grffile} % extends the file name processing of package graphics 
+                         % to support a larger range
+    \makeatletter % fix for old versions of grffile with XeLaTeX
+    \@ifpackagelater{grffile}{2019/11/01}
+    {
+      % Do nothing on new versions
+    }
+    {
+      \def\Gread@@xetex#1{%
+        \IfFileExists{"\Gin@base".bb}%
+        {\Gread@eps{\Gin@base.bb}}%
+        {\Gread@@xetex@aux#1}%
+      }
+    }
+    \makeatother
+    \usepackage[Export]{adjustbox} % Used to constrain images to a maximum size
+    \adjustboxset{max size={0.9\linewidth}{0.9\paperheight}}
+
+    % The hyperref package gives us a pdf with properly built
+    % internal navigation ('pdf bookmarks' for the table of contents,
+    % internal cross-reference links, web links for URLs, etc.)
+    \usepackage{hyperref}
+    % The default LaTeX title has an obnoxious amount of whitespace. By default,
+    % titling removes some of it. It also provides customization options.
+    \usepackage{titling}
+    \usepackage{longtable} % longtable support required by pandoc >1.10
+    \usepackage{booktabs}  % table support for pandoc > 1.12.2
+    \usepackage[inline]{enumitem} % IRkernel/repr support (it uses the enumerate* environment)
+    \usepackage[normalem]{ulem} % ulem is needed to support strikethroughs (\sout)
+                                % normalem makes italics be italics, not underlines
+    \usepackage{mathrsfs}
+    
+
+    
+    % Colors for the hyperref package
+    \definecolor{urlcolor}{rgb}{0,.145,.698}
+    \definecolor{linkcolor}{rgb}{.71,0.21,0.01}
+    \definecolor{citecolor}{rgb}{.12,.54,.11}
+
+    % ANSI colors
+    \definecolor{ansi-black}{HTML}{3E424D}
+    \definecolor{ansi-black-intense}{HTML}{282C36}
+    \definecolor{ansi-red}{HTML}{E75C58}
+    \definecolor{ansi-red-intense}{HTML}{B22B31}
+    \definecolor{ansi-green}{HTML}{00A250}
+    \definecolor{ansi-green-intense}{HTML}{007427}
+    \definecolor{ansi-yellow}{HTML}{DDB62B}
+    \definecolor{ansi-yellow-intense}{HTML}{B27D12}
+    \definecolor{ansi-blue}{HTML}{208FFB}
+    \definecolor{ansi-blue-intense}{HTML}{0065CA}
+    \definecolor{ansi-magenta}{HTML}{D160C4}
+    \definecolor{ansi-magenta-intense}{HTML}{A03196}
+    \definecolor{ansi-cyan}{HTML}{60C6C8}
+    \definecolor{ansi-cyan-intense}{HTML}{258F8F}
+    \definecolor{ansi-white}{HTML}{C5C1B4}
+    \definecolor{ansi-white-intense}{HTML}{A1A6B2}
+    \definecolor{ansi-default-inverse-fg}{HTML}{FFFFFF}
+    \definecolor{ansi-default-inverse-bg}{HTML}{000000}
+
+    % common color for the border for error outputs.
+    \definecolor{outerrorbackground}{HTML}{FFDFDF}
+
+    % commands and environments needed by pandoc snippets
+    % extracted from the output of `pandoc -s`
+    \providecommand{\tightlist}{%
+      \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+    \DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+    % Add ',fontsize=\small' for more characters per line
+    \newenvironment{Shaded}{}{}
+    \newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{{#1}}}
+    \newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{{#1}}}}
+    \newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{{#1}}}
+    \newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{{#1}}}
+    \newcommand{\RegionMarkerTok}[1]{{#1}}
+    \newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\NormalTok}[1]{{#1}}
+    
+    % Additional commands for more recent versions of Pandoc
+    \newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.53,0.00,0.00}{{#1}}}
+    \newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.73,0.40,0.53}{{#1}}}
+    \newcommand{\ImportTok}[1]{{#1}}
+    \newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.73,0.13,0.13}{\textit{{#1}}}}
+    \newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\VariableTok}[1]{\textcolor[rgb]{0.10,0.09,0.49}{{#1}}}
+    \newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.40,0.40,0.40}{{#1}}}
+    \newcommand{\BuiltInTok}[1]{{#1}}
+    \newcommand{\ExtensionTok}[1]{{#1}}
+    \newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.74,0.48,0.00}{{#1}}}
+    \newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.49,0.56,0.16}{{#1}}}
+    \newcommand{\InformationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\WarningTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    
+    
+    % Define a nice break command that doesn't care if a line doesn't already
+    % exist.
+    \def\br{\hspace*{\fill} \\* }
+    % Math Jax compatibility definitions
+    \def\gt{>}
+    \def\lt{<}
+    \let\Oldtex\TeX
+    \let\Oldlatex\LaTeX
+    \renewcommand{\TeX}{\textrm{\Oldtex}}
+    \renewcommand{\LaTeX}{\textrm{\Oldlatex}}
+    % Document parameters
+    % Document title
+    \title{exercise\_sheet\_10\_Immanuel\_Albrecht}
+    
+    
+    
+    
+    
+% Pygments definitions
+\makeatletter
+\def\PY@reset{\let\PY@it=\relax \let\PY@bf=\relax%
+    \let\PY@ul=\relax \let\PY@tc=\relax%
+    \let\PY@bc=\relax \let\PY@ff=\relax}
+\def\PY@tok#1{\csname PY@tok@#1\endcsname}
+\def\PY@toks#1+{\ifx\relax#1\empty\else%
+    \PY@tok{#1}\expandafter\PY@toks\fi}
+\def\PY@do#1{\PY@bc{\PY@tc{\PY@ul{%
+    \PY@it{\PY@bf{\PY@ff{#1}}}}}}}
+\def\PY#1#2{\PY@reset\PY@toks#1+\relax+\PY@do{#2}}
+
+\expandafter\def\csname PY@tok@w\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.73,0.73}{##1}}}
+\expandafter\def\csname PY@tok@c\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@cp\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.74,0.48,0.00}{##1}}}
+\expandafter\def\csname PY@tok@k\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@kp\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@kt\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.69,0.00,0.25}{##1}}}
+\expandafter\def\csname PY@tok@o\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@ow\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\expandafter\def\csname PY@tok@nb\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@nf\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\expandafter\def\csname PY@tok@nc\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\expandafter\def\csname PY@tok@nn\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\expandafter\def\csname PY@tok@ne\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.82,0.25,0.23}{##1}}}
+\expandafter\def\csname PY@tok@nv\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@no\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.53,0.00,0.00}{##1}}}
+\expandafter\def\csname PY@tok@nl\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.63,0.63,0.00}{##1}}}
+\expandafter\def\csname PY@tok@ni\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.60,0.60,0.60}{##1}}}
+\expandafter\def\csname PY@tok@na\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.49,0.56,0.16}{##1}}}
+\expandafter\def\csname PY@tok@nt\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@nd\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\expandafter\def\csname PY@tok@s\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sd\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@si\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.53}{##1}}}
+\expandafter\def\csname PY@tok@se\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sr\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.53}{##1}}}
+\expandafter\def\csname PY@tok@ss\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@sx\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@m\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@gh\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\expandafter\def\csname PY@tok@gu\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.50,0.00,0.50}{##1}}}
+\expandafter\def\csname PY@tok@gd\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.63,0.00,0.00}{##1}}}
+\expandafter\def\csname PY@tok@gi\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.63,0.00}{##1}}}
+\expandafter\def\csname PY@tok@gr\endcsname{\def\PY@tc##1{\textcolor[rgb]{1.00,0.00,0.00}{##1}}}
+\expandafter\def\csname PY@tok@ge\endcsname{\let\PY@it=\textit}
+\expandafter\def\csname PY@tok@gs\endcsname{\let\PY@bf=\textbf}
+\expandafter\def\csname PY@tok@gp\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\expandafter\def\csname PY@tok@go\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.53,0.53,0.53}{##1}}}
+\expandafter\def\csname PY@tok@gt\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.27,0.87}{##1}}}
+\expandafter\def\csname PY@tok@err\endcsname{\def\PY@bc##1{\setlength{\fboxsep}{0pt}\fcolorbox[rgb]{1.00,0.00,0.00}{1,1,1}{\strut ##1}}}
+\expandafter\def\csname PY@tok@kc\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@kd\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@kn\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@kr\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@bp\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@fm\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\expandafter\def\csname PY@tok@vc\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@vg\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@vi\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@vm\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@sa\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sb\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sc\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@dl\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@s2\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sh\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@s1\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@mb\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@mf\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@mh\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@mi\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@il\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@mo\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@ch\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@cm\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@cpf\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@c1\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@cs\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+
+\def\PYZbs{\char`\\}
+\def\PYZus{\char`\_}
+\def\PYZob{\char`\{}
+\def\PYZcb{\char`\}}
+\def\PYZca{\char`\^}
+\def\PYZam{\char`\&}
+\def\PYZlt{\char`\<}
+\def\PYZgt{\char`\>}
+\def\PYZsh{\char`\#}
+\def\PYZpc{\char`\%}
+\def\PYZdl{\char`\$}
+\def\PYZhy{\char`\-}
+\def\PYZsq{\char`\'}
+\def\PYZdq{\char`\"}
+\def\PYZti{\char`\~}
+% for compatibility with earlier versions
+\def\PYZat{@}
+\def\PYZlb{[}
+\def\PYZrb{]}
+\makeatother
+
+
+    % For linebreaks inside Verbatim environment from package fancyvrb. 
+    \makeatletter
+        \newbox\Wrappedcontinuationbox 
+        \newbox\Wrappedvisiblespacebox 
+        \newcommand*\Wrappedvisiblespace {\textcolor{red}{\textvisiblespace}} 
+        \newcommand*\Wrappedcontinuationsymbol {\textcolor{red}{\llap{\tiny$\m@th\hookrightarrow$}}} 
+        \newcommand*\Wrappedcontinuationindent {3ex } 
+        \newcommand*\Wrappedafterbreak {\kern\Wrappedcontinuationindent\copy\Wrappedcontinuationbox} 
+        % Take advantage of the already applied Pygments mark-up to insert 
+        % potential linebreaks for TeX processing. 
+        %        {, <, #, %, $, ' and ": go to next line. 
+        %        _, }, ^, &, >, - and ~: stay at end of broken line. 
+        % Use of \textquotesingle for straight quote. 
+        \newcommand*\Wrappedbreaksatspecials {% 
+            \def\PYGZus{\discretionary{\char`\_}{\Wrappedafterbreak}{\char`\_}}% 
+            \def\PYGZob{\discretionary{}{\Wrappedafterbreak\char`\{}{\char`\{}}% 
+            \def\PYGZcb{\discretionary{\char`\}}{\Wrappedafterbreak}{\char`\}}}% 
+            \def\PYGZca{\discretionary{\char`\^}{\Wrappedafterbreak}{\char`\^}}% 
+            \def\PYGZam{\discretionary{\char`\&}{\Wrappedafterbreak}{\char`\&}}% 
+            \def\PYGZlt{\discretionary{}{\Wrappedafterbreak\char`\<}{\char`\<}}% 
+            \def\PYGZgt{\discretionary{\char`\>}{\Wrappedafterbreak}{\char`\>}}% 
+            \def\PYGZsh{\discretionary{}{\Wrappedafterbreak\char`\#}{\char`\#}}% 
+            \def\PYGZpc{\discretionary{}{\Wrappedafterbreak\char`\%}{\char`\%}}% 
+            \def\PYGZdl{\discretionary{}{\Wrappedafterbreak\char`\$}{\char`\$}}% 
+            \def\PYGZhy{\discretionary{\char`\-}{\Wrappedafterbreak}{\char`\-}}% 
+            \def\PYGZsq{\discretionary{}{\Wrappedafterbreak\textquotesingle}{\textquotesingle}}% 
+            \def\PYGZdq{\discretionary{}{\Wrappedafterbreak\char`\"}{\char`\"}}% 
+            \def\PYGZti{\discretionary{\char`\~}{\Wrappedafterbreak}{\char`\~}}% 
+        } 
+        % Some characters . , ; ? ! / are not pygmentized. 
+        % This macro makes them "active" and they will insert potential linebreaks 
+        \newcommand*\Wrappedbreaksatpunct {% 
+            \lccode`\~`\.\lowercase{\def~}{\discretionary{\hbox{\char`\.}}{\Wrappedafterbreak}{\hbox{\char`\.}}}% 
+            \lccode`\~`\,\lowercase{\def~}{\discretionary{\hbox{\char`\,}}{\Wrappedafterbreak}{\hbox{\char`\,}}}% 
+            \lccode`\~`\;\lowercase{\def~}{\discretionary{\hbox{\char`\;}}{\Wrappedafterbreak}{\hbox{\char`\;}}}% 
+            \lccode`\~`\:\lowercase{\def~}{\discretionary{\hbox{\char`\:}}{\Wrappedafterbreak}{\hbox{\char`\:}}}% 
+            \lccode`\~`\?\lowercase{\def~}{\discretionary{\hbox{\char`\?}}{\Wrappedafterbreak}{\hbox{\char`\?}}}% 
+            \lccode`\~`\!\lowercase{\def~}{\discretionary{\hbox{\char`\!}}{\Wrappedafterbreak}{\hbox{\char`\!}}}% 
+            \lccode`\~`\/\lowercase{\def~}{\discretionary{\hbox{\char`\/}}{\Wrappedafterbreak}{\hbox{\char`\/}}}% 
+            \catcode`\.\active
+            \catcode`\,\active 
+            \catcode`\;\active
+            \catcode`\:\active
+            \catcode`\?\active
+            \catcode`\!\active
+            \catcode`\/\active 
+            \lccode`\~`\~ 	
+        }
+    \makeatother
+
+    \let\OriginalVerbatim=\Verbatim
+    \makeatletter
+    \renewcommand{\Verbatim}[1][1]{%
+        %\parskip\z@skip
+        \sbox\Wrappedcontinuationbox {\Wrappedcontinuationsymbol}%
+        \sbox\Wrappedvisiblespacebox {\FV@SetupFont\Wrappedvisiblespace}%
+        \def\FancyVerbFormatLine ##1{\hsize\linewidth
+            \vtop{\raggedright\hyphenpenalty\z@\exhyphenpenalty\z@
+                \doublehyphendemerits\z@\finalhyphendemerits\z@
+                \strut ##1\strut}%
+        }%
+        % If the linebreak is at a space, the latter will be displayed as visible
+        % space at end of first line, and a continuation symbol starts next line.
+        % Stretch/shrink are however usually zero for typewriter font.
+        \def\FV@Space {%
+            \nobreak\hskip\z@ plus\fontdimen3\font minus\fontdimen4\font
+            \discretionary{\copy\Wrappedvisiblespacebox}{\Wrappedafterbreak}
+            {\kern\fontdimen2\font}%
+        }%
+        
+        % Allow breaks at special characters using \PYG... macros.
+        \Wrappedbreaksatspecials
+        % Breaks at punctuation characters . , ; ? ! and / need catcode=\active 	
+        \OriginalVerbatim[#1,codes*=\Wrappedbreaksatpunct]%
+    }
+    \makeatother
+
+    % Exact colors from NB
+    \definecolor{incolor}{HTML}{303F9F}
+    \definecolor{outcolor}{HTML}{D84315}
+    \definecolor{cellborder}{HTML}{CFCFCF}
+    \definecolor{cellbackground}{HTML}{F7F7F7}
+    
+    % prompt
+    \makeatletter
+    \newcommand{\boxspacing}{\kern\kvtcb@left@rule\kern\kvtcb@boxsep}
+    \makeatother
+    \newcommand{\prompt}[4]{
+        {\ttfamily\llap{{\color{#2}[#3]:\hspace{3pt}#4}}\vspace{-\baselineskip}}
+    }
+    
+
+    
+    % Prevent overflowing lines due to hard-to-break entities
+    \sloppy 
+    % Setup hyperref package
+    \hypersetup{
+      breaklinks=true,  % so long urls are correctly broken across lines
+      colorlinks=true,
+      urlcolor=urlcolor,
+      linkcolor=linkcolor,
+      citecolor=citecolor,
+      }
+    % Slightly bigger margins than the latex defaults
+    
+    \geometry{verbose,tmargin=1in,bmargin=1in,lmargin=1in,rmargin=1in}
+    
+    
+
+\begin{document}
+    
+    \maketitle
+    
+    
+
+    
+    \hypertarget{exercise-sheet-10}{%
+\section{Exercise sheet 10}\label{exercise-sheet-10}}
+
+\hypertarget{nwo-grant-applications}{%
+\subsection{NWO grant applications}\label{nwo-grant-applications}}
+
+\hypertarget{exercise-1}{%
+\subsubsection{Exercise 1}\label{exercise-1}}
+
+For this exercise, you will need to load the dataset NWOGrants from the
+rethinking package. This dataset reports on the funding outcomes of the
+Netherlands Organisation for Scientific Research (NWO) grant
+applications over the 2010-2012 period. One study used that dataset to
+investigate gender bias in the funding awards:
+https://www.pnas.org/content/112/40/12349. You can read there that a
+response to this paper has been formulated, as briefly discussed at the
+beginning of lecture 9. Note that in general less than half applications
+are awarded funding.
+
+Address the same question as the one in the paper by Lee and Ellemers by
+using binomial GLM to investigate potential gender bias on awards.
+Quantify the contrast between male and female applicants. In a second
+step, condition on the discipline as well. What are your conclusions?
+Should the NWO take specific measures for gender equity in general and
+across disciplines? Is there any excess variance in the data? If yes,
+can you elaborate on the nature of possible unaccounted sources?
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{1}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nf}{library}\PY{p}{(}\PY{n}{rethinking}\PY{p}{)}
+\PY{n+nf}{data}\PY{p}{(}\PY{n}{NWOGrants}\PY{p}{)}
+\PY{n}{d} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n}{NWOGrants}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Lade nötiges Paket: rstan
+
+Lade nötiges Paket: StanHeaders
+
+
+rstan version 2.26.16 (Stan version 2.26.1)
+
+
+For execution on a local, multicore CPU with excess RAM we recommend calling
+options(mc.cores = parallel::detectCores()).
+To avoid recompilation of unchanged Stan programs, we recommend calling
+rstan\_options(auto\_write = TRUE)
+For within-chain threading using `reduce\_sum()` or `map\_rect()` Stan functions,
+change `threads\_per\_chain` option:
+rstan\_options(threads\_per\_chain = 1)
+
+
+Do not specify '-march=native' in 'LOCAL\_CPPFLAGS' or a Makevars file
+
+Lade nötiges Paket: cmdstanr
+
+This is cmdstanr version 0.5.3
+
+- CmdStanR documentation and vignettes: mc-stan.org/cmdstanr
+
+- CmdStan path: D:/Users/Immanuel/Documents/.cmdstan/cmdstan-2.31.0
+
+- CmdStan version: 2.31.0
+
+
+A newer version of CmdStan is available. See ?install\_cmdstan() to install it.
+To disable this check set option or environment variable
+CMDSTANR\_NO\_VER\_CHECK=TRUE.
+
+Lade nötiges Paket: parallel
+
+rethinking (Version 2.31)
+
+
+Attache Paket: 'rethinking'
+
+
+Das folgende Objekt ist maskiert 'package:rstan':
+
+    stan
+
+
+Das folgende Objekt ist maskiert 'package:stats':
+
+    rstudent
+
+
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{2}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{d}\PY{o}{\PYZdl{}}\PY{n}{male} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{as.integer}\PY{p}{(}\PY{n}{d}\PY{o}{\PYZdl{}}\PY{n}{gender}\PY{p}{)} \PY{o}{\PYZhy{}} \PY{l+m}{1}
+\PY{n}{d}\PY{o}{\PYZdl{}}\PY{n}{field} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{as.integer}\PY{p}{(}\PY{n}{d}\PY{o}{\PYZdl{}}\PY{n}{discipline}\PY{p}{)}
+\PY{n}{d}\PY{o}{\PYZdl{}}\PY{n}{accept} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n}{d}\PY{o}{\PYZdl{}}\PY{n}{awards} \PY{o}{/} \PY{n}{d}\PY{o}{\PYZdl{}}\PY{n}{applications}
+\PY{n}{d} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n}{d}\PY{p}{[}\PY{n+nf}{order}\PY{p}{(}\PY{n}{d}\PY{o}{\PYZdl{}}\PY{n}{field}\PY{p}{)}\PY{p}{,} \PY{p}{]}
+\PY{n}{d}\PY{o}{\PYZdl{}}\PY{n}{accept.scaled} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{scale}\PY{p}{(}\PY{n}{d}\PY{o}{\PYZdl{}}\PY{n}{accept}\PY{p}{)}
+\PY{n}{d}
+\end{Verbatim}
+\end{tcolorbox}
+
+    A data.frame: 18 × 8
+\begin{tabular}{r|llllllll}
+  & discipline & gender & applications & awards & male & field & accept & accept.scaled\\
+  & <fct> & <fct> & <int> & <int> & <dbl> & <int> & <dbl> & <dbl{[},1{]}>\\
+\hline
+	1 & Chemical sciences   & m &  83 & 22 & 1 & 1 & 0.2650602 &  1.41716126\\
+	2 & Chemical sciences   & f &  39 & 10 & 0 & 1 & 0.2564103 &  1.25309407\\
+	13 & Earth/life sciences & m & 156 & 38 & 1 & 2 & 0.2435897 &  1.00992305\\
+	14 & Earth/life sciences & f & 126 & 18 & 0 & 2 & 0.1428571 & -0.90070635\\
+	7 & Humanities          & m & 230 & 33 & 1 & 3 & 0.1434783 & -0.88892539\\
+	8 & Humanities          & f & 166 & 32 & 0 & 3 & 0.1927711 &  0.04602831\\
+	11 & Interdisciplinary   & m & 105 & 12 & 1 & 4 & 0.1142857 & -1.44263033\\
+	12 & Interdisciplinary   & f &  78 & 17 & 0 & 4 & 0.2179487 &  0.52358102\\
+	17 & Medical sciences    & m & 245 & 46 & 1 & 5 & 0.1877551 & -0.04911153\\
+	18 & Medical sciences    & f & 260 & 29 & 0 & 5 & 0.1115385 & -1.49473840\\
+	3 & Physical sciences   & m & 135 & 26 & 1 & 6 & 0.1925926 &  0.04264279\\
+	4 & Physical sciences   & f &  39 &  9 & 0 & 6 & 0.2307692 &  0.76675204\\
+	5 & Physics             & m &  67 & 18 & 1 & 7 & 0.2686567 &  1.48537683\\
+	6 & Physics             & f &   9 &  2 & 0 & 7 & 0.2222222 &  0.60463803\\
+	15 & Social sciences     & m & 425 & 65 & 1 & 8 & 0.1529412 & -0.70943907\\
+	16 & Social sciences     & f & 409 & 47 & 0 & 8 & 0.1149144 & -1.43070535\\
+	9 & Technical sciences  & m & 189 & 30 & 1 & 9 & 0.1587302 & -0.59963748\\
+	10 & Technical sciences  & f &  62 & 13 & 0 & 9 & 0.2096774 &  0.36669650\\
+\end{tabular}
+
+
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{3}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nf}{par}\PY{p}{(}\PY{n}{mar} \PY{o}{=} \PY{n+nf}{c}\PY{p}{(}\PY{l+m}{4}\PY{p}{,} \PY{l+m}{9}\PY{p}{,} \PY{l+m}{2}\PY{p}{,} \PY{l+m}{2}\PY{p}{)}\PY{p}{)}
+\PY{n+nf}{barplot}\PY{p}{(}\PY{n+nf}{rev}\PY{p}{(}\PY{n}{d}\PY{o}{\PYZdl{}}\PY{n}{accept}\PY{p}{)}\PY{p}{,} \PY{n}{names.arg} \PY{o}{=} \PY{n+nf}{rev}\PY{p}{(}\PY{n}{d}\PY{o}{\PYZdl{}}\PY{n}{discipline}\PY{p}{)}\PY{p}{,} \PY{n}{las}\PY{o}{=}\PY{l+m}{2}\PY{p}{,} \PY{n}{xlim} \PY{o}{=} \PY{n+nf}{c}\PY{p}{(}\PY{l+m}{0.10}\PY{p}{,} \PY{l+m}{0.30}\PY{p}{)}\PY{p}{,} \PY{n}{xpd} \PY{o}{=} \PY{k+kc}{FALSE}\PY{p}{,} \PY{n}{horiz} \PY{o}{=} \PY{k+kc}{TRUE}\PY{p}{,} \PY{n}{col} \PY{o}{=} \PY{n+nf}{ifelse}\PY{p}{(}\PY{n}{d}\PY{o}{\PYZdl{}}\PY{n}{male}\PY{p}{,} \PY{l+s}{\PYZdq{}}\PY{l+s}{red\PYZdq{}}\PY{p}{,} \PY{l+s}{\PYZdq{}}\PY{l+s}{blue\PYZdq{}}\PY{p}{)}\PY{p}{)}
+\PY{n+nf}{title}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{Acceptance rate per discipline and gender\PYZdq{}}\PY{p}{)}
+\PY{n+nf}{legend}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{right\PYZdq{}}\PY{p}{,} \PY{n+nf}{c}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{male\PYZdq{}}\PY{p}{,} \PY{l+s}{\PYZdq{}}\PY{l+s}{female\PYZdq{}}\PY{p}{)}\PY{p}{,} \PY{n}{fill} \PY{o}{=} \PY{n+nf}{c}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{blue\PYZdq{}}\PY{p}{,} \PY{l+s}{\PYZdq{}}\PY{l+s}{red\PYZdq{}}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{exercise_sheet_10_Immanuel_Albrecht_files/exercise_sheet_10_Immanuel_Albrecht_3_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    So male applicants are more likely to get accepted in humanities,
+interdiciplinary, physical and technical sciences. Female applicants are
+more likely to get accepted in chemical, earth/life, medical and social
+sciences and in physics.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{4}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{e} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{data.frame}\PY{p}{(}\PY{n}{discipline} \PY{o}{=} \PY{n+nf}{character}\PY{p}{(}\PY{p}{)}\PY{p}{,} \PY{n}{applications} \PY{o}{=} \PY{n+nf}{integer}\PY{p}{(}\PY{p}{)}\PY{p}{,} \PY{n}{awards} \PY{o}{=} \PY{n+nf}{integer}\PY{p}{(}\PY{p}{)}\PY{p}{,} \PY{n}{field} \PY{o}{=} \PY{n+nf}{integer}\PY{p}{(}\PY{p}{)}\PY{p}{,} \PY{n}{accept} \PY{o}{=} \PY{n+nf}{double}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+\PY{n+nf}{for }\PY{p}{(}\PY{n}{field} \PY{n}{in} \PY{l+m}{1}\PY{o}{:}\PY{n+nf}{max}\PY{p}{(}\PY{n}{d}\PY{o}{\PYZdl{}}\PY{n}{field}\PY{p}{)}\PY{p}{)} \PY{p}{\PYZob{}}
+	\PY{n}{dat} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n}{d}\PY{p}{[}\PY{n}{d}\PY{o}{\PYZdl{}}\PY{n}{field} \PY{o}{==} \PY{n}{field}\PY{p}{,} \PY{p}{]}
+	\PY{n}{discipline} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{as.character}\PY{p}{(}\PY{n}{dat}\PY{o}{\PYZdl{}}\PY{n}{discipline}\PY{p}{[}\PY{l+m}{1}\PY{p}{]}\PY{p}{)}
+	\PY{n}{applications} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{sum}\PY{p}{(}\PY{n}{dat}\PY{o}{\PYZdl{}}\PY{n}{applications}\PY{p}{)}
+	\PY{n}{awards} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{sum}\PY{p}{(}\PY{n}{dat}\PY{o}{\PYZdl{}}\PY{n}{awards}\PY{p}{)}
+	\PY{n}{accept} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n}{awards} \PY{o}{/} \PY{n}{applications}
+	\PY{n}{e}\PY{p}{[}\PY{n+nf}{nrow}\PY{p}{(}\PY{n}{e}\PY{p}{)} \PY{o}{+} \PY{l+m}{1}\PY{p}{,} \PY{p}{]} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{list}\PY{p}{(}\PY{n}{discipline}\PY{p}{,} \PY{n}{applications}\PY{p}{,} \PY{n}{awards}\PY{p}{,} \PY{n}{field}\PY{p}{,} \PY{n}{accept}\PY{p}{)}
+\PY{p}{\PYZcb{}}
+\PY{n}{e}
+\end{Verbatim}
+\end{tcolorbox}
+
+    A data.frame: 9 × 5
+\begin{tabular}{r|lllll}
+  & discipline & applications & awards & field & accept\\
+  & <chr> & <int> & <int> & <int> & <dbl>\\
+\hline
+	1 & Chemical sciences   & 122 &  32 & 1 & 0.2622951\\
+	2 & Earth/life sciences & 282 &  56 & 2 & 0.1985816\\
+	3 & Humanities          & 396 &  65 & 3 & 0.1641414\\
+	4 & Interdisciplinary   & 183 &  29 & 4 & 0.1584699\\
+	5 & Medical sciences    & 505 &  75 & 5 & 0.1485149\\
+	6 & Physical sciences   & 174 &  35 & 6 & 0.2011494\\
+	7 & Physics             &  76 &  20 & 7 & 0.2631579\\
+	8 & Social sciences     & 834 & 112 & 8 & 0.1342926\\
+	9 & Technical sciences  & 251 &  43 & 9 & 0.1713147\\
+\end{tabular}
+
+
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{5}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nf}{par}\PY{p}{(}\PY{n}{mar} \PY{o}{=} \PY{n+nf}{c}\PY{p}{(}\PY{l+m}{4}\PY{p}{,} \PY{l+m}{9}\PY{p}{,} \PY{l+m}{2}\PY{p}{,} \PY{l+m}{2}\PY{p}{)}\PY{p}{)}
+\PY{n+nf}{barplot}\PY{p}{(}\PY{n}{e}\PY{o}{\PYZdl{}}\PY{n}{accept}\PY{p}{,} \PY{n}{names.arg} \PY{o}{=} \PY{n}{e}\PY{o}{\PYZdl{}}\PY{n}{discipline}\PY{p}{,} \PY{n}{las}\PY{o}{=}\PY{l+m}{2}\PY{p}{,} \PY{n}{xlim} \PY{o}{=} \PY{n+nf}{c}\PY{p}{(}\PY{l+m}{0.10}\PY{p}{,} \PY{l+m}{0.30}\PY{p}{)}\PY{p}{,} \PY{n}{xpd} \PY{o}{=} \PY{k+kc}{FALSE}\PY{p}{,} \PY{n}{horiz} \PY{o}{=} \PY{k+kc}{TRUE}\PY{p}{)}
+\PY{n+nf}{title}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{Acceptance rate per discipline\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{exercise_sheet_10_Immanuel_Albrecht_files/exercise_sheet_10_Immanuel_Albrecht_6_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{6}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{male\PYZus{}applications} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{sum}\PY{p}{(}\PY{n}{d}\PY{p}{[}\PY{n}{d}\PY{o}{\PYZdl{}}\PY{n}{male} \PY{o}{==} \PY{l+m}{1}\PY{p}{,} \PY{p}{]}\PY{o}{\PYZdl{}}\PY{n}{applications}\PY{p}{)}
+\PY{n}{female\PYZus{}applications} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{sum}\PY{p}{(}\PY{n}{d}\PY{p}{[}\PY{n}{d}\PY{o}{\PYZdl{}}\PY{n}{male} \PY{o}{==} \PY{l+m}{0}\PY{p}{,} \PY{p}{]}\PY{o}{\PYZdl{}}\PY{n}{applications}\PY{p}{)}
+\PY{n}{male\PYZus{}awards} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{sum}\PY{p}{(}\PY{n}{d}\PY{p}{[}\PY{n}{d}\PY{o}{\PYZdl{}}\PY{n}{male} \PY{o}{==} \PY{l+m}{1}\PY{p}{,} \PY{p}{]}\PY{o}{\PYZdl{}}\PY{n}{awards}\PY{p}{)}
+\PY{n}{female\PYZus{}awards} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{sum}\PY{p}{(}\PY{n}{d}\PY{p}{[}\PY{n}{d}\PY{o}{\PYZdl{}}\PY{n}{male} \PY{o}{==} \PY{l+m}{0}\PY{p}{,} \PY{p}{]}\PY{o}{\PYZdl{}}\PY{n}{awards}\PY{p}{)}
+\PY{n}{male\PYZus{}accept} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n}{male\PYZus{}awards} \PY{o}{/} \PY{n}{male\PYZus{}applications}
+\PY{n}{female\PYZus{}accept} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n}{female\PYZus{}awards} \PY{o}{/} \PY{n}{female\PYZus{}applications}
+
+\PY{n+nf}{barplot}\PY{p}{(}\PY{n+nf}{c}\PY{p}{(}\PY{n}{male\PYZus{}accept}\PY{p}{,} \PY{n}{female\PYZus{}accept}\PY{p}{)}\PY{p}{,} \PY{n}{names.arg} \PY{o}{=} \PY{n+nf}{c}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{male\PYZdq{}}\PY{p}{,} \PY{l+s}{\PYZdq{}}\PY{l+s}{female\PYZdq{}}\PY{p}{)}\PY{p}{,} \PY{n}{ylim} \PY{o}{=} \PY{n+nf}{c}\PY{p}{(}\PY{l+m}{0.14}\PY{p}{,} \PY{l+m}{0.18}\PY{p}{)}\PY{p}{,} \PY{n}{xpd} \PY{o}{=} \PY{k+kc}{FALSE}\PY{p}{,} \PY{n}{col} \PY{o}{=} \PY{n+nf}{c}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{blue\PYZdq{}}\PY{p}{,} \PY{l+s}{\PYZdq{}}\PY{l+s}{red\PYZdq{}}\PY{p}{)}\PY{p}{)}
+\PY{n+nf}{title}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{Acceptance rate per gender\PYZdq{}}\PY{p}{)}
+
+\PY{n+nf}{mean}\PY{p}{(}\PY{n}{male\PYZus{}accept}\PY{p}{)} \PY{o}{\PYZhy{}} \PY{n+nf}{mean}\PY{p}{(}\PY{n}{female\PYZus{}accept}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    0.0283801315911408
+
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{exercise_sheet_10_Immanuel_Albrecht_files/exercise_sheet_10_Immanuel_Albrecht_7_1.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    So in the data there is a difference between the male and female
+acceptance rate in the data. But is it statistically significant? We
+construct different models and compare them.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{7}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} A single mean over all the data}
+\PY{n}{model1} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{map}\PY{p}{(}
+	\PY{n+nf}{alist}\PY{p}{(}
+		\PY{n}{awards} \PY{o}{\PYZti{}} \PY{n+nf}{dbinom}\PY{p}{(}\PY{n}{applications}\PY{p}{,} \PY{n}{p}\PY{p}{)}\PY{p}{,}
+		\PY{n+nf}{logit}\PY{p}{(}\PY{n}{p}\PY{p}{)} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n}{a}\PY{p}{,}
+		\PY{n}{a} \PY{o}{\PYZti{}} \PY{n+nf}{dnorm}\PY{p}{(}\PY{l+m}{0}\PY{p}{,} \PY{l+m}{10}\PY{p}{)}
+	\PY{p}{)}\PY{p}{,}
+	\PY{n}{data} \PY{o}{=} \PY{n}{d}
+\PY{p}{)}
+\PY{n}{model1\PYZus{}parameter\PYZus{}amount} \PY{o}{\PYZlt{}\PYZhy{}} \PY{l+m}{1} \PY{c+c1}{\PYZsh{} 1}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{8}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} One mean for male and one mean for female}
+\PY{n}{model\PYZus{}male} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{map}\PY{p}{(}
+	\PY{n+nf}{alist}\PY{p}{(}
+		\PY{n}{awards} \PY{o}{\PYZti{}} \PY{n+nf}{dbinom}\PY{p}{(}\PY{n}{applications}\PY{p}{,} \PY{n}{p}\PY{p}{)}\PY{p}{,}
+		\PY{n+nf}{logit}\PY{p}{(}\PY{n}{p}\PY{p}{)} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n}{a} \PY{o}{+} \PY{n}{a\PYZus{}male} \PY{o}{*} \PY{n}{male}\PY{p}{,}
+		\PY{n}{a} \PY{o}{\PYZti{}} \PY{n+nf}{dnorm}\PY{p}{(}\PY{l+m}{0}\PY{p}{,} \PY{l+m}{10}\PY{p}{)}\PY{p}{,}
+		\PY{n}{a\PYZus{}male} \PY{o}{\PYZti{}} \PY{n+nf}{dnorm}\PY{p}{(}\PY{l+m}{0}\PY{p}{,} \PY{l+m}{10}\PY{p}{)}
+	\PY{p}{)}\PY{p}{,}
+	\PY{n}{data} \PY{o}{=} \PY{n}{d}
+\PY{p}{)}
+\PY{n}{model\PYZus{}male\PYZus{}parameter\PYZus{}amount} \PY{o}{\PYZlt{}\PYZhy{}} \PY{l+m}{1} \PY{o}{+} \PY{l+m}{1} \PY{c+c1}{\PYZsh{} 2}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{9}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} A model where we dont distinguish between male and female, but the department is relevant}
+\PY{n}{model\PYZus{}field} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{map}\PY{p}{(}
+	\PY{n+nf}{alist}\PY{p}{(}
+		\PY{n}{awards} \PY{o}{\PYZti{}} \PY{n+nf}{dbinom}\PY{p}{(}\PY{n}{applications}\PY{p}{,} \PY{n}{p}\PY{p}{)}\PY{p}{,}
+		\PY{n+nf}{logit}\PY{p}{(}\PY{n}{p}\PY{p}{)} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n}{a}\PY{p}{[}\PY{n}{field}\PY{p}{]}\PY{p}{,}
+		\PY{n}{a}\PY{p}{[}\PY{n}{field}\PY{p}{]} \PY{o}{\PYZti{}} \PY{n+nf}{dnorm}\PY{p}{(}\PY{l+m}{0}\PY{p}{,} \PY{l+m}{10}\PY{p}{)}
+	\PY{p}{)}\PY{p}{,}
+	\PY{n}{data} \PY{o}{=} \PY{n}{d}
+\PY{p}{)}
+\PY{n}{model\PYZus{}field\PYZus{}parameter\PYZus{}amount} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{nrow}\PY{p}{(}\PY{n}{e}\PY{p}{)} \PY{c+c1}{\PYZsh{} 9}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{10}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Each field has its own mean but the change if a participant is male is global}
+\PY{n}{model\PYZus{}field\PYZus{}male} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{map}\PY{p}{(}
+	\PY{n+nf}{alist}\PY{p}{(}
+		\PY{n}{awards} \PY{o}{\PYZti{}} \PY{n+nf}{dbinom}\PY{p}{(}\PY{n}{applications}\PY{p}{,} \PY{n}{p}\PY{p}{)}\PY{p}{,}
+		\PY{n+nf}{logit}\PY{p}{(}\PY{n}{p}\PY{p}{)} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n}{a}\PY{p}{[}\PY{n}{field}\PY{p}{]} \PY{o}{+} \PY{n}{a\PYZus{}male} \PY{o}{*} \PY{n}{male}\PY{p}{,}
+		\PY{n}{a}\PY{p}{[}\PY{n}{field}\PY{p}{]} \PY{o}{\PYZti{}} \PY{n+nf}{dnorm}\PY{p}{(}\PY{l+m}{0}\PY{p}{,} \PY{l+m}{10}\PY{p}{)}\PY{p}{,}
+		\PY{n}{a\PYZus{}male} \PY{o}{\PYZti{}} \PY{n+nf}{dnorm}\PY{p}{(}\PY{l+m}{0}\PY{p}{,} \PY{l+m}{10}\PY{p}{)}
+	\PY{p}{)}\PY{p}{,}
+	\PY{n}{data} \PY{o}{=} \PY{n}{d}
+\PY{p}{)}
+\PY{n}{model\PYZus{}field\PYZus{}male\PYZus{}parameter\PYZus{}amount} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{nrow}\PY{p}{(}\PY{n}{e}\PY{p}{)} \PY{o}{+} \PY{l+m}{1} \PY{c+c1}{\PYZsh{} 10}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{11}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} We have the same mean for all fields, but the influence if the participant is male is unique for each field}
+\PY{n}{model\PYZus{}male\PYZus{}field} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{map}\PY{p}{(}
+	\PY{n+nf}{alist}\PY{p}{(}
+		\PY{n}{awards} \PY{o}{\PYZti{}} \PY{n+nf}{dbinom}\PY{p}{(}\PY{n}{applications}\PY{p}{,} \PY{n}{p}\PY{p}{)}\PY{p}{,}
+		\PY{n+nf}{logit}\PY{p}{(}\PY{n}{p}\PY{p}{)} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n}{a} \PY{o}{+} \PY{n}{a\PYZus{}male}\PY{p}{[}\PY{n}{field}\PY{p}{]} \PY{o}{*} \PY{n}{male}\PY{p}{,}
+		\PY{n}{a} \PY{o}{\PYZti{}} \PY{n+nf}{dnorm}\PY{p}{(}\PY{l+m}{0}\PY{p}{,} \PY{l+m}{10}\PY{p}{)}\PY{p}{,}
+		\PY{n}{a\PYZus{}male}\PY{p}{[}\PY{n}{field}\PY{p}{]} \PY{o}{\PYZti{}} \PY{n+nf}{dnorm}\PY{p}{(}\PY{l+m}{0}\PY{p}{,} \PY{l+m}{10}\PY{p}{)}
+	\PY{p}{)}\PY{p}{,}
+	\PY{n}{data} \PY{o}{=} \PY{n}{d}
+\PY{p}{)}
+\PY{n}{model\PYZus{}male\PYZus{}field\PYZus{}parameter\PYZus{}amount} \PY{o}{\PYZlt{}\PYZhy{}} \PY{l+m}{1} \PY{o}{+} \PY{n+nf}{nrow}\PY{p}{(}\PY{n}{e}\PY{p}{)} \PY{c+c1}{\PYZsh{} 10}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{12}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Both the mean and the offset for a male participant is different for each department}
+\PY{n}{model\PYZus{}field\PYZus{}male\PYZus{}field} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{map}\PY{p}{(}
+	\PY{n+nf}{alist}\PY{p}{(}
+		\PY{n}{awards} \PY{o}{\PYZti{}} \PY{n+nf}{dbinom}\PY{p}{(}\PY{n}{applications}\PY{p}{,} \PY{n}{p}\PY{p}{)}\PY{p}{,}
+		\PY{n+nf}{logit}\PY{p}{(}\PY{n}{p}\PY{p}{)} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n}{a}\PY{p}{[}\PY{n}{field}\PY{p}{]} \PY{o}{+} \PY{n}{a\PYZus{}male}\PY{p}{[}\PY{n}{field}\PY{p}{]} \PY{o}{*} \PY{n}{male}\PY{p}{,}
+		\PY{n}{a}\PY{p}{[}\PY{n}{field}\PY{p}{]} \PY{o}{\PYZti{}} \PY{n+nf}{dnorm}\PY{p}{(}\PY{l+m}{0}\PY{p}{,} \PY{l+m}{10}\PY{p}{)}\PY{p}{,}
+		\PY{n}{a\PYZus{}male}\PY{p}{[}\PY{n}{field}\PY{p}{]} \PY{o}{\PYZti{}} \PY{n+nf}{dnorm}\PY{p}{(}\PY{l+m}{0}\PY{p}{,} \PY{l+m}{10}\PY{p}{)}
+	\PY{p}{)}\PY{p}{,}
+	\PY{n}{data} \PY{o}{=} \PY{n}{d}
+\PY{p}{)}
+\PY{n}{model6\PYZus{}field\PYZus{}male\PYZus{}field\PYZus{}parameter\PYZus{}amount} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{nrow}\PY{p}{(}\PY{n}{e}\PY{p}{)} \PY{o}{+} \PY{n+nf}{nrow}\PY{p}{(}\PY{n}{e}\PY{p}{)} \PY{c+c1}{\PYZsh{} 18}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{13}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nf}{compare}\PY{p}{(}\PY{n}{model1}\PY{p}{,} \PY{n}{model\PYZus{}male}\PY{p}{,} \PY{n}{model\PYZus{}field}\PY{p}{,} \PY{n}{model\PYZus{}field\PYZus{}male}\PY{p}{,} \PY{n}{model\PYZus{}male\PYZus{}field}\PY{p}{,} \PY{n}{model\PYZus{}field\PYZus{}male\PYZus{}field}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    A compareIC: 6 × 6
+\begin{tabular}{r|llllll}
+  & WAIC & SE & dWAIC & dSE & pWAIC & weight\\
+  & <dbl> & <dbl> & <dbl> & <dbl> & <dbl> & <dbl>\\
+\hline
+	model\_field\_male\_field & 114.1189 &  3.323187 &  0.000000 &        NA &  8.916445 & 0.9780031254\\
+	model\_male\_field & 121.8910 &  7.573247 &  7.772083 &  5.880442 &  7.050472 & 0.0200749240\\
+	model\_field\_male & 128.4570 &  8.013722 & 14.338031 &  6.176659 & 12.589328 & 0.0007531413\\
+	model\_field & 129.1645 &  9.418417 & 15.045598 &  7.314806 & 12.477572 & 0.0005287253\\
+	model\_male & 130.1521 &  8.867268 & 16.033179 &  7.403613 &  4.998377 & 0.0003226857\\
+	model1 & 130.1852 & 12.900592 & 16.066222 & 11.779835 &  2.702629 & 0.0003173983\\
+\end{tabular}
+
+
+    
+    So we see that the model that is able to distinguish between male and
+female and also between departments is able to fit the data the best,
+obviously.
+
+    Now we quantify the contrast while disregarding the field the
+participants come from. These are the two models \texttt{model\_male}
+and \texttt{model1}. Because the latter is gender independent, we only
+have to do this discussion one for the first model.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{14}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} The relative scale, which in most cases can be disregarded.}
+\PY{n+nf}{summary}\PY{p}{(}\PY{n}{model1}\PY{p}{)}
+\PY{n+nf}{summary}\PY{p}{(}\PY{n}{model\PYZus{}male}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    A precis: 1 × 4
+\begin{tabular}{r|llll}
+  & mean & sd & 5.5\% & 94.5\%\\
+  & <dbl> & <dbl> & <dbl> & <dbl>\\
+\hline
+	a & -1.61835 & 0.05065213 & -1.699302 & -1.537398\\
+\end{tabular}
+
+
+    
+    A precis: 2 × 4
+\begin{tabular}{r|llll}
+  & mean & sd & 5.5\% & 94.5\%\\
+  & <dbl> & <dbl> & <dbl> & <dbl>\\
+\hline
+	a & -1.7424160 & 0.08146995 & -1.87262075 & -1.6122113\\
+	a\_male &  0.2081389 & 0.10405967 &  0.04183145 &  0.3744463\\
+\end{tabular}
+
+
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{15}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Better to compare the models with an information criterion}
+\PY{n+nf}{compare}\PY{p}{(}\PY{n}{model1}\PY{p}{,} \PY{n}{model\PYZus{}male}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    A compareIC: 2 × 6
+\begin{tabular}{r|llllll}
+  & WAIC & SE & dWAIC & dSE & pWAIC & weight\\
+  & <dbl> & <dbl> & <dbl> & <dbl> & <dbl> & <dbl>\\
+\hline
+	model\_male & 129.9961 &  8.736106 & 0.0000000 &       NA & 4.900122 & 0.5569528\\
+	model1 & 130.4537 & 13.016595 & 0.4576087 & 6.713701 & 2.867156 & 0.4430472\\
+\end{tabular}
+
+
+    
+    We see that the inclusion of the male parameter makes a difference,
+although its not that significant. Next we look at the contrast between
+the number of male and female awardees in the second model.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{16}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{post} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{extract.samples}\PY{p}{(}\PY{n}{model\PYZus{}male}\PY{p}{)}
+\PY{n}{p.award.male} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{logistic}\PY{p}{(}\PY{n}{post}\PY{o}{\PYZdl{}}\PY{n}{a} \PY{o}{+} \PY{n}{post}\PY{o}{\PYZdl{}}\PY{n}{a\PYZus{}male}\PY{p}{)}
+\PY{n}{p.award.female} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{logistic}\PY{p}{(}\PY{n}{post}\PY{o}{\PYZdl{}}\PY{n}{a}\PY{p}{)}
+\PY{n}{diff.award} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n}{p.award.male} \PY{o}{\PYZhy{}} \PY{n}{p.award.female}
+\PY{n+nf}{quantile}\PY{p}{(}\PY{n}{diff.award}\PY{p}{,} \PY{n+nf}{c}\PY{p}{(}\PY{l+m}{0.025}\PY{p}{,} \PY{l+m}{0.5}\PY{p}{,} \PY{l+m}{0.975}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{description*}
+\item[2.5\textbackslash{}\%] 0.000513055530130447
+\item[50\textbackslash{}\%] 0.0286093141054553
+\item[97.5\textbackslash{}\%] 0.0556196194455272
+\end{description*}
+
+
+    
+    We see that as in the data, the model generated a gap between male and
+female of 0.028, which means that males are 3 percent more likely to be
+awarded than females. Next we also include the field of study. We
+consider the model \texttt{model\_field\_male\_field}.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{17}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{post} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{extract.samples}\PY{p}{(}\PY{n}{model\PYZus{}field\PYZus{}male\PYZus{}field}\PY{p}{)}
+\PY{n}{p.award.male} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{logistic}\PY{p}{(}\PY{n}{post}\PY{o}{\PYZdl{}}\PY{n}{a} \PY{o}{+} \PY{n}{post}\PY{o}{\PYZdl{}}\PY{n}{a\PYZus{}male}\PY{p}{)}
+\PY{n}{p.award.female} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{logistic}\PY{p}{(}\PY{n}{post}\PY{o}{\PYZdl{}}\PY{n}{a}\PY{p}{)}
+\PY{n}{diff.award} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n}{p.award.male} \PY{o}{\PYZhy{}} \PY{n}{p.award.female}
+
+\PY{n}{means} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{c}\PY{p}{(}\PY{p}{)}
+\PY{n}{names} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{c}\PY{p}{(}\PY{p}{)}
+\PY{n+nf}{for }\PY{p}{(}\PY{n}{index} \PY{n}{in} \PY{l+m}{1}\PY{o}{:}\PY{n+nf}{ncol}\PY{p}{(}\PY{n}{diff.award}\PY{p}{)}\PY{p}{)} \PY{p}{\PYZob{}}
+	\PY{n}{means} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{append}\PY{p}{(}\PY{n}{means}\PY{p}{,} \PY{n+nf}{mean}\PY{p}{(}\PY{n}{diff.award}\PY{p}{[}\PY{p}{,} \PY{n}{index}\PY{p}{]}\PY{p}{)}\PY{p}{)}
+	\PY{n}{names} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{append}\PY{p}{(}\PY{n}{names}\PY{p}{,} \PY{n}{e}\PY{p}{[}\PY{n}{e}\PY{o}{\PYZdl{}}\PY{n}{field} \PY{o}{==} \PY{n}{index}\PY{p}{,} \PY{p}{]}\PY{o}{\PYZdl{}}\PY{n}{discipline}\PY{p}{)}
+\PY{p}{\PYZcb{}}
+
+\PY{n+nf}{par}\PY{p}{(}\PY{n}{mar} \PY{o}{=} \PY{n+nf}{c}\PY{p}{(}\PY{l+m}{4}\PY{p}{,} \PY{l+m}{9}\PY{p}{,} \PY{l+m}{2}\PY{p}{,} \PY{l+m}{2}\PY{p}{)}\PY{p}{)}
+\PY{n}{bp} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{barplot}\PY{p}{(}\PY{n}{means}\PY{p}{,} \PY{n}{names.arg} \PY{o}{=} \PY{n}{names}\PY{p}{,} \PY{n}{las}\PY{o}{=}\PY{l+m}{2}\PY{p}{,} \PY{n}{xpd} \PY{o}{=} \PY{k+kc}{FALSE}\PY{p}{,} \PY{n}{horiz} \PY{o}{=} \PY{k+kc}{TRUE}\PY{p}{,} \PY{n}{xlim} \PY{o}{=} \PY{n+nf}{c}\PY{p}{(}\PY{l+m}{\PYZhy{}0.11}\PY{p}{,} \PY{l+m}{0.11}\PY{p}{)}\PY{p}{)}
+\PY{n+nf}{title}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{Award probability gender difference per discipline\PYZdq{}}\PY{p}{)}
+\PY{n+nf}{text}\PY{p}{(}\PY{n}{bp}\PY{p}{,} \PY{l+m}{0}\PY{p}{,} \PY{n}{means}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{exercise_sheet_10_Immanuel_Albrecht_files/exercise_sheet_10_Immanuel_Albrecht_23_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+
+    % Add a bibliography block to the postdoc
+    
+    
+    
+\end{document}
