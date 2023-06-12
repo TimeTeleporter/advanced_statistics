@@ -10,9 +10,15 @@ The corresponding exercise sheets is given in the brakets.
 - Simulating data (3, 5)
 - Linear models (4, 5)
 - Categorical varaiables (5, 7, 9)
-- Comparing models (5, 6, 7)
-- Multivariate models (6, 7, 9)
+- Comparing models (5, 6, 7, 11, 12)
+- Multivariate models (6, 7, 9, 12)
 - Multicollinearity (6)
+- Interacting multivariate models (9)
+- General linear models (10, 11)
+    - Binomial (10)
+    - Poisson
+- Multi-level models (11, 12)
+- GLMs error handling
 
 ## Exercise sheet 2
 
@@ -47,3 +53,23 @@ This exercise introduces the notion of training and testing datasets. Using the 
 ## Exercise sheet 9
 
 In this exercise sheet we continue our discussion of categorical variables, where we now look at them in multivaraiate models. We look at the example of wine tasting.
+
+## Exercise sheet 10
+
+This exercise introduces the general linear models for the first time and we consider an example of grands being awarded - a binomial process. The binomial glm requires the logit function to map the linear model to the probability space.
+
+- [ ] In a further step we may also consider the posson distributed glm, which would require the log as a mapping function. It gets introduced in lecture 10.
+
+## Exercise sheet 11
+
+Multi-level glm get introduced in this exercise. The mulit-level approach allowes us to control for over-dispresion and increase the uncertainty towards its real value. We consider two examples, one of tadpoles in 48 tanks, and one for salamanders on 47 sites.
+
+## Exercise sheet 12
+
+Here we continue our discussion of multivariate models. We can make use of the multi-level approach, which in this case is not that helpful. The example tihis time is a exoplanets dataset, where we investigate the dependence of the density on a handful of parameters.
+
+## Exercise sheet 13
+
+This sheet continues the investigation of the exoplanets dataset with the inclusion of errors.
+
+- [ ] Solve an example with errors that is not exoplanets. This is explained in lecture 
