@@ -42,7 +42,7 @@ We continue constructing multivariate models, this time looking at primates, whe
 
 This exercise introduces the notion of training and testing datasets. Using the Watanabe–Akaike information criterion we compare the models, adding it to our toolbox.
 
-[x] Out of sample deviance needs to be investigated further.
+- [x] Out of sample deviance needs to be investigated further.
 
 ## Exercise sheet 9
 
