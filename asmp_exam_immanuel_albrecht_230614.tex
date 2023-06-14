@@ -1,0 +1,3338 @@
+\documentclass[11pt]{article}
+
+    \usepackage[breakable]{tcolorbox}
+    \usepackage{parskip} % Stop auto-indenting (to mimic markdown behaviour)
+    
+
+    % Basic figure setup, for now with no caption control since it's done
+    % automatically by Pandoc (which extracts ![](path) syntax from Markdown).
+    \usepackage{graphicx}
+    % Maintain compatibility with old templates. Remove in nbconvert 6.0
+    \let\Oldincludegraphics\includegraphics
+    % Ensure that by default, figures have no caption (until we provide a
+    % proper Figure object with a Caption API and a way to capture that
+    % in the conversion process - todo).
+    \usepackage{caption}
+    \DeclareCaptionFormat{nocaption}{}
+    \captionsetup{format=nocaption,aboveskip=0pt,belowskip=0pt}
+
+    \usepackage{float}
+    \floatplacement{figure}{H} % forces figures to be placed at the correct location
+    \usepackage{xcolor} % Allow colors to be defined
+    \usepackage{enumerate} % Needed for markdown enumerations to work
+    \usepackage{geometry} % Used to adjust the document margins
+    \usepackage{amsmath} % Equations
+    \usepackage{amssymb} % Equations
+    \usepackage{textcomp} % defines textquotesingle
+    % Hack from http://tex.stackexchange.com/a/47451/13684:
+    \AtBeginDocument{%
+        \def\PYZsq{\textquotesingle}% Upright quotes in Pygmentized code
+    }
+    \usepackage{upquote} % Upright quotes for verbatim code
+    \usepackage{eurosym} % defines \euro
+
+    \usepackage{iftex}
+    \ifPDFTeX
+        \usepackage[T1]{fontenc}
+        \IfFileExists{alphabeta.sty}{
+              \usepackage{alphabeta}
+          }{
+              \usepackage[mathletters]{ucs}
+              \usepackage[utf8x]{inputenc}
+          }
+    \else
+        \usepackage{fontspec}
+        \usepackage{unicode-math}
+    \fi
+
+    \usepackage{fancyvrb} % verbatim replacement that allows latex
+    \usepackage{grffile} % extends the file name processing of package graphics 
+                         % to support a larger range
+    \makeatletter % fix for old versions of grffile with XeLaTeX
+    \@ifpackagelater{grffile}{2019/11/01}
+    {
+      % Do nothing on new versions
+    }
+    {
+      \def\Gread@@xetex#1{%
+        \IfFileExists{"\Gin@base".bb}%
+        {\Gread@eps{\Gin@base.bb}}%
+        {\Gread@@xetex@aux#1}%
+      }
+    }
+    \makeatother
+    \usepackage[Export]{adjustbox} % Used to constrain images to a maximum size
+    \adjustboxset{max size={0.9\linewidth}{0.9\paperheight}}
+
+    % The hyperref package gives us a pdf with properly built
+    % internal navigation ('pdf bookmarks' for the table of contents,
+    % internal cross-reference links, web links for URLs, etc.)
+    \usepackage{hyperref}
+    % The default LaTeX title has an obnoxious amount of whitespace. By default,
+    % titling removes some of it. It also provides customization options.
+    \usepackage{titling}
+    \usepackage{longtable} % longtable support required by pandoc >1.10
+    \usepackage{booktabs}  % table support for pandoc > 1.12.2
+    \usepackage{array}     % table support for pandoc >= 2.11.3
+    \usepackage{calc}      % table minipage width calculation for pandoc >= 2.11.1
+    \usepackage[inline]{enumitem} % IRkernel/repr support (it uses the enumerate* environment)
+    \usepackage[normalem]{ulem} % ulem is needed to support strikethroughs (\sout)
+                                % normalem makes italics be italics, not underlines
+    \usepackage{mathrsfs}
+    
+
+    
+    % Colors for the hyperref package
+    \definecolor{urlcolor}{rgb}{0,.145,.698}
+    \definecolor{linkcolor}{rgb}{.71,0.21,0.01}
+    \definecolor{citecolor}{rgb}{.12,.54,.11}
+
+    % ANSI colors
+    \definecolor{ansi-black}{HTML}{3E424D}
+    \definecolor{ansi-black-intense}{HTML}{282C36}
+    \definecolor{ansi-red}{HTML}{E75C58}
+    \definecolor{ansi-red-intense}{HTML}{B22B31}
+    \definecolor{ansi-green}{HTML}{00A250}
+    \definecolor{ansi-green-intense}{HTML}{007427}
+    \definecolor{ansi-yellow}{HTML}{DDB62B}
+    \definecolor{ansi-yellow-intense}{HTML}{B27D12}
+    \definecolor{ansi-blue}{HTML}{208FFB}
+    \definecolor{ansi-blue-intense}{HTML}{0065CA}
+    \definecolor{ansi-magenta}{HTML}{D160C4}
+    \definecolor{ansi-magenta-intense}{HTML}{A03196}
+    \definecolor{ansi-cyan}{HTML}{60C6C8}
+    \definecolor{ansi-cyan-intense}{HTML}{258F8F}
+    \definecolor{ansi-white}{HTML}{C5C1B4}
+    \definecolor{ansi-white-intense}{HTML}{A1A6B2}
+    \definecolor{ansi-default-inverse-fg}{HTML}{FFFFFF}
+    \definecolor{ansi-default-inverse-bg}{HTML}{000000}
+
+    % common color for the border for error outputs.
+    \definecolor{outerrorbackground}{HTML}{FFDFDF}
+
+    % commands and environments needed by pandoc snippets
+    % extracted from the output of `pandoc -s`
+    \providecommand{\tightlist}{%
+      \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+    \DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+    % Add ',fontsize=\small' for more characters per line
+    \newenvironment{Shaded}{}{}
+    \newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{{#1}}}
+    \newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{{#1}}}}
+    \newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{{#1}}}
+    \newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{{#1}}}
+    \newcommand{\RegionMarkerTok}[1]{{#1}}
+    \newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\NormalTok}[1]{{#1}}
+    
+    % Additional commands for more recent versions of Pandoc
+    \newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.53,0.00,0.00}{{#1}}}
+    \newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.73,0.40,0.53}{{#1}}}
+    \newcommand{\ImportTok}[1]{{#1}}
+    \newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.73,0.13,0.13}{\textit{{#1}}}}
+    \newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\VariableTok}[1]{\textcolor[rgb]{0.10,0.09,0.49}{{#1}}}
+    \newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.40,0.40,0.40}{{#1}}}
+    \newcommand{\BuiltInTok}[1]{{#1}}
+    \newcommand{\ExtensionTok}[1]{{#1}}
+    \newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.74,0.48,0.00}{{#1}}}
+    \newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.49,0.56,0.16}{{#1}}}
+    \newcommand{\InformationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\WarningTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    
+    
+    % Define a nice break command that doesn't care if a line doesn't already
+    % exist.
+    \def\br{\hspace*{\fill} \\* }
+    % Math Jax compatibility definitions
+    \def\gt{>}
+    \def\lt{<}
+    \let\Oldtex\TeX
+    \let\Oldlatex\LaTeX
+    \renewcommand{\TeX}{\textrm{\Oldtex}}
+    \renewcommand{\LaTeX}{\textrm{\Oldlatex}}
+    % Document parameters
+    % Document title
+    \title{asmp\_exam\_immanuel\_albrecht\_230614}
+    
+    
+    
+    
+    
+% Pygments definitions
+\makeatletter
+\def\PY@reset{\let\PY@it=\relax \let\PY@bf=\relax%
+    \let\PY@ul=\relax \let\PY@tc=\relax%
+    \let\PY@bc=\relax \let\PY@ff=\relax}
+\def\PY@tok#1{\csname PY@tok@#1\endcsname}
+\def\PY@toks#1+{\ifx\relax#1\empty\else%
+    \PY@tok{#1}\expandafter\PY@toks\fi}
+\def\PY@do#1{\PY@bc{\PY@tc{\PY@ul{%
+    \PY@it{\PY@bf{\PY@ff{#1}}}}}}}
+\def\PY#1#2{\PY@reset\PY@toks#1+\relax+\PY@do{#2}}
+
+\@namedef{PY@tok@w}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.73,0.73}{##1}}}
+\@namedef{PY@tok@c}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cp}{\def\PY@tc##1{\textcolor[rgb]{0.61,0.40,0.00}{##1}}}
+\@namedef{PY@tok@k}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kp}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kt}{\def\PY@tc##1{\textcolor[rgb]{0.69,0.00,0.25}{##1}}}
+\@namedef{PY@tok@o}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@ow}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\@namedef{PY@tok@nb}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@nf}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@nc}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@nn}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@ne}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.80,0.25,0.22}{##1}}}
+\@namedef{PY@tok@nv}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@no}{\def\PY@tc##1{\textcolor[rgb]{0.53,0.00,0.00}{##1}}}
+\@namedef{PY@tok@nl}{\def\PY@tc##1{\textcolor[rgb]{0.46,0.46,0.00}{##1}}}
+\@namedef{PY@tok@ni}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.44,0.44,0.44}{##1}}}
+\@namedef{PY@tok@na}{\def\PY@tc##1{\textcolor[rgb]{0.41,0.47,0.13}{##1}}}
+\@namedef{PY@tok@nt}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@nd}{\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\@namedef{PY@tok@s}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sd}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@si}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.64,0.35,0.47}{##1}}}
+\@namedef{PY@tok@se}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.67,0.36,0.12}{##1}}}
+\@namedef{PY@tok@sr}{\def\PY@tc##1{\textcolor[rgb]{0.64,0.35,0.47}{##1}}}
+\@namedef{PY@tok@ss}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@sx}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@m}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@gh}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\@namedef{PY@tok@gu}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.50,0.00,0.50}{##1}}}
+\@namedef{PY@tok@gd}{\def\PY@tc##1{\textcolor[rgb]{0.63,0.00,0.00}{##1}}}
+\@namedef{PY@tok@gi}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.52,0.00}{##1}}}
+\@namedef{PY@tok@gr}{\def\PY@tc##1{\textcolor[rgb]{0.89,0.00,0.00}{##1}}}
+\@namedef{PY@tok@ge}{\let\PY@it=\textit}
+\@namedef{PY@tok@gs}{\let\PY@bf=\textbf}
+\@namedef{PY@tok@gp}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\@namedef{PY@tok@go}{\def\PY@tc##1{\textcolor[rgb]{0.44,0.44,0.44}{##1}}}
+\@namedef{PY@tok@gt}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.27,0.87}{##1}}}
+\@namedef{PY@tok@err}{\def\PY@bc##1{{\setlength{\fboxsep}{\string -\fboxrule}\fcolorbox[rgb]{1.00,0.00,0.00}{1,1,1}{\strut ##1}}}}
+\@namedef{PY@tok@kc}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kd}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kn}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kr}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@bp}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@fm}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@vc}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vg}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vi}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vm}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@sa}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sb}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sc}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@dl}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@s2}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sh}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@s1}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@mb}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mf}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mh}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mi}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@il}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mo}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@ch}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cm}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cpf}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@c1}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cs}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+
+\def\PYZbs{\char`\\}
+\def\PYZus{\char`\_}
+\def\PYZob{\char`\{}
+\def\PYZcb{\char`\}}
+\def\PYZca{\char`\^}
+\def\PYZam{\char`\&}
+\def\PYZlt{\char`\<}
+\def\PYZgt{\char`\>}
+\def\PYZsh{\char`\#}
+\def\PYZpc{\char`\%}
+\def\PYZdl{\char`\$}
+\def\PYZhy{\char`\-}
+\def\PYZsq{\char`\'}
+\def\PYZdq{\char`\"}
+\def\PYZti{\char`\~}
+% for compatibility with earlier versions
+\def\PYZat{@}
+\def\PYZlb{[}
+\def\PYZrb{]}
+\makeatother
+
+
+    % For linebreaks inside Verbatim environment from package fancyvrb. 
+    \makeatletter
+        \newbox\Wrappedcontinuationbox 
+        \newbox\Wrappedvisiblespacebox 
+        \newcommand*\Wrappedvisiblespace {\textcolor{red}{\textvisiblespace}} 
+        \newcommand*\Wrappedcontinuationsymbol {\textcolor{red}{\llap{\tiny$\m@th\hookrightarrow$}}} 
+        \newcommand*\Wrappedcontinuationindent {3ex } 
+        \newcommand*\Wrappedafterbreak {\kern\Wrappedcontinuationindent\copy\Wrappedcontinuationbox} 
+        % Take advantage of the already applied Pygments mark-up to insert 
+        % potential linebreaks for TeX processing. 
+        %        {, <, #, %, $, ' and ": go to next line. 
+        %        _, }, ^, &, >, - and ~: stay at end of broken line. 
+        % Use of \textquotesingle for straight quote. 
+        \newcommand*\Wrappedbreaksatspecials {% 
+            \def\PYGZus{\discretionary{\char`\_}{\Wrappedafterbreak}{\char`\_}}% 
+            \def\PYGZob{\discretionary{}{\Wrappedafterbreak\char`\{}{\char`\{}}% 
+            \def\PYGZcb{\discretionary{\char`\}}{\Wrappedafterbreak}{\char`\}}}% 
+            \def\PYGZca{\discretionary{\char`\^}{\Wrappedafterbreak}{\char`\^}}% 
+            \def\PYGZam{\discretionary{\char`\&}{\Wrappedafterbreak}{\char`\&}}% 
+            \def\PYGZlt{\discretionary{}{\Wrappedafterbreak\char`\<}{\char`\<}}% 
+            \def\PYGZgt{\discretionary{\char`\>}{\Wrappedafterbreak}{\char`\>}}% 
+            \def\PYGZsh{\discretionary{}{\Wrappedafterbreak\char`\#}{\char`\#}}% 
+            \def\PYGZpc{\discretionary{}{\Wrappedafterbreak\char`\%}{\char`\%}}% 
+            \def\PYGZdl{\discretionary{}{\Wrappedafterbreak\char`\$}{\char`\$}}% 
+            \def\PYGZhy{\discretionary{\char`\-}{\Wrappedafterbreak}{\char`\-}}% 
+            \def\PYGZsq{\discretionary{}{\Wrappedafterbreak\textquotesingle}{\textquotesingle}}% 
+            \def\PYGZdq{\discretionary{}{\Wrappedafterbreak\char`\"}{\char`\"}}% 
+            \def\PYGZti{\discretionary{\char`\~}{\Wrappedafterbreak}{\char`\~}}% 
+        } 
+        % Some characters . , ; ? ! / are not pygmentized. 
+        % This macro makes them "active" and they will insert potential linebreaks 
+        \newcommand*\Wrappedbreaksatpunct {% 
+            \lccode`\~`\.\lowercase{\def~}{\discretionary{\hbox{\char`\.}}{\Wrappedafterbreak}{\hbox{\char`\.}}}% 
+            \lccode`\~`\,\lowercase{\def~}{\discretionary{\hbox{\char`\,}}{\Wrappedafterbreak}{\hbox{\char`\,}}}% 
+            \lccode`\~`\;\lowercase{\def~}{\discretionary{\hbox{\char`\;}}{\Wrappedafterbreak}{\hbox{\char`\;}}}% 
+            \lccode`\~`\:\lowercase{\def~}{\discretionary{\hbox{\char`\:}}{\Wrappedafterbreak}{\hbox{\char`\:}}}% 
+            \lccode`\~`\?\lowercase{\def~}{\discretionary{\hbox{\char`\?}}{\Wrappedafterbreak}{\hbox{\char`\?}}}% 
+            \lccode`\~`\!\lowercase{\def~}{\discretionary{\hbox{\char`\!}}{\Wrappedafterbreak}{\hbox{\char`\!}}}% 
+            \lccode`\~`\/\lowercase{\def~}{\discretionary{\hbox{\char`\/}}{\Wrappedafterbreak}{\hbox{\char`\/}}}% 
+            \catcode`\.\active
+            \catcode`\,\active 
+            \catcode`\;\active
+            \catcode`\:\active
+            \catcode`\?\active
+            \catcode`\!\active
+            \catcode`\/\active 
+            \lccode`\~`\~ 	
+        }
+    \makeatother
+
+    \let\OriginalVerbatim=\Verbatim
+    \makeatletter
+    \renewcommand{\Verbatim}[1][1]{%
+        %\parskip\z@skip
+        \sbox\Wrappedcontinuationbox {\Wrappedcontinuationsymbol}%
+        \sbox\Wrappedvisiblespacebox {\FV@SetupFont\Wrappedvisiblespace}%
+        \def\FancyVerbFormatLine ##1{\hsize\linewidth
+            \vtop{\raggedright\hyphenpenalty\z@\exhyphenpenalty\z@
+                \doublehyphendemerits\z@\finalhyphendemerits\z@
+                \strut ##1\strut}%
+        }%
+        % If the linebreak is at a space, the latter will be displayed as visible
+        % space at end of first line, and a continuation symbol starts next line.
+        % Stretch/shrink are however usually zero for typewriter font.
+        \def\FV@Space {%
+            \nobreak\hskip\z@ plus\fontdimen3\font minus\fontdimen4\font
+            \discretionary{\copy\Wrappedvisiblespacebox}{\Wrappedafterbreak}
+            {\kern\fontdimen2\font}%
+        }%
+        
+        % Allow breaks at special characters using \PYG... macros.
+        \Wrappedbreaksatspecials
+        % Breaks at punctuation characters . , ; ? ! and / need catcode=\active 	
+        \OriginalVerbatim[#1,codes*=\Wrappedbreaksatpunct]%
+    }
+    \makeatother
+
+    % Exact colors from NB
+    \definecolor{incolor}{HTML}{303F9F}
+    \definecolor{outcolor}{HTML}{D84315}
+    \definecolor{cellborder}{HTML}{CFCFCF}
+    \definecolor{cellbackground}{HTML}{F7F7F7}
+    
+    % prompt
+    \makeatletter
+    \newcommand{\boxspacing}{\kern\kvtcb@left@rule\kern\kvtcb@boxsep}
+    \makeatother
+    \newcommand{\prompt}[4]{
+        {\ttfamily\llap{{\color{#2}[#3]:\hspace{3pt}#4}}\vspace{-\baselineskip}}
+    }
+    
+
+    
+    % Prevent overflowing lines due to hard-to-break entities
+    \sloppy 
+    % Setup hyperref package
+    \hypersetup{
+      breaklinks=true,  % so long urls are correctly broken across lines
+      colorlinks=true,
+      urlcolor=urlcolor,
+      linkcolor=linkcolor,
+      citecolor=citecolor,
+      }
+    % Slightly bigger margins than the latex defaults
+    
+    \geometry{verbose,tmargin=1in,bmargin=1in,lmargin=1in,rmargin=1in}
+    
+    
+
+\begin{document}
+    
+    \maketitle
+    
+    
+
+    
+    \hypertarget{advanced-statistical-methods-for-physicists}{%
+\section{Advanced Statistical Methods for
+Physicists}\label{advanced-statistical-methods-for-physicists}}
+
+\hypertarget{exam-14.06.2013---immanuel-albrecht}{%
+\section{Exam 14.06.2013 - Immanuel
+Albrecht}\label{exam-14.06.2013---immanuel-albrecht}}
+
+    \hypertarget{exercise-1-2030-pts-brightening-star}{%
+\subsection{Exercise 1 (20/30 pts) -- Brightening
+star}\label{exercise-1-2030-pts-brightening-star}}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{1}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nf}{library}\PY{p}{(}\PY{n}{rethinking}\PY{p}{)}
+\PY{n}{data} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{read.csv}\PY{p}{(}\PY{n}{file}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{brightening\PYZus{}star.csv\PYZdq{}}\PY{p}{,} \PY{n}{header}\PY{o}{=}\PY{k+kc}{TRUE}\PY{p}{,} \PY{n}{sep}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{;\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Lade nötiges Paket: rstan
+
+Lade nötiges Paket: StanHeaders
+
+
+rstan version 2.26.20 (Stan version 2.26.1)
+
+
+For execution on a local, multicore CPU with excess RAM we recommend calling
+options(mc.cores = parallel::detectCores()).
+To avoid recompilation of unchanged Stan programs, we recommend calling
+rstan\_options(auto\_write = TRUE)
+For within-chain threading using `reduce\_sum()` or `map\_rect()` Stan functions,
+change `threads\_per\_chain` option:
+rstan\_options(threads\_per\_chain = 1)
+
+
+Do not specify '-march=native' in 'LOCAL\_CPPFLAGS' or a Makevars file
+
+Lade nötiges Paket: cmdstanr
+
+This is cmdstanr version 0.5.3
+
+- CmdStanR documentation and vignettes: mc-stan.org/cmdstanr
+
+- CmdStan path: C:/Users/immal/Documents/.cmdstan/cmdstan-2.31.0
+
+- CmdStan version: 2.31.0
+
+
+A newer version of CmdStan is available. See ?install\_cmdstan() to install it.
+To disable this check set option or environment variable
+CMDSTANR\_NO\_VER\_CHECK=TRUE.
+
+Lade nötiges Paket: parallel
+
+rethinking (Version 2.31)
+
+
+Attache Paket: 'rethinking'
+
+
+Das folgende Objekt ist maskiert 'package:rstan':
+
+    stan
+
+
+Das folgende Objekt ist maskiert 'package:stats':
+
+    rstudent
+
+
+    \end{Verbatim}
+
+    \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+The flux of a star has been found to increase abruptly recently. No less
+than 26 observatories have performed measurements of this star at the
+same, 9 epochs (dates that have been standardised in the file). All
+these measurements have been compiled in the file brightening\_star.csv
+mentioned above. One issue is that each observatory, run by different
+teams and using different data analysis methods are affected by
+systematics effects and the measured values differ by a lot. Using a
+multi-level model will thus be useful to make accurate inference.
+
+The science question is: what is the dependence of star flux on time?
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+    We start by looking at our dataset.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{2}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{data}
+\PY{n+nf}{pairs}\PY{p}{(}\PY{n}{data}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    A data.frame: 234 × 4
+\begin{tabular}{llll}
+ Observatory & Epoch & Flux & Measurement\\
+ <int> & <dbl> & <dbl> & <int>\\
+\hline
+	 1 & -1.0000 & 140.5 & 1\\
+	 1 & -0.7479 & 143.4 & 2\\
+	 1 & -0.4630 & 144.8 & 3\\
+	 1 & -0.1643 & 147.1 & 4\\
+	 1 & -0.0027 & 147.7 & 5\\
+	 1 &  0.2466 & 150.2 & 6\\
+	 1 &  0.5562 & 151.7 & 7\\
+	 1 &  0.7781 & 153.3 & 8\\
+	 1 &  0.9945 & 155.8 & 9\\
+	 2 & -1.0000 & 136.9 & 1\\
+	 2 & -0.7479 & 139.1 & 2\\
+	 2 & -0.4630 & 140.1 & 3\\
+	 2 & -0.1643 & 142.6 & 4\\
+	 2 & -0.0027 & 143.2 & 5\\
+	 2 &  0.2466 & 144.0 & 6\\
+	 2 &  0.5562 & 145.8 & 7\\
+	 2 &  0.7781 & 146.8 & 8\\
+	 2 &  0.9945 & 148.3 & 9\\
+	 3 & -1.0000 & 150.0 & 1\\
+	 3 & -0.7479 & 152.1 & 2\\
+	 3 & -0.4630 & 153.9 & 3\\
+	 3 & -0.1643 & 155.8 & 4\\
+	 3 & -0.0027 & 156.0 & 5\\
+	 3 &  0.2466 & 156.9 & 6\\
+	 3 &  0.5562 & 157.4 & 7\\
+	 3 &  0.7781 & 159.1 & 8\\
+	 3 &  0.9945 & 160.6 & 9\\
+	 4 & -1.0000 & 155.7 & 1\\
+	 4 & -0.7479 & 158.7 & 2\\
+	 4 & -0.4630 & 160.6 & 3\\
+	 ⋮ & ⋮ & ⋮ & ⋮\\
+	 23 &  0.5562 & 155.0 & 7\\
+	 23 &  0.7781 & 156.8 & 8\\
+	 23 &  0.9945 & 158.8 & 9\\
+	 24 & -1.0000 & 147.8 & 1\\
+	 24 & -0.7479 & 148.2 & 2\\
+	 24 & -0.4630 & 150.2 & 3\\
+	 24 & -0.1643 & 151.0 & 4\\
+	 24 & -0.0027 & 152.2 & 5\\
+	 24 &  0.2466 & 153.6 & 6\\
+	 24 &  0.5562 & 155.8 & 7\\
+	 24 &  0.7781 & 159.2 & 8\\
+	 24 &  0.9945 & 161.6 & 9\\
+	 25 & -1.0000 & 135.5 & 1\\
+	 25 & -0.7479 & 136.6 & 2\\
+	 25 & -0.4630 & 137.3 & 3\\
+	 25 & -0.1643 & 138.2 & 4\\
+	 25 & -0.0027 & 139.0 & 5\\
+	 25 &  0.2466 & 139.5 & 6\\
+	 25 &  0.5562 & 141.0 & 7\\
+	 25 &  0.7808 & 142.7 & 8\\
+	 25 &  0.9945 & 143.9 & 9\\
+	 26 & -1.0000 & 132.2 & 1\\
+	 26 & -0.7479 & 134.3 & 2\\
+	 26 & -0.4630 & 135.1 & 3\\
+	 26 & -0.1643 & 136.7 & 4\\
+	 26 & -0.0027 & 138.4 & 5\\
+	 26 &  0.2466 & 138.9 & 6\\
+	 26 &  0.5562 & 141.8 & 7\\
+	 26 &  0.7781 & 142.6 & 8\\
+	 26 &  1.0055 & 143.1 & 9\\
+\end{tabular}
+
+
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{asmp_exam_immanuel_albrecht_230614_files/asmp_exam_immanuel_albrecht_230614_5_1.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{13}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} We build our data for the model}
+\PY{n}{d} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{data.frame}\PY{p}{(}\PY{n+nf}{list}\PY{p}{(}\PY{n}{flux} \PY{o}{=} \PY{n}{data}\PY{o}{\PYZdl{}}\PY{n}{Flux}\PY{p}{,} \PY{n}{time} \PY{o}{=} \PY{n}{data}\PY{o}{\PYZdl{}}\PY{n}{Epoch}\PY{p}{,} \PY{n}{obs} \PY{o}{=} \PY{n}{data}\PY{o}{\PYZdl{}}\PY{n}{Observatory}\PY{p}{,} \PY{n}{measurement} \PY{o}{=} \PY{n}{data}\PY{o}{\PYZdl{}}\PY{n}{Measurement}\PY{p}{)}\PY{p}{)}
+\PY{c+c1}{\PYZsh{} Standardize the flux}
+\PY{n}{d}\PY{o}{\PYZdl{}}\PY{n}{flux} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{scale}\PY{p}{(}\PY{n}{d}\PY{o}{\PYZdl{}}\PY{n}{flux}\PY{p}{)}
+\PY{n}{d}
+\end{Verbatim}
+\end{tcolorbox}
+
+    A data.frame: 234 × 4
+\begin{tabular}{llll}
+ flux & time & obs & measurement\\
+ <dbl{[},1{]}> & <dbl> & <int> & <int>\\
+\hline
+	 -0.99079357 & -1.0000 & 1 & 1\\
+	 -0.67222462 & -0.7479 & 1 & 2\\
+	 -0.51843271 & -0.4630 & 1 & 3\\
+	 -0.26577457 & -0.1643 & 1 & 4\\
+	 -0.19986376 & -0.0027 & 1 & 5\\
+	  0.07476465 &  0.2466 & 1 & 6\\
+	  0.23954169 &  0.5562 & 1 & 7\\
+	  0.41530387 &  0.7781 & 1 & 8\\
+	  0.68993228 &  0.9945 & 1 & 9\\
+	 -1.38625847 & -1.0000 & 2 & 1\\
+	 -1.14458547 & -0.7479 & 2 & 2\\
+	 -1.03473411 & -0.4630 & 2 & 3\\
+	 -0.76010570 & -0.1643 & 2 & 4\\
+	 -0.69419489 & -0.0027 & 2 & 5\\
+	 -0.60631380 &  0.2466 & 2 & 6\\
+	 -0.40858135 &  0.5562 & 2 & 7\\
+	 -0.29872998 &  0.7781 & 2 & 8\\
+	 -0.13395294 &  0.9945 & 2 & 9\\
+	  0.05279438 & -1.0000 & 3 & 1\\
+	  0.28348224 & -0.7479 & 3 & 2\\
+	  0.48121469 & -0.4630 & 3 & 3\\
+	  0.68993228 & -0.1643 & 3 & 4\\
+	  0.71190255 & -0.0027 & 3 & 5\\
+	  0.81076878 &  0.2466 & 3 & 6\\
+	  0.86569446 &  0.5562 & 3 & 7\\
+	  1.05244178 &  0.7781 & 3 & 8\\
+	  1.21721882 &  0.9945 & 3 & 9\\
+	  0.67894714 & -1.0000 & 4 & 1\\
+	  1.00850123 & -0.7479 & 4 & 2\\
+	  1.21721882 & -0.4630 & 4 & 3\\
+	 ⋮ & ⋮ & ⋮ & ⋮\\
+	  0.60205119 &  0.5562 & 23 & 7\\
+	  0.79978364 &  0.7781 & 23 & 8\\
+	  1.01948637 &  0.9945 & 23 & 9\\
+	 -0.18887862 & -1.0000 & 24 & 1\\
+	 -0.14493808 & -0.7479 & 24 & 2\\
+	  0.07476465 & -0.4630 & 24 & 3\\
+	  0.16264574 & -0.1643 & 24 & 4\\
+	  0.29446737 & -0.0027 & 24 & 5\\
+	  0.44825928 &  0.2466 & 24 & 6\\
+	  0.68993228 &  0.5562 & 24 & 7\\
+	  1.06342691 &  0.7781 & 24 & 8\\
+	  1.32707018 &  0.9945 & 24 & 9\\
+	 -1.54005038 & -1.0000 & 25 & 1\\
+	 -1.41921388 & -0.7479 & 25 & 2\\
+	 -1.34231793 & -0.4630 & 25 & 3\\
+	 -1.24345170 & -0.1643 & 25 & 4\\
+	 -1.15557061 & -0.0027 & 25 & 5\\
+	 -1.10064493 &  0.2466 & 25 & 6\\
+	 -0.93586788 &  0.5562 & 25 & 7\\
+	 -0.74912057 &  0.7808 & 25 & 8\\
+	 -0.61729893 &  0.9945 & 25 & 9\\
+	 -1.90255987 & -1.0000 & 26 & 1\\
+	 -1.67187201 & -0.7479 & 26 & 2\\
+	 -1.58399092 & -0.4630 & 26 & 3\\
+	 -1.40822874 & -0.1643 & 26 & 4\\
+	 -1.22148143 & -0.0027 & 26 & 5\\
+	 -1.16655575 &  0.2466 & 26 & 6\\
+	 -0.84798679 &  0.5562 & 26 & 7\\
+	 -0.76010570 &  0.7781 & 26 & 8\\
+	 -0.70518002 &  1.0055 & 26 & 9\\
+\end{tabular}
+
+
+    
+    The next step ist to build the multi-level model.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Which would be the obvious cluster to use?
+\end{enumerate}
+
+In this case the obvious clusters are the observatories, and thats what
+we are going to use.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{1}
+\tightlist
+\item
+  Design two multi-level models to address the question above, one with
+  varying intercepts alone and one with both varying intercepts and
+  varying slopes.
+\end{enumerate}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{4}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} A model with varying intercepts}
+\PY{n}{intercepts} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{map2stan}\PY{p}{(}
+    \PY{n+nf}{alist}\PY{p}{(}
+        \PY{n}{flux} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{dnorm}\PY{p}{(}\PY{n}{mu}\PY{p}{,} \PY{n}{sigma}\PY{p}{)}\PY{p}{,}
+        \PY{n}{mu} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n}{a}\PY{p}{[}\PY{n}{obs}\PY{p}{]}\PY{p}{,}
+        \PY{n}{a}\PY{p}{[}\PY{n}{obs}\PY{p}{]} \PY{o}{\PYZti{}} \PY{n+nf}{dnorm}\PY{p}{(}\PY{n}{a\PYZus{}pool}\PY{p}{,} \PY{l+m}{10}\PY{p}{)}\PY{p}{,}
+        \PY{n}{a\PYZus{}pool} \PY{o}{\PYZti{}} \PY{n+nf}{dnorm}\PY{p}{(}\PY{l+m}{0}\PY{p}{,} \PY{l+m}{10}\PY{p}{)}\PY{p}{,}
+        \PY{n}{sigma} \PY{o}{\PYZti{}} \PY{n+nf}{dcauchy}\PY{p}{(}\PY{l+m}{0}\PY{p}{,} \PY{l+m}{10}\PY{p}{)}
+    \PY{p}{)}\PY{p}{,}
+    \PY{n}{data} \PY{o}{=} \PY{n}{d}\PY{p}{,}
+    \PY{n}{constraints} \PY{o}{=} \PY{n+nf}{list}\PY{p}{(}\PY{n}{simga} \PY{o}{=} \PY{l+s}{\PYZdq{}}\PY{l+s}{lower=0\PYZdq{}}\PY{p}{)}\PY{p}{,}
+    \PY{n}{chains} \PY{o}{=} \PY{l+m}{7}\PY{p}{,} \PY{n}{cores} \PY{o}{=} \PY{l+m}{7}
+\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Warning message in map2stan(alist(flux <- dnorm(mu, sigma), mu <- a[obs], a[obs]
+\textasciitilde{} :
+"DEPRECATED: map2stan is no longer supported and may behave unpredictably or
+stop working altogether. Start using ulam instead."
+Warning message in map2stan(alist(flux <- dnorm(mu, sigma), mu <- a[obs], a[obs]
+\textasciitilde{} :
+"Stripping scale attributes from variable flux"
+Warning in
+'C:/Users/immal/AppData/Local/Temp/RtmpaSqGVm/model-3dd8594e54b8.stan', line 5,
+column 4: Declaration
+    of arrays by placing brackets after a variable name is deprecated and
+    will be removed in Stan 2.32.0. Instead use the array keyword before the
+    type. This can be changed automatically using the auto-format flag to
+    stanc
+Warning in
+'C:/Users/immal/AppData/Local/Temp/RtmpaSqGVm/model-3dd8594e54b8.stan', line 6,
+column 4: Declaration
+    of arrays by placing brackets after a variable name is deprecated and
+    will be removed in Stan 2.32.0. Instead use the array keyword before the
+    type. This can be changed automatically using the auto-format flag to
+    stanc
+
+
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Running MCMC with 7 parallel chains{\ldots}
+
+Chain 1 Iteration:    1 / 2000 [  0\%]  (Warmup)
+Chain 1 Iteration:  100 / 2000 [  5\%]  (Warmup)
+Chain 2 Iteration:    1 / 2000 [  0\%]  (Warmup)
+Chain 2 Iteration:  100 / 2000 [  5\%]  (Warmup)
+Chain 3 Iteration:    1 / 2000 [  0\%]  (Warmup)
+Chain 4 Iteration:    1 / 2000 [  0\%]  (Warmup)
+Chain 5 Iteration:    1 / 2000 [  0\%]  (Warmup)
+Chain 6 Iteration:    1 / 2000 [  0\%]  (Warmup)
+Chain 7 Iteration:    1 / 2000 [  0\%]  (Warmup)
+Chain 1 Iteration:  200 / 2000 [ 10\%]  (Warmup)
+Chain 1 Iteration:  300 / 2000 [ 15\%]  (Warmup)
+Chain 1 Iteration:  400 / 2000 [ 20\%]  (Warmup)
+Chain 1 Iteration:  500 / 2000 [ 25\%]  (Warmup)
+Chain 1 Iteration:  600 / 2000 [ 30\%]  (Warmup)
+Chain 1 Iteration:  700 / 2000 [ 35\%]  (Warmup)
+Chain 1 Iteration:  800 / 2000 [ 40\%]  (Warmup)
+Chain 1 Iteration:  900 / 2000 [ 45\%]  (Warmup)
+Chain 1 Iteration: 1000 / 2000 [ 50\%]  (Warmup)
+Chain 1 Iteration: 1001 / 2000 [ 50\%]  (Sampling)
+Chain 1 Iteration: 1100 / 2000 [ 55\%]  (Sampling)
+Chain 1 Iteration: 1200 / 2000 [ 60\%]  (Sampling)
+Chain 2 Iteration:  200 / 2000 [ 10\%]  (Warmup)
+Chain 2 Iteration:  300 / 2000 [ 15\%]  (Warmup)
+Chain 2 Iteration:  400 / 2000 [ 20\%]  (Warmup)
+Chain 2 Iteration:  500 / 2000 [ 25\%]  (Warmup)
+Chain 2 Iteration:  600 / 2000 [ 30\%]  (Warmup)
+Chain 2 Iteration:  700 / 2000 [ 35\%]  (Warmup)
+Chain 2 Iteration:  800 / 2000 [ 40\%]  (Warmup)
+Chain 2 Iteration:  900 / 2000 [ 45\%]  (Warmup)
+Chain 2 Iteration: 1000 / 2000 [ 50\%]  (Warmup)
+Chain 2 Iteration: 1001 / 2000 [ 50\%]  (Sampling)
+Chain 2 Iteration: 1100 / 2000 [ 55\%]  (Sampling)
+Chain 3 Iteration:  100 / 2000 [  5\%]  (Warmup)
+Chain 3 Iteration:  200 / 2000 [ 10\%]  (Warmup)
+Chain 3 Iteration:  300 / 2000 [ 15\%]  (Warmup)
+Chain 3 Iteration:  400 / 2000 [ 20\%]  (Warmup)
+Chain 3 Iteration:  500 / 2000 [ 25\%]  (Warmup)
+Chain 3 Iteration:  600 / 2000 [ 30\%]  (Warmup)
+Chain 3 Iteration:  700 / 2000 [ 35\%]  (Warmup)
+Chain 3 Iteration:  800 / 2000 [ 40\%]  (Warmup)
+Chain 3 Iteration:  900 / 2000 [ 45\%]  (Warmup)
+Chain 3 Iteration: 1000 / 2000 [ 50\%]  (Warmup)
+Chain 3 Iteration: 1001 / 2000 [ 50\%]  (Sampling)
+Chain 4 Iteration:  100 / 2000 [  5\%]  (Warmup)
+Chain 4 Iteration:  200 / 2000 [ 10\%]  (Warmup)
+Chain 4 Iteration:  300 / 2000 [ 15\%]  (Warmup)
+Chain 4 Iteration:  400 / 2000 [ 20\%]  (Warmup)
+Chain 4 Iteration:  500 / 2000 [ 25\%]  (Warmup)
+Chain 4 Iteration:  600 / 2000 [ 30\%]  (Warmup)
+Chain 4 Iteration:  700 / 2000 [ 35\%]  (Warmup)
+Chain 4 Iteration:  800 / 2000 [ 40\%]  (Warmup)
+Chain 4 Iteration:  900 / 2000 [ 45\%]  (Warmup)
+Chain 4 Iteration: 1000 / 2000 [ 50\%]  (Warmup)
+Chain 4 Iteration: 1001 / 2000 [ 50\%]  (Sampling)
+Chain 4 Iteration: 1100 / 2000 [ 55\%]  (Sampling)
+Chain 5 Iteration:  100 / 2000 [  5\%]  (Warmup)
+Chain 5 Iteration:  200 / 2000 [ 10\%]  (Warmup)
+Chain 5 Iteration:  300 / 2000 [ 15\%]  (Warmup)
+Chain 5 Iteration:  400 / 2000 [ 20\%]  (Warmup)
+Chain 5 Iteration:  500 / 2000 [ 25\%]  (Warmup)
+Chain 5 Iteration:  600 / 2000 [ 30\%]  (Warmup)
+Chain 5 Iteration:  700 / 2000 [ 35\%]  (Warmup)
+Chain 5 Iteration:  800 / 2000 [ 40\%]  (Warmup)
+Chain 5 Iteration:  900 / 2000 [ 45\%]  (Warmup)
+Chain 5 Iteration: 1000 / 2000 [ 50\%]  (Warmup)
+Chain 5 Iteration: 1001 / 2000 [ 50\%]  (Sampling)
+Chain 5 Iteration: 1100 / 2000 [ 55\%]  (Sampling)
+Chain 6 Iteration:  100 / 2000 [  5\%]  (Warmup)
+Chain 6 Iteration:  200 / 2000 [ 10\%]  (Warmup)
+Chain 6 Iteration:  300 / 2000 [ 15\%]  (Warmup)
+Chain 6 Iteration:  400 / 2000 [ 20\%]  (Warmup)
+Chain 6 Iteration:  500 / 2000 [ 25\%]  (Warmup)
+Chain 6 Iteration:  600 / 2000 [ 30\%]  (Warmup)
+Chain 6 Iteration:  700 / 2000 [ 35\%]  (Warmup)
+Chain 6 Iteration:  800 / 2000 [ 40\%]  (Warmup)
+Chain 6 Iteration:  900 / 2000 [ 45\%]  (Warmup)
+Chain 7 Iteration:  100 / 2000 [  5\%]  (Warmup)
+Chain 7 Iteration:  200 / 2000 [ 10\%]  (Warmup)
+Chain 7 Iteration:  300 / 2000 [ 15\%]  (Warmup)
+Chain 7 Iteration:  400 / 2000 [ 20\%]  (Warmup)
+Chain 7 Iteration:  500 / 2000 [ 25\%]  (Warmup)
+Chain 7 Iteration:  600 / 2000 [ 30\%]  (Warmup)
+Chain 7 Iteration:  700 / 2000 [ 35\%]  (Warmup)
+Chain 7 Iteration:  800 / 2000 [ 40\%]  (Warmup)
+Chain 7 Iteration:  900 / 2000 [ 45\%]  (Warmup)
+Chain 7 Iteration: 1000 / 2000 [ 50\%]  (Warmup)
+Chain 7 Iteration: 1001 / 2000 [ 50\%]  (Sampling)
+Chain 1 Iteration: 1300 / 2000 [ 65\%]  (Sampling)
+Chain 1 Iteration: 1400 / 2000 [ 70\%]  (Sampling)
+Chain 1 Iteration: 1500 / 2000 [ 75\%]  (Sampling)
+Chain 2 Iteration: 1200 / 2000 [ 60\%]  (Sampling)
+Chain 2 Iteration: 1300 / 2000 [ 65\%]  (Sampling)
+Chain 2 Iteration: 1400 / 2000 [ 70\%]  (Sampling)
+Chain 3 Iteration: 1100 / 2000 [ 55\%]  (Sampling)
+Chain 3 Iteration: 1200 / 2000 [ 60\%]  (Sampling)
+Chain 4 Iteration: 1200 / 2000 [ 60\%]  (Sampling)
+Chain 4 Iteration: 1300 / 2000 [ 65\%]  (Sampling)
+Chain 5 Iteration: 1200 / 2000 [ 60\%]  (Sampling)
+Chain 5 Iteration: 1300 / 2000 [ 65\%]  (Sampling)
+Chain 6 Iteration: 1000 / 2000 [ 50\%]  (Warmup)
+Chain 6 Iteration: 1001 / 2000 [ 50\%]  (Sampling)
+Chain 6 Iteration: 1100 / 2000 [ 55\%]  (Sampling)
+Chain 7 Iteration: 1100 / 2000 [ 55\%]  (Sampling)
+Chain 7 Iteration: 1200 / 2000 [ 60\%]  (Sampling)
+Chain 7 Iteration: 1300 / 2000 [ 65\%]  (Sampling)
+Chain 1 Iteration: 1600 / 2000 [ 80\%]  (Sampling)
+Chain 2 Iteration: 1500 / 2000 [ 75\%]  (Sampling)
+Chain 3 Iteration: 1300 / 2000 [ 65\%]  (Sampling)
+Chain 4 Iteration: 1400 / 2000 [ 70\%]  (Sampling)
+Chain 5 Iteration: 1400 / 2000 [ 70\%]  (Sampling)
+Chain 6 Iteration: 1200 / 2000 [ 60\%]  (Sampling)
+Chain 7 Iteration: 1400 / 2000 [ 70\%]  (Sampling)
+Chain 2 Iteration: 1600 / 2000 [ 80\%]  (Sampling)
+Chain 3 Iteration: 1400 / 2000 [ 70\%]  (Sampling)
+Chain 4 Iteration: 1500 / 2000 [ 75\%]  (Sampling)
+Chain 5 Iteration: 1500 / 2000 [ 75\%]  (Sampling)
+Chain 1 Iteration: 1700 / 2000 [ 85\%]  (Sampling)
+Chain 4 Iteration: 1600 / 2000 [ 80\%]  (Sampling)
+Chain 5 Iteration: 1600 / 2000 [ 80\%]  (Sampling)
+Chain 6 Iteration: 1300 / 2000 [ 65\%]  (Sampling)
+Chain 7 Iteration: 1500 / 2000 [ 75\%]  (Sampling)
+Chain 1 Iteration: 1800 / 2000 [ 90\%]  (Sampling)
+Chain 2 Iteration: 1700 / 2000 [ 85\%]  (Sampling)
+Chain 3 Iteration: 1500 / 2000 [ 75\%]  (Sampling)
+Chain 5 Iteration: 1700 / 2000 [ 85\%]  (Sampling)
+Chain 6 Iteration: 1400 / 2000 [ 70\%]  (Sampling)
+Chain 7 Iteration: 1600 / 2000 [ 80\%]  (Sampling)
+Chain 2 Iteration: 1800 / 2000 [ 90\%]  (Sampling)
+Chain 3 Iteration: 1600 / 2000 [ 80\%]  (Sampling)
+Chain 4 Iteration: 1700 / 2000 [ 85\%]  (Sampling)
+Chain 1 Iteration: 1900 / 2000 [ 95\%]  (Sampling)
+Chain 2 Iteration: 1900 / 2000 [ 95\%]  (Sampling)
+Chain 4 Iteration: 1800 / 2000 [ 90\%]  (Sampling)
+Chain 5 Iteration: 1800 / 2000 [ 90\%]  (Sampling)
+Chain 6 Iteration: 1500 / 2000 [ 75\%]  (Sampling)
+Chain 7 Iteration: 1700 / 2000 [ 85\%]  (Sampling)
+Chain 1 Iteration: 2000 / 2000 [100\%]  (Sampling)
+Chain 2 Iteration: 2000 / 2000 [100\%]  (Sampling)
+Chain 3 Iteration: 1700 / 2000 [ 85\%]  (Sampling)
+Chain 4 Iteration: 1900 / 2000 [ 95\%]  (Sampling)
+Chain 5 Iteration: 1900 / 2000 [ 95\%]  (Sampling)
+Chain 6 Iteration: 1600 / 2000 [ 80\%]  (Sampling)
+Chain 7 Iteration: 1800 / 2000 [ 90\%]  (Sampling)
+Chain 1 finished in 4.2 seconds.
+Chain 2 finished in 4.2 seconds.
+Chain 3 Iteration: 1800 / 2000 [ 90\%]  (Sampling)
+Chain 5 Iteration: 2000 / 2000 [100\%]  (Sampling)
+Chain 6 Iteration: 1700 / 2000 [ 85\%]  (Sampling)
+Chain 7 Iteration: 1900 / 2000 [ 95\%]  (Sampling)
+Chain 4 Iteration: 2000 / 2000 [100\%]  (Sampling)
+Chain 4 finished in 0.0 seconds.
+Chain 5 finished in 4.2 seconds.
+Chain 3 Iteration: 1900 / 2000 [ 95\%]  (Sampling)
+Chain 3 Iteration: 2000 / 2000 [100\%]  (Sampling)
+Chain 6 Iteration: 1800 / 2000 [ 90\%]  (Sampling)
+Chain 7 Iteration: 2000 / 2000 [100\%]  (Sampling)
+Chain 3 finished in 4.5 seconds.
+Chain 4 finished in 4.3 seconds.
+Chain 7 finished in 4.3 seconds.
+Chain 6 Iteration: 1900 / 2000 [ 95\%]  (Sampling)
+Chain 6 Iteration: 2000 / 2000 [100\%]  (Sampling)
+Chain 6 finished in 4.5 seconds.
+
+All 7 chains finished successfully.
+Mean chain execution time: 4.3 seconds.
+Total execution time: 4.9 seconds.
+
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Computing WAIC
+
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{4}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} A model with varying intercepts and varying slopes}
+\PY{n}{slopes} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{map2stan}\PY{p}{(}
+    \PY{n+nf}{alist}\PY{p}{(}
+        \PY{n}{flux} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{dnorm}\PY{p}{(}\PY{n}{mu}\PY{p}{,} \PY{n}{sigma}\PY{p}{)}\PY{p}{,}
+        \PY{n}{mu} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n}{a}\PY{p}{[}\PY{n}{obs}\PY{p}{]} \PY{o}{+} \PY{n}{b\PYZus{}time}\PY{p}{[}\PY{n}{obs}\PY{p}{]} \PY{o}{*} \PY{n}{time}\PY{p}{,}
+        \PY{n}{a}\PY{p}{[}\PY{n}{obs}\PY{p}{]} \PY{o}{\PYZti{}} \PY{n+nf}{dnorm}\PY{p}{(}\PY{n}{a\PYZus{}pool}\PY{p}{,} \PY{l+m}{10}\PY{p}{)}\PY{p}{,}
+        \PY{n}{a\PYZus{}pool} \PY{o}{\PYZti{}} \PY{n+nf}{dnorm}\PY{p}{(}\PY{l+m}{0}\PY{p}{,} \PY{l+m}{10}\PY{p}{)}\PY{p}{,}
+        \PY{n}{b\PYZus{}time}\PY{p}{[}\PY{n}{obs}\PY{p}{]} \PY{o}{\PYZti{}} \PY{n+nf}{dnorm}\PY{p}{(}\PY{n}{b\PYZus{}time\PYZus{}pool}\PY{p}{,} \PY{l+m}{10}\PY{p}{)}\PY{p}{,}
+        \PY{n}{b\PYZus{}time\PYZus{}pool} \PY{o}{\PYZti{}} \PY{n+nf}{dnorm}\PY{p}{(}\PY{l+m}{0}\PY{p}{,} \PY{l+m}{10}\PY{p}{)}\PY{p}{,}
+        \PY{n}{sigma} \PY{o}{\PYZti{}} \PY{n+nf}{dcauchy}\PY{p}{(}\PY{l+m}{0}\PY{p}{,} \PY{l+m}{10}\PY{p}{)}
+    \PY{p}{)}\PY{p}{,}
+    \PY{n}{data} \PY{o}{=} \PY{n}{d}\PY{p}{,}
+    \PY{n}{constraints} \PY{o}{=} \PY{n+nf}{list}\PY{p}{(}\PY{n}{simga} \PY{o}{=} \PY{l+s}{\PYZdq{}}\PY{l+s}{lower=0\PYZdq{}}\PY{p}{)}\PY{p}{,}
+    \PY{n}{chains} \PY{o}{=} \PY{l+m}{7}\PY{p}{,} \PY{n}{cores} \PY{o}{=} \PY{l+m}{7}
+\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Warning message in map2stan(alist(flux <- dnorm(mu, sigma), mu <- a[obs] +
+b\_time[obs] * :
+"DEPRECATED: map2stan is no longer supported and may behave unpredictably or
+stop working altogether. Start using ulam instead."
+Warning message in map2stan(alist(flux <- dnorm(mu, sigma), mu <- a[obs] +
+b\_time[obs] * :
+"Stripping scale attributes from variable flux"
+Warning in
+'C:/Users/immal/AppData/Local/Temp/RtmpyCjL0l/model-1ffc1d242225.stan', line 5,
+column 4: Declaration
+    of arrays by placing brackets after a variable name is deprecated and
+    will be removed in Stan 2.32.0. Instead use the array keyword before the
+    type. This can be changed automatically using the auto-format flag to
+    stanc
+Warning in
+'C:/Users/immal/AppData/Local/Temp/RtmpyCjL0l/model-1ffc1d242225.stan', line 6,
+column 4: Declaration
+    of arrays by placing brackets after a variable name is deprecated and
+    will be removed in Stan 2.32.0. Instead use the array keyword before the
+    type. This can be changed automatically using the auto-format flag to
+    stanc
+Warning in
+'C:/Users/immal/AppData/Local/Temp/RtmpyCjL0l/model-1ffc1d242225.stan', line 7,
+column 4: Declaration
+    of arrays by placing brackets after a variable name is deprecated and
+    will be removed in Stan 2.32.0. Instead use the array keyword before the
+    type. This can be changed automatically using the auto-format flag to
+    stanc
+
+
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Running MCMC with 7 parallel chains{\ldots}
+
+Chain 1 Iteration:    1 / 2000 [  0\%]  (Warmup)
+Chain 1 Iteration:  100 / 2000 [  5\%]  (Warmup)
+Chain 2 Iteration:    1 / 2000 [  0\%]  (Warmup)
+Chain 3 Iteration:    1 / 2000 [  0\%]  (Warmup)
+Chain 4 Iteration:    1 / 2000 [  0\%]  (Warmup)
+Chain 5 Iteration:    1 / 2000 [  0\%]  (Warmup)
+Chain 6 Iteration:    1 / 2000 [  0\%]  (Warmup)
+Chain 7 Iteration:    1 / 2000 [  0\%]  (Warmup)
+Chain 1 Iteration:  200 / 2000 [ 10\%]  (Warmup)
+Chain 1 Iteration:  300 / 2000 [ 15\%]  (Warmup)
+Chain 1 Iteration:  400 / 2000 [ 20\%]  (Warmup)
+Chain 1 Iteration:  500 / 2000 [ 25\%]  (Warmup)
+Chain 1 Iteration:  600 / 2000 [ 30\%]  (Warmup)
+Chain 1 Iteration:  700 / 2000 [ 35\%]  (Warmup)
+Chain 2 Iteration:  100 / 2000 [  5\%]  (Warmup)
+Chain 2 Iteration:  200 / 2000 [ 10\%]  (Warmup)
+Chain 2 Iteration:  300 / 2000 [ 15\%]  (Warmup)
+Chain 2 Iteration:  400 / 2000 [ 20\%]  (Warmup)
+Chain 2 Iteration:  500 / 2000 [ 25\%]  (Warmup)
+Chain 2 Iteration:  600 / 2000 [ 30\%]  (Warmup)
+Chain 3 Iteration:  100 / 2000 [  5\%]  (Warmup)
+Chain 3 Iteration:  200 / 2000 [ 10\%]  (Warmup)
+Chain 3 Iteration:  300 / 2000 [ 15\%]  (Warmup)
+Chain 3 Iteration:  400 / 2000 [ 20\%]  (Warmup)
+Chain 3 Iteration:  500 / 2000 [ 25\%]  (Warmup)
+Chain 3 Iteration:  600 / 2000 [ 30\%]  (Warmup)
+Chain 3 Iteration:  700 / 2000 [ 35\%]  (Warmup)
+Chain 4 Iteration:  100 / 2000 [  5\%]  (Warmup)
+Chain 4 Iteration:  200 / 2000 [ 10\%]  (Warmup)
+Chain 4 Iteration:  300 / 2000 [ 15\%]  (Warmup)
+Chain 4 Iteration:  400 / 2000 [ 20\%]  (Warmup)
+Chain 4 Iteration:  500 / 2000 [ 25\%]  (Warmup)
+Chain 4 Iteration:  600 / 2000 [ 30\%]  (Warmup)
+Chain 5 Iteration:  100 / 2000 [  5\%]  (Warmup)
+Chain 5 Iteration:  200 / 2000 [ 10\%]  (Warmup)
+Chain 5 Iteration:  300 / 2000 [ 15\%]  (Warmup)
+Chain 5 Iteration:  400 / 2000 [ 20\%]  (Warmup)
+Chain 5 Iteration:  500 / 2000 [ 25\%]  (Warmup)
+Chain 5 Iteration:  600 / 2000 [ 30\%]  (Warmup)
+Chain 6 Iteration:  100 / 2000 [  5\%]  (Warmup)
+Chain 6 Iteration:  200 / 2000 [ 10\%]  (Warmup)
+Chain 6 Iteration:  300 / 2000 [ 15\%]  (Warmup)
+Chain 6 Iteration:  400 / 2000 [ 20\%]  (Warmup)
+Chain 6 Iteration:  500 / 2000 [ 25\%]  (Warmup)
+Chain 6 Iteration:  600 / 2000 [ 30\%]  (Warmup)
+Chain 7 Iteration:  100 / 2000 [  5\%]  (Warmup)
+Chain 7 Iteration:  200 / 2000 [ 10\%]  (Warmup)
+Chain 7 Iteration:  300 / 2000 [ 15\%]  (Warmup)
+Chain 7 Iteration:  400 / 2000 [ 20\%]  (Warmup)
+Chain 7 Iteration:  500 / 2000 [ 25\%]  (Warmup)
+Chain 7 Iteration:  600 / 2000 [ 30\%]  (Warmup)
+Chain 7 Iteration:  700 / 2000 [ 35\%]  (Warmup)
+Chain 1 Iteration:  800 / 2000 [ 40\%]  (Warmup)
+Chain 2 Iteration:  700 / 2000 [ 35\%]  (Warmup)
+Chain 2 Iteration:  800 / 2000 [ 40\%]  (Warmup)
+Chain 3 Iteration:  800 / 2000 [ 40\%]  (Warmup)
+Chain 3 Iteration:  900 / 2000 [ 45\%]  (Warmup)
+Chain 4 Iteration:  700 / 2000 [ 35\%]  (Warmup)
+Chain 5 Iteration:  700 / 2000 [ 35\%]  (Warmup)
+Chain 5 Iteration:  800 / 2000 [ 40\%]  (Warmup)
+Chain 6 Iteration:  700 / 2000 [ 35\%]  (Warmup)
+Chain 7 Iteration:  800 / 2000 [ 40\%]  (Warmup)
+Chain 1 Iteration:  900 / 2000 [ 45\%]  (Warmup)
+Chain 4 Iteration:  800 / 2000 [ 40\%]  (Warmup)
+Chain 6 Iteration:  800 / 2000 [ 40\%]  (Warmup)
+Chain 2 Iteration:  900 / 2000 [ 45\%]  (Warmup)
+Chain 3 Iteration: 1000 / 2000 [ 50\%]  (Warmup)
+Chain 4 Iteration:  900 / 2000 [ 45\%]  (Warmup)
+Chain 5 Iteration:  900 / 2000 [ 45\%]  (Warmup)
+Chain 6 Iteration:  900 / 2000 [ 45\%]  (Warmup)
+Chain 7 Iteration:  900 / 2000 [ 45\%]  (Warmup)
+Chain 1 Iteration: 1000 / 2000 [ 50\%]  (Warmup)
+Chain 3 Iteration: 1001 / 2000 [ 50\%]  (Sampling)
+Chain 1 Iteration: 1001 / 2000 [ 50\%]  (Sampling)
+Chain 2 Iteration: 1000 / 2000 [ 50\%]  (Warmup)
+Chain 3 Iteration: 1100 / 2000 [ 55\%]  (Sampling)
+Chain 5 Iteration: 1000 / 2000 [ 50\%]  (Warmup)
+Chain 6 Iteration: 1000 / 2000 [ 50\%]  (Warmup)
+Chain 7 Iteration: 1000 / 2000 [ 50\%]  (Warmup)
+Chain 1 Iteration: 1100 / 2000 [ 55\%]  (Sampling)
+Chain 2 Iteration: 1001 / 2000 [ 50\%]  (Sampling)
+Chain 4 Iteration: 1000 / 2000 [ 50\%]  (Warmup)
+Chain 5 Iteration: 1001 / 2000 [ 50\%]  (Sampling)
+Chain 6 Iteration: 1001 / 2000 [ 50\%]  (Sampling)
+Chain 7 Iteration: 1001 / 2000 [ 50\%]  (Sampling)
+Chain 2 Iteration: 1100 / 2000 [ 55\%]  (Sampling)
+Chain 3 Iteration: 1200 / 2000 [ 60\%]  (Sampling)
+Chain 4 Iteration: 1001 / 2000 [ 50\%]  (Sampling)
+Chain 4 Iteration: 1100 / 2000 [ 55\%]  (Sampling)
+Chain 5 Iteration: 1100 / 2000 [ 55\%]  (Sampling)
+Chain 6 Iteration: 1100 / 2000 [ 55\%]  (Sampling)
+Chain 7 Iteration: 1100 / 2000 [ 55\%]  (Sampling)
+Chain 1 Iteration: 1200 / 2000 [ 60\%]  (Sampling)
+Chain 2 Iteration: 1200 / 2000 [ 60\%]  (Sampling)
+Chain 3 Iteration: 1300 / 2000 [ 65\%]  (Sampling)
+Chain 4 Iteration: 1200 / 2000 [ 60\%]  (Sampling)
+Chain 5 Iteration: 1200 / 2000 [ 60\%]  (Sampling)
+Chain 6 Iteration: 1200 / 2000 [ 60\%]  (Sampling)
+Chain 7 Iteration: 1200 / 2000 [ 60\%]  (Sampling)
+Chain 1 Iteration: 1300 / 2000 [ 65\%]  (Sampling)
+Chain 2 Iteration: 1300 / 2000 [ 65\%]  (Sampling)
+Chain 3 Iteration: 1400 / 2000 [ 70\%]  (Sampling)
+Chain 4 Iteration: 1300 / 2000 [ 65\%]  (Sampling)
+Chain 5 Iteration: 1300 / 2000 [ 65\%]  (Sampling)
+Chain 6 Iteration: 1300 / 2000 [ 65\%]  (Sampling)
+Chain 7 Iteration: 1300 / 2000 [ 65\%]  (Sampling)
+Chain 1 Iteration: 1400 / 2000 [ 70\%]  (Sampling)
+Chain 2 Iteration: 1400 / 2000 [ 70\%]  (Sampling)
+Chain 3 Iteration: 1500 / 2000 [ 75\%]  (Sampling)
+Chain 4 Iteration: 1400 / 2000 [ 70\%]  (Sampling)
+Chain 5 Iteration: 1400 / 2000 [ 70\%]  (Sampling)
+Chain 6 Iteration: 1400 / 2000 [ 70\%]  (Sampling)
+Chain 7 Iteration: 1400 / 2000 [ 70\%]  (Sampling)
+Chain 1 Iteration: 1500 / 2000 [ 75\%]  (Sampling)
+Chain 2 Iteration: 1500 / 2000 [ 75\%]  (Sampling)
+Chain 3 Iteration: 1600 / 2000 [ 80\%]  (Sampling)
+Chain 4 Iteration: 1500 / 2000 [ 75\%]  (Sampling)
+Chain 5 Iteration: 1500 / 2000 [ 75\%]  (Sampling)
+Chain 6 Iteration: 1500 / 2000 [ 75\%]  (Sampling)
+Chain 7 Iteration: 1500 / 2000 [ 75\%]  (Sampling)
+Chain 1 Iteration: 1600 / 2000 [ 80\%]  (Sampling)
+Chain 2 Iteration: 1600 / 2000 [ 80\%]  (Sampling)
+Chain 3 Iteration: 1700 / 2000 [ 85\%]  (Sampling)
+Chain 4 Iteration: 1600 / 2000 [ 80\%]  (Sampling)
+Chain 5 Iteration: 1600 / 2000 [ 80\%]  (Sampling)
+Chain 6 Iteration: 1600 / 2000 [ 80\%]  (Sampling)
+Chain 7 Iteration: 1600 / 2000 [ 80\%]  (Sampling)
+Chain 1 Iteration: 1700 / 2000 [ 85\%]  (Sampling)
+Chain 3 Iteration: 1800 / 2000 [ 90\%]  (Sampling)
+Chain 7 Iteration: 1700 / 2000 [ 85\%]  (Sampling)
+Chain 2 Iteration: 1700 / 2000 [ 85\%]  (Sampling)
+Chain 4 Iteration: 1700 / 2000 [ 85\%]  (Sampling)
+Chain 5 Iteration: 1700 / 2000 [ 85\%]  (Sampling)
+Chain 6 Iteration: 1700 / 2000 [ 85\%]  (Sampling)
+Chain 1 Iteration: 1800 / 2000 [ 90\%]  (Sampling)
+Chain 3 Iteration: 1900 / 2000 [ 95\%]  (Sampling)
+Chain 6 Iteration: 1800 / 2000 [ 90\%]  (Sampling)
+Chain 7 Iteration: 1800 / 2000 [ 90\%]  (Sampling)
+Chain 2 Iteration: 1800 / 2000 [ 90\%]  (Sampling)
+Chain 4 Iteration: 1800 / 2000 [ 90\%]  (Sampling)
+Chain 5 Iteration: 1800 / 2000 [ 90\%]  (Sampling)
+Chain 1 Iteration: 1900 / 2000 [ 95\%]  (Sampling)
+Chain 3 Iteration: 2000 / 2000 [100\%]  (Sampling)
+Chain 6 Iteration: 1900 / 2000 [ 95\%]  (Sampling)
+Chain 7 Iteration: 1900 / 2000 [ 95\%]  (Sampling)
+Chain 3 finished in 5.3 seconds.
+Chain 1 Iteration: 2000 / 2000 [100\%]  (Sampling)
+Chain 2 Iteration: 1900 / 2000 [ 95\%]  (Sampling)
+Chain 5 Iteration: 1900 / 2000 [ 95\%]  (Sampling)
+Chain 1 finished in 5.6 seconds.
+Chain 4 Iteration: 1900 / 2000 [ 95\%]  (Sampling)
+Chain 6 Iteration: 2000 / 2000 [100\%]  (Sampling)
+Chain 7 Iteration: 2000 / 2000 [100\%]  (Sampling)
+Chain 6 finished in 5.7 seconds.
+Chain 7 finished in 5.6 seconds.
+Chain 2 Iteration: 2000 / 2000 [100\%]  (Sampling)
+Chain 4 Iteration: 2000 / 2000 [100\%]  (Sampling)
+Chain 5 Iteration: 2000 / 2000 [100\%]  (Sampling)
+Chain 2 finished in 5.8 seconds.
+Chain 4 finished in 5.8 seconds.
+Chain 5 finished in 5.7 seconds.
+
+All 7 chains finished successfully.
+Mean chain execution time: 5.7 seconds.
+Total execution time: 6.1 seconds.
+
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Computing WAIC
+
+    \end{Verbatim}
+
+    \begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{2}
+\tightlist
+\item
+  Run both models, present the results in the form that you find the
+  most relevant and interpret the estimates. What is the largest source
+  (intercept/slope?) of variation in the outcome?
+\end{enumerate}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{6}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nf}{compare}\PY{p}{(}\PY{n}{intercepts}\PY{p}{,} \PY{n}{slopes}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    A compareIC: 2 × 6
+\begin{tabular}{r|llllll}
+  & WAIC & SE & dWAIC & dSE & pWAIC & weight\\
+  & <dbl> & <dbl> & <dbl> & <dbl> & <dbl> & <dbl>\\
+\hline
+	slopes & -502.8295 & 23.74248 &   0.0000 &       NA & 49.74929 &  1.000000e+00\\
+	intercepts &  379.5735 & 16.90505 & 882.4029 & 24.79406 & 25.03757 & 2.447005e-192\\
+\end{tabular}
+
+
+    
+    The model with the slopes has a way better WAIC than the model with only
+the intercepts, we may as well discard the intercepts model.
+
+    \begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{3}
+\tightlist
+\item
+  Build a third model that includes the correlation between the varying
+  intercepts and slopes. Interpret the value of the correlation and
+  discuss the implication on the predictions that you could make, if you
+  were to receive a sample of new observations for that star.
+\end{enumerate}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{31}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} A model with varying intercepts and varying slopes,}
+\PY{c+c1}{\PYZsh{} that takes the correlation between slopes and intercepts into account}
+\PY{n}{slopes\PYZus{}cov} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{ulam}\PY{p}{(}
+    \PY{n+nf}{alist}\PY{p}{(}
+        \PY{n}{flux} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{dnorm}\PY{p}{(}\PY{n}{mu}\PY{p}{,} \PY{n}{sigma}\PY{p}{)}\PY{p}{,}
+        \PY{n}{mu} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n}{a}\PY{p}{[}\PY{n}{obs}\PY{p}{]} \PY{o}{+} \PY{n}{b\PYZus{}time}\PY{p}{[}\PY{n}{obs}\PY{p}{]} \PY{o}{*} \PY{n}{time}\PY{p}{,}
+        \PY{n+nf}{c}\PY{p}{(}\PY{n}{a}\PY{p}{,} \PY{n}{b\PYZus{}time}\PY{p}{)}\PY{p}{[}\PY{n}{obs}\PY{p}{]} \PY{o}{\PYZti{}} \PY{n+nf}{multi\PYZus{}normal}\PY{p}{(}\PY{n+nf}{c}\PY{p}{(}\PY{n}{a\PYZus{}pool}\PY{p}{,} \PY{n}{b\PYZus{}time\PYZus{}pool}\PY{p}{)}\PY{p}{,} \PY{n}{Rho}\PY{p}{,} \PY{n}{sigma\PYZus{}pool}\PY{p}{)}\PY{p}{,}
+        \PY{n}{a\PYZus{}pool} \PY{o}{\PYZti{}} \PY{n+nf}{dnorm}\PY{p}{(}\PY{l+m}{0}\PY{p}{,} \PY{l+m}{10}\PY{p}{)}\PY{p}{,}
+        \PY{n}{b\PYZus{}time\PYZus{}pool} \PY{o}{\PYZti{}} \PY{n+nf}{dnorm}\PY{p}{(}\PY{l+m}{0}\PY{p}{,} \PY{l+m}{10}\PY{p}{)}\PY{p}{,}
+        \PY{n}{sigma\PYZus{}pool} \PY{o}{\PYZti{}} \PY{n+nf}{dcauchy}\PY{p}{(}\PY{l+m}{0}\PY{p}{,} \PY{l+m}{10}\PY{p}{)}\PY{p}{,}
+        \PY{n}{sigma} \PY{o}{\PYZti{}} \PY{n+nf}{dcauchy}\PY{p}{(}\PY{l+m}{0}\PY{p}{,} \PY{l+m}{10}\PY{p}{)}\PY{p}{,}
+        \PY{n}{Rho} \PY{o}{\PYZti{}} \PY{n+nf}{lkj\PYZus{}corr}\PY{p}{(}\PY{l+m}{2}\PY{p}{)}
+    \PY{p}{)}\PY{p}{,}
+    \PY{n}{data} \PY{o}{=} \PY{n}{d}\PY{p}{,}
+    \PY{n}{constraints} \PY{o}{=} \PY{n+nf}{list}\PY{p}{(}\PY{n}{simga} \PY{o}{=} \PY{l+s}{\PYZdq{}}\PY{l+s}{lower=0\PYZdq{}}\PY{p}{)}\PY{p}{,}
+    \PY{n}{chains} \PY{o}{=} \PY{l+m}{7}\PY{p}{,} \PY{n}{cores} \PY{o}{=} \PY{l+m}{7}\PY{p}{,} \PY{n}{log\PYZus{}lik} \PY{o}{=} \PY{k+kc}{TRUE}
+\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Semantic error in
+'C:/Users/immal/AppData/Local/Temp/RtmpaSqGVm/model-3dd84096307f.stan', line 34,
+column 18 to column 37:
+   -------------------------------------------------
+    32:      \}
+    33:      for ( i in 1:234 ) \{
+    34:          flux[i] = dnorm(mu[i], sigma);
+                           \^{}
+    35:      \}
+    36:  \}
+   -------------------------------------------------
+
+A returning function was expected but an undeclared identifier 'dnorm' was
+supplied.
+A similar known identifier is 'norm'
+
+
+mingw32-make: *** [make/program:50:
+C:\textbackslash{}Users\textbackslash{}immal\textbackslash{}AppData\textbackslash{}Local\textbackslash{}Temp\textbackslash{}RtmpaSqGVm\textbackslash{}model-3dd84096307f.hpp] Error 1
+
+
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}, frame=single, framerule=2mm, rulecolor=\color{outerrorbackground}]
+Error: An error occured during compilation! See the message above for more information.
+Traceback:
+
+1. ulam(alist(flux <- dnorm(mu, sigma), mu <- a[obs] + b\_time[obs] * 
+ .     time, c(a, b\_time)[obs] \textasciitilde{} multi\_normal(c(a\_pool, b\_time\_pool), 
+ .     Rho, sigma\_pool), a\_pool \textasciitilde{} dnorm(0, 10), b\_time\_pool \textasciitilde{} dnorm(0, 
+ .     10), sigma\_pool \textasciitilde{} dcauchy(0, 10), sigma \textasciitilde{} dcauchy(0, 10), 
+ .     Rho \textasciitilde{} lkj\_corr(2)), data = d, constraints = list(simga = "lower=0"), 
+ .     chains = 7, cores = 7, log\_lik = TRUE)
+2. cmdstan\_model(stan\_file = filex[[1]], compile = filex[[3]], cpp\_options = cpp\_options, 
+ .     stanc\_options = stanc\_options)
+3. CmdStanModel\$new(stan\_file = stan\_file, exe\_file = exe\_file, 
+ .     compile = compile, {\ldots})
+4. initialize({\ldots})
+5. self\$compile({\ldots})
+6. stop("An error occured during compilation! See the message above for more information.", 
+ .     call. = FALSE)
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{20}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} A model with varying intercepts and varying slopes,}
+\PY{c+c1}{\PYZsh{} that takes the correlation between slopes and intercepts into account}
+\PY{n}{slopes\PYZus{}cov} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{map2stan}\PY{p}{(}
+    \PY{n+nf}{alist}\PY{p}{(}
+        \PY{n}{flux} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{dnorm}\PY{p}{(}\PY{n}{mu}\PY{p}{,} \PY{n}{sigma}\PY{p}{)}\PY{p}{,}
+        \PY{n}{mu} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n}{a}\PY{p}{[}\PY{n}{obs}\PY{p}{]} \PY{o}{+} \PY{n}{b\PYZus{}time}\PY{p}{[}\PY{n}{obs}\PY{p}{]} \PY{o}{*} \PY{n}{time}\PY{p}{,}
+        \PY{n+nf}{c}\PY{p}{(}\PY{n}{a}\PY{p}{,} \PY{n}{b\PYZus{}time}\PY{p}{)}\PY{p}{[}\PY{n}{obs}\PY{p}{]} \PY{o}{\PYZti{}} \PY{n+nf}{dmvnorm2}\PY{p}{(}\PY{n+nf}{c}\PY{p}{(}\PY{n}{a\PYZus{}pool}\PY{p}{,} \PY{n}{b\PYZus{}pool}\PY{p}{)}\PY{p}{,} \PY{n}{sigma\PYZus{}pool}\PY{p}{,} \PY{n}{Rho}\PY{p}{)}\PY{p}{,}
+        \PY{n}{a\PYZus{}pool} \PY{o}{\PYZti{}} \PY{n+nf}{dnorm}\PY{p}{(}\PY{l+m}{0}\PY{p}{,} \PY{l+m}{10}\PY{p}{)}\PY{p}{,}
+        \PY{n}{b\PYZus{}time\PYZus{}pool} \PY{o}{\PYZti{}} \PY{n+nf}{dnorm}\PY{p}{(}\PY{l+m}{0}\PY{p}{,} \PY{l+m}{10}\PY{p}{)}\PY{p}{,}
+        \PY{n}{sigma\PYZus{}pool} \PY{o}{\PYZti{}} \PY{n+nf}{dcauchy}\PY{p}{(}\PY{l+m}{0}\PY{p}{,} \PY{l+m}{10}\PY{p}{)}\PY{p}{,}
+        \PY{n}{sigma} \PY{o}{\PYZti{}} \PY{n+nf}{dcauchy}\PY{p}{(}\PY{l+m}{0}\PY{p}{,} \PY{l+m}{10}\PY{p}{)}\PY{p}{,}
+        \PY{n}{Rho} \PY{o}{\PYZti{}} \PY{n+nf}{dlkjcorr}\PY{p}{(}\PY{l+m}{2}\PY{p}{)}
+    \PY{p}{)}\PY{p}{,}
+    \PY{n}{data} \PY{o}{=} \PY{n}{d}\PY{p}{,}
+    \PY{n}{constraints} \PY{o}{=} \PY{n+nf}{list}\PY{p}{(}\PY{n}{simga} \PY{o}{=} \PY{l+s}{\PYZdq{}}\PY{l+s}{lower=0\PYZdq{}}\PY{p}{)}\PY{p}{,}
+    \PY{n}{chains} \PY{o}{=} \PY{l+m}{7}\PY{p}{,} \PY{n}{cores} \PY{o}{=} \PY{l+m}{7}
+\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Warning message in map2stan(alist(flux <- dnorm(mu, sigma), mu <- a[obs] +
+b\_time[obs] * :
+"DEPRECATED: map2stan is no longer supported and may behave unpredictably or
+stop working altogether. Start using ulam instead."
+Warning message in map2stan(alist(flux <- dnorm(mu, sigma), mu <- a[obs] +
+b\_time[obs] * :
+"Stripping scale attributes from variable flux"
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}, frame=single, framerule=2mm, rulecolor=\color{outerrorbackground}]
+Error in if (class(start[[1]][[i]]) == "matrix") \{: Bedingung hat Länge > 1
+Traceback:
+
+1. map2stan(alist(flux <- dnorm(mu, sigma), mu <- a[obs] + b\_time[obs] * 
+ .     time, c(a, b\_time)[obs] \textasciitilde{} dmvnorm2(c(a\_pool, b\_pool), sigma\_pool, 
+ .     Rho), a\_pool \textasciitilde{} dnorm(0, 10), b\_time\_pool \textasciitilde{} dnorm(0, 10), 
+ .     sigma\_pool \textasciitilde{} dcauchy(0, 10), sigma \textasciitilde{} dcauchy(0, 10), Rho \textasciitilde{} 
+ .         dlkjcorr(2)), data = d, constraints = list(simga = "lower=0"), 
+ .     chains = 7, cores = 7)
+    \end{Verbatim}
+
+    Sadly, I was not able to fix the issue with the correlation approach for
+the code for now. I will use the data from the previous model to
+continue the exercise.
+
+    \begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{4}
+\tightlist
+\item
+  Using the posterior mean values of the parameters, simulate flux data
+  from 5 new observatories. Simulating both the varying slopes and
+  intercepts will be necessary.
+\end{enumerate}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{8}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Extracting the posterior distribution}
+\PY{n}{post} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{extract.samples}\PY{p}{(}\PY{n}{slopes}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    The data for the intercepts of new observatories is given in
+\texttt{a\_pool}, and for the slopes we find it in
+\texttt{b\_time\_pool}.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{18}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{post\PYZus{}a\PYZus{}pool} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{mean}\PY{p}{(}\PY{n}{post}\PY{o}{\PYZdl{}}\PY{n}{a\PYZus{}pool}\PY{p}{)}
+\PY{n}{post\PYZus{}b\PYZus{}time\PYZus{}pool} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{mean}\PY{p}{(}\PY{n}{post}\PY{o}{\PYZdl{}}\PY{n}{b\PYZus{}time\PYZus{}pool}\PY{p}{)}
+\PY{n}{post\PYZus{}sigma} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{mean}\PY{p}{(}\PY{n}{post}\PY{o}{\PYZdl{}}\PY{n}{sigma}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    We then draw 5 times from the given distributions in order to get 5 new
+\texttt{a{[}obs{]}} and \texttt{b\_time{[}obs{]}} for 5 new
+observatories.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{39}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{post\PYZus{}a} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{rnorm}\PY{p}{(}\PY{l+m}{5}\PY{p}{,} \PY{n}{post\PYZus{}a\PYZus{}pool}\PY{p}{,} \PY{l+m}{10}\PY{p}{)}
+\PY{n}{post\PYZus{}b\PYZus{}time} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{rnorm}\PY{p}{(}\PY{l+m}{5}\PY{p}{,} \PY{n}{post\PYZus{}b\PYZus{}time\PYZus{}pool}\PY{p}{,} \PY{l+m}{10}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    Building the flux simulation is straight forward. We use the same epoch
+data for our time sequence as given in the dataset.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{41}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Defining the measurement epochs}
+\PY{n}{seq} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n}{d}\PY{o}{\PYZdl{}}\PY{n}{time}\PY{p}{[}\PY{l+m}{1}\PY{o}{:}\PY{l+m}{9}\PY{p}{]}
+\PY{c+c1}{\PYZsh{} Indexing the new observations}
+\PY{n}{indices} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{c}\PY{p}{(}\PY{l+m}{1}\PY{p}{,} \PY{l+m}{2}\PY{p}{,} \PY{l+m}{3}\PY{p}{,} \PY{l+m}{4}\PY{p}{,} \PY{l+m}{5}\PY{p}{)}
+\PY{c+c1}{\PYZsh{} Creating arrays for the new data}
+\PY{n}{new\PYZus{}flux} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{c}\PY{p}{(}\PY{p}{)}
+\PY{n}{new\PYZus{}time} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{c}\PY{p}{(}\PY{p}{)}
+\PY{n}{new\PYZus{}obs} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{c}\PY{p}{(}\PY{p}{)}
+\PY{n}{new\PYZus{}measurement} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{c}\PY{p}{(}\PY{p}{)}
+
+
+\PY{n+nf}{for }\PY{p}{(}\PY{n}{index} \PY{n}{in} \PY{n}{indices}\PY{p}{)} \PY{n+nf}{for }\PY{p}{(}\PY{n}{step} \PY{n}{in} \PY{l+m}{1}\PY{o}{:}\PY{l+m}{9}\PY{p}{)} \PY{p}{\PYZob{}}
+    \PY{n}{time} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n}{seq}\PY{p}{[}\PY{n}{step}\PY{p}{]}
+    \PY{c+c1}{\PYZsh{} Link function to generate mu from a and b\PYZus{}time * time}
+    \PY{n}{mu\PYZus{}link} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{function}\PY{p}{(}\PY{n}{time}\PY{p}{)} \PY{n}{post\PYZus{}a}\PY{p}{[}\PY{n}{index}\PY{p}{]} \PY{o}{+} \PY{n}{post\PYZus{}b\PYZus{}time}\PY{p}{[}\PY{n}{index}\PY{p}{]} \PY{o}{*} \PY{n}{time}
+    \PY{n}{mu} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{mu\PYZus{}link}\PY{p}{(}\PY{n}{time}\PY{p}{)}
+    \PY{n}{flux} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{rnorm}\PY{p}{(}\PY{l+m}{1}\PY{p}{,} \PY{n}{mu}\PY{p}{,} \PY{n}{post}\PY{o}{\PYZdl{}}\PY{n}{sigma}\PY{p}{)}
+    \PY{n}{new\PYZus{}flux} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{append}\PY{p}{(}\PY{n}{new\PYZus{}flux}\PY{p}{,} \PY{n}{flux}\PY{p}{)}
+    \PY{n}{new\PYZus{}time} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{append}\PY{p}{(}\PY{n}{new\PYZus{}time}\PY{p}{,} \PY{n}{time}\PY{p}{)}
+    \PY{n}{new\PYZus{}obs} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{append}\PY{p}{(}\PY{n}{new\PYZus{}obs}\PY{p}{,} \PY{l+m}{26} \PY{o}{+} \PY{n}{index}\PY{p}{)}
+    \PY{n}{new\PYZus{}measurement} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{append}\PY{p}{(}\PY{n}{new\PYZus{}measurement}\PY{p}{,} \PY{n}{step}\PY{p}{)}
+\PY{p}{\PYZcb{}}
+
+\PY{n}{sim\PYZus{}data} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{data.frame}\PY{p}{(}\PY{n+nf}{list}\PY{p}{(}\PY{n}{flux} \PY{o}{=} \PY{n}{new\PYZus{}flux}\PY{p}{,}
+    \PY{n}{time} \PY{o}{=} \PY{n}{new\PYZus{}time}\PY{p}{,}
+    \PY{n}{obs} \PY{o}{=} \PY{n}{new\PYZus{}obs}\PY{p}{,}
+    \PY{n}{measurement} \PY{o}{=} \PY{n}{new\PYZus{}measurement}
+\PY{p}{)}\PY{p}{)}
+\PY{n}{sim\PYZus{}data}
+\end{Verbatim}
+\end{tcolorbox}
+
+    A data.frame: 45 × 4
+\begin{tabular}{llll}
+ flux & time & obs & measurement\\
+ <dbl> & <dbl> & <dbl> & <int>\\
+\hline
+	  -0.1787919 & -1.0000 & 27 & 1\\
+	  -1.5307202 & -0.7479 & 27 & 2\\
+	  -2.6329597 & -0.4630 & 27 & 3\\
+	  -4.0038512 & -0.1643 & 27 & 4\\
+	  -4.7851096 & -0.0027 & 27 & 5\\
+	  -6.1310848 &  0.2466 & 27 & 6\\
+	  -7.4477588 &  0.5562 & 27 & 7\\
+	  -8.5205116 &  0.7781 & 27 & 8\\
+	  -9.6333499 &  0.9945 & 27 & 9\\
+	  36.8441820 & -1.0000 & 28 & 1\\
+	  32.8153088 & -0.7479 & 28 & 2\\
+	  28.2022136 & -0.4630 & 28 & 3\\
+	  23.4350108 & -0.1643 & 28 & 4\\
+	  20.8700697 & -0.0027 & 28 & 5\\
+	  17.0030365 &  0.2466 & 28 & 6\\
+	  12.2158796 &  0.5562 & 28 & 7\\
+	   8.6118111 &  0.7781 & 28 & 8\\
+	   5.0460965 &  0.9945 & 28 & 9\\
+	  -2.9388536 & -1.0000 & 29 & 1\\
+	  -0.3364384 & -0.7479 & 29 & 2\\
+	   2.3033485 & -0.4630 & 29 & 3\\
+	   5.2526290 & -0.1643 & 29 & 4\\
+	   6.7061935 & -0.0027 & 29 & 5\\
+	   9.2445232 &  0.2466 & 29 & 6\\
+	  12.3160927 &  0.5562 & 29 & 7\\
+	  14.4383648 &  0.7781 & 29 & 8\\
+	  16.5750617 &  0.9945 & 29 & 9\\
+	 -13.2138391 & -1.0000 & 30 & 1\\
+	 -11.1986408 & -0.7479 & 30 & 2\\
+	  -8.9403029 & -0.4630 & 30 & 3\\
+	  -6.6464953 & -0.1643 & 30 & 4\\
+	  -5.3419684 & -0.0027 & 30 & 5\\
+	  -3.2969824 &  0.2466 & 30 & 6\\
+	  -0.9968730 &  0.5562 & 30 & 7\\
+	   0.7548920 &  0.7781 & 30 & 8\\
+	   2.4385304 &  0.9945 & 30 & 9\\
+	  -0.7548102 & -1.0000 & 31 & 1\\
+	   2.5117167 & -0.7479 & 31 & 2\\
+	   6.2376321 & -0.4630 & 31 & 3\\
+	  10.4085998 & -0.1643 & 31 & 4\\
+	  12.6020671 & -0.0027 & 31 & 5\\
+	  15.8655225 &  0.2466 & 31 & 6\\
+	  20.0785278 &  0.5562 & 31 & 7\\
+	  22.9911438 &  0.7781 & 31 & 8\\
+	  25.9379616 &  0.9945 & 31 & 9\\
+\end{tabular}
+
+
+    
+    \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{exercise-2-1030-pts-dysfunctional-cosmic-ray-detectors}{%
+\subsection{Exercise 2 (10/30 pts) -- Dysfunctional cosmic ray
+detectors}\label{exercise-2-1030-pts-dysfunctional-cosmic-ray-detectors}}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{32}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nf}{library}\PY{p}{(}\PY{n}{rethinking}\PY{p}{)}
+\PY{n}{data2} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{read.csv}\PY{p}{(}\PY{n}{file}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{detectors.csv\PYZdq{}}\PY{p}{,} \PY{n}{header}\PY{o}{=}\PY{k+kc}{TRUE}\PY{p}{,} \PY{n}{sep}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{;\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    The dataset is about a campaign of 250 distinct experiments to detect
+cosmic rays (CR) around the globe. Each detector has different
+properties (e.g.~old/new generation, number of arrays\ldots). One issue
+is that we do not know whether each experiment was actually functioning
+when it was powered up. For each experiment, the dataset includes the
+number of CR that have been detected, whether the detector used was
+equipped with an amplifier to increase sensitivity, whether it used a
+next-generation detector, how many arrays each detector had and how many
+of these arrays were operating in parallel. Finally the timespan during
+which the experiment was powered-up is indicated in the final column.
+The scientific question is how many cosmic rays are detected per hour
+per detector array, when the experiment is actually functioning.
+
+    \begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Think about the data-generating process. Write down one possible
+  likelihood to answer the science question.
+\end{enumerate}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{36}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nf}{summary}\PY{p}{(}\PY{n}{data2}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+   Experiment       CRdetected        Amplifier.      Next.gen.    
+ Min.   :  1.00   Min.   :  0.000   Min.   :0.000   Min.   :0.000  
+ 1st Qu.: 63.25   1st Qu.:  0.000   1st Qu.:1.000   1st Qu.:0.000  
+ Median :125.50   Median :  0.000   Median :1.000   Median :1.000  
+ Mean   :125.50   Mean   :  3.296   Mean   :0.864   Mean   :0.588  
+ 3rd Qu.:187.75   3rd Qu.:  2.000   3rd Qu.:1.000   3rd Qu.:1.000  
+ Max.   :250.00   Max.   :149.000   Max.   :1.000   Max.   :1.000  
+   Detarrays     Parallelarrays  Powered.on.time..hours.
+ Min.   :1.000   Min.   :0.000   Min.   : 0.0040        
+ 1st Qu.:2.000   1st Qu.:0.000   1st Qu.: 0.2865        
+ Median :2.000   Median :0.000   Median : 1.8315        
+ Mean   :2.528   Mean   :0.684   Mean   : 5.5260        
+ 3rd Qu.:4.000   3rd Qu.:1.000   3rd Qu.: 7.3427        
+ Max.   :4.000   Max.   :3.000   Max.   :71.0360        
+    \end{Verbatim}
+
+    
+    For each functioning detector array, the detection would be a Poisson
+process with some rate of events. So the measured cosmic rays would be
+proportional to the measured time and the number of arrays that were
+active at the same time. The number of arrays itself does not play a
+role if they were not active in parallel. Maybe the fact if the
+experiment had an amplifier or if it was next gen does have an impact on
+the data, but this would need to be identified in the analysis.
+
+    \begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{1}
+\tightlist
+\item
+  Design a model to predict the number of detected CRs per detector
+  array per second as a function of any variables that are found to be
+  relevant, you can try several and use model comparison to identify
+  those that are worth including.
+\end{enumerate}
+
+    As said above, we model the detection in a Poisson process, dependent on
+the amount of time passed times the detectors amount. We thus build a
+dataset that includes the detectortime.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{68}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{d} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{data.frame}\PY{p}{(}\PY{n+nf}{list}\PY{p}{(}
+    \PY{n}{exp} \PY{o}{=} \PY{n}{data2}\PY{o}{\PYZdl{}}\PY{n}{Experiment}\PY{p}{,}
+    \PY{n}{events} \PY{o}{=} \PY{n}{data2}\PY{o}{\PYZdl{}}\PY{n}{CRdetected}\PY{p}{,}
+    \PY{n}{time} \PY{o}{=} \PY{n}{data2}\PY{o}{\PYZdl{}}\PY{n}{Powered.on.time..hours.}\PY{p}{,}
+    \PY{n}{detectors} \PY{o}{=} \PY{n}{data2}\PY{o}{\PYZdl{}}\PY{n}{Parallelarrays} \PY{o}{+} \PY{l+m}{1}
+\PY{p}{)}\PY{p}{)}
+\PY{n}{d}\PY{o}{\PYZdl{}}\PY{n}{logtime} \PY{o}{=} \PY{n+nf}{log}\PY{p}{(}\PY{n}{d}\PY{o}{\PYZdl{}}\PY{n}{time}\PY{p}{)}
+\PY{n}{d}\PY{o}{\PYZdl{}}\PY{n}{amp} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n}{data2}\PY{o}{\PYZdl{}}\PY{n}{Amplifier.}
+\PY{n}{d}\PY{o}{\PYZdl{}}\PY{n}{new} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n}{data2}\PY{o}{\PYZdl{}}\PY{n}{Next.gen.}
+\PY{n+nf}{pairs}\PY{p}{(}\PY{n}{d}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{asmp_exam_immanuel_albrecht_230614_files/asmp_exam_immanuel_albrecht_230614_33_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    In the pairs plot we see that the events \textasciitilde{} time plot has
+a lot of data in short time spans and few datapoints for big time spans.
+Thus it is helpful to use a logartihmic scale for the time.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{69}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nf}{plot}\PY{p}{(}\PY{n}{events} \PY{o}{\PYZti{}} \PY{n}{logtime}\PY{p}{,} \PY{n}{data} \PY{o}{=} \PY{n}{d}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{asmp_exam_immanuel_albrecht_230614_files/asmp_exam_immanuel_albrecht_230614_35_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    We start by building a single intercept model with slope.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{99}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Linear model}
+\PY{n}{model} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{map2stan}\PY{p}{(}
+    \PY{n+nf}{alist}\PY{p}{(}
+        \PY{n}{events} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{dpois}\PY{p}{(}\PY{n}{lambda}\PY{p}{)}\PY{p}{,}
+        \PY{n+nf}{log}\PY{p}{(}\PY{n}{lambda}\PY{p}{)} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n}{a} \PY{o}{+} \PY{n}{b\PYZus{}logtime} \PY{o}{*} \PY{n}{logtime}\PY{p}{,}
+        \PY{n}{a} \PY{o}{\PYZti{}} \PY{n+nf}{dnorm}\PY{p}{(}\PY{l+m}{0}\PY{p}{,} \PY{l+m}{10}\PY{p}{)}\PY{p}{,}
+        \PY{n}{b\PYZus{}logtime} \PY{o}{\PYZti{}} \PY{n+nf}{dnorm}\PY{p}{(}\PY{l+m}{0}\PY{p}{,} \PY{l+m}{10}\PY{p}{)}
+    \PY{p}{)}\PY{p}{,}
+    \PY{n}{data} \PY{o}{=} \PY{n}{d}\PY{p}{,}
+    \PY{n}{chains} \PY{o}{=} \PY{l+m}{7}\PY{p}{,} \PY{n}{cores} \PY{o}{=} \PY{l+m}{7}
+\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Warning message in map2stan(alist(events <- dpois(lambda), log(lambda) <- a +
+b\_logtime * :
+"DEPRECATED: map2stan is no longer supported and may behave unpredictably or
+stop working altogether. Start using ulam instead."
+Warning in
+'C:/Users/immal/AppData/Local/Temp/RtmpaSqGVm/model-3dd81c45fbe.stan', line 4,
+column 4: Declaration
+    of arrays by placing brackets after a variable name is deprecated and
+    will be removed in Stan 2.32.0. Instead use the array keyword before the
+    type. This can be changed automatically using the auto-format flag to
+    stanc
+Warning in
+'C:/Users/immal/AppData/Local/Temp/RtmpaSqGVm/model-3dd81c45fbe.stan', line 5,
+column 4: Declaration
+    of arrays by placing brackets after a variable name is deprecated and
+    will be removed in Stan 2.32.0. Instead use the array keyword before the
+    type. This can be changed automatically using the auto-format flag to
+    stanc
+
+
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Running MCMC with 7 parallel chains{\ldots}
+
+Chain 1 Iteration:    1 / 2000 [  0\%]  (Warmup)
+Chain 1 Iteration:  100 / 2000 [  5\%]  (Warmup)
+Chain 2 Iteration:    1 / 2000 [  0\%]  (Warmup)
+Chain 2 Iteration:  100 / 2000 [  5\%]  (Warmup)
+Chain 3 Iteration:    1 / 2000 [  0\%]  (Warmup)
+Chain 3 Iteration:  100 / 2000 [  5\%]  (Warmup)
+Chain 4 Iteration:    1 / 2000 [  0\%]  (Warmup)
+Chain 4 Iteration:  100 / 2000 [  5\%]  (Warmup)
+Chain 5 Iteration:    1 / 2000 [  0\%]  (Warmup)
+Chain 6 Iteration:    1 / 2000 [  0\%]  (Warmup)
+Chain 7 Iteration:    1 / 2000 [  0\%]  (Warmup)
+Chain 1 Iteration:  200 / 2000 [ 10\%]  (Warmup)
+Chain 1 Iteration:  300 / 2000 [ 15\%]  (Warmup)
+Chain 1 Iteration:  400 / 2000 [ 20\%]  (Warmup)
+Chain 1 Iteration:  500 / 2000 [ 25\%]  (Warmup)
+Chain 1 Iteration:  600 / 2000 [ 30\%]  (Warmup)
+Chain 1 Iteration:  700 / 2000 [ 35\%]  (Warmup)
+Chain 1 Iteration:  800 / 2000 [ 40\%]  (Warmup)
+Chain 1 Iteration:  900 / 2000 [ 45\%]  (Warmup)
+Chain 1 Iteration: 1000 / 2000 [ 50\%]  (Warmup)
+Chain 1 Iteration: 1001 / 2000 [ 50\%]  (Sampling)
+Chain 1 Iteration: 1100 / 2000 [ 55\%]  (Sampling)
+Chain 1 Iteration: 1200 / 2000 [ 60\%]  (Sampling)
+Chain 2 Iteration:  200 / 2000 [ 10\%]  (Warmup)
+Chain 2 Iteration:  300 / 2000 [ 15\%]  (Warmup)
+Chain 2 Iteration:  400 / 2000 [ 20\%]  (Warmup)
+Chain 2 Iteration:  500 / 2000 [ 25\%]  (Warmup)
+Chain 2 Iteration:  600 / 2000 [ 30\%]  (Warmup)
+Chain 2 Iteration:  700 / 2000 [ 35\%]  (Warmup)
+Chain 2 Iteration:  800 / 2000 [ 40\%]  (Warmup)
+Chain 2 Iteration:  900 / 2000 [ 45\%]  (Warmup)
+Chain 2 Iteration: 1000 / 2000 [ 50\%]  (Warmup)
+Chain 2 Iteration: 1001 / 2000 [ 50\%]  (Sampling)
+Chain 2 Iteration: 1100 / 2000 [ 55\%]  (Sampling)
+Chain 3 Iteration:  200 / 2000 [ 10\%]  (Warmup)
+Chain 3 Iteration:  300 / 2000 [ 15\%]  (Warmup)
+Chain 3 Iteration:  400 / 2000 [ 20\%]  (Warmup)
+Chain 3 Iteration:  500 / 2000 [ 25\%]  (Warmup)
+Chain 3 Iteration:  600 / 2000 [ 30\%]  (Warmup)
+Chain 3 Iteration:  700 / 2000 [ 35\%]  (Warmup)
+Chain 3 Iteration:  800 / 2000 [ 40\%]  (Warmup)
+Chain 3 Iteration:  900 / 2000 [ 45\%]  (Warmup)
+Chain 3 Iteration: 1000 / 2000 [ 50\%]  (Warmup)
+Chain 3 Iteration: 1001 / 2000 [ 50\%]  (Sampling)
+Chain 4 Iteration:  200 / 2000 [ 10\%]  (Warmup)
+Chain 4 Iteration:  300 / 2000 [ 15\%]  (Warmup)
+Chain 4 Iteration:  400 / 2000 [ 20\%]  (Warmup)
+Chain 4 Iteration:  500 / 2000 [ 25\%]  (Warmup)
+Chain 4 Iteration:  600 / 2000 [ 30\%]  (Warmup)
+Chain 4 Iteration:  700 / 2000 [ 35\%]  (Warmup)
+Chain 4 Iteration:  800 / 2000 [ 40\%]  (Warmup)
+Chain 4 Iteration:  900 / 2000 [ 45\%]  (Warmup)
+Chain 4 Iteration: 1000 / 2000 [ 50\%]  (Warmup)
+Chain 4 Iteration: 1001 / 2000 [ 50\%]  (Sampling)
+Chain 5 Iteration:  100 / 2000 [  5\%]  (Warmup)
+Chain 5 Iteration:  200 / 2000 [ 10\%]  (Warmup)
+Chain 5 Iteration:  300 / 2000 [ 15\%]  (Warmup)
+Chain 5 Iteration:  400 / 2000 [ 20\%]  (Warmup)
+Chain 5 Iteration:  500 / 2000 [ 25\%]  (Warmup)
+Chain 5 Iteration:  600 / 2000 [ 30\%]  (Warmup)
+Chain 5 Iteration:  700 / 2000 [ 35\%]  (Warmup)
+Chain 5 Iteration:  800 / 2000 [ 40\%]  (Warmup)
+Chain 5 Iteration:  900 / 2000 [ 45\%]  (Warmup)
+Chain 5 Iteration: 1000 / 2000 [ 50\%]  (Warmup)
+Chain 6 Iteration:  100 / 2000 [  5\%]  (Warmup)
+Chain 6 Iteration:  200 / 2000 [ 10\%]  (Warmup)
+Chain 6 Iteration:  300 / 2000 [ 15\%]  (Warmup)
+Chain 6 Iteration:  400 / 2000 [ 20\%]  (Warmup)
+Chain 6 Iteration:  500 / 2000 [ 25\%]  (Warmup)
+Chain 6 Iteration:  600 / 2000 [ 30\%]  (Warmup)
+Chain 6 Iteration:  700 / 2000 [ 35\%]  (Warmup)
+Chain 6 Iteration:  800 / 2000 [ 40\%]  (Warmup)
+Chain 6 Iteration:  900 / 2000 [ 45\%]  (Warmup)
+Chain 7 Iteration:  100 / 2000 [  5\%]  (Warmup)
+Chain 7 Iteration:  200 / 2000 [ 10\%]  (Warmup)
+Chain 7 Iteration:  300 / 2000 [ 15\%]  (Warmup)
+Chain 7 Iteration:  400 / 2000 [ 20\%]  (Warmup)
+Chain 7 Iteration:  500 / 2000 [ 25\%]  (Warmup)
+Chain 7 Iteration:  600 / 2000 [ 30\%]  (Warmup)
+Chain 7 Iteration:  700 / 2000 [ 35\%]  (Warmup)
+Chain 7 Iteration:  800 / 2000 [ 40\%]  (Warmup)
+Chain 7 Iteration:  900 / 2000 [ 45\%]  (Warmup)
+Chain 7 Iteration: 1000 / 2000 [ 50\%]  (Warmup)
+Chain 7 Iteration: 1001 / 2000 [ 50\%]  (Sampling)
+Chain 7 Iteration: 1100 / 2000 [ 55\%]  (Sampling)
+Chain 1 Iteration: 1300 / 2000 [ 65\%]  (Sampling)
+Chain 1 Iteration: 1400 / 2000 [ 70\%]  (Sampling)
+Chain 2 Iteration: 1200 / 2000 [ 60\%]  (Sampling)
+Chain 2 Iteration: 1300 / 2000 [ 65\%]  (Sampling)
+Chain 3 Iteration: 1100 / 2000 [ 55\%]  (Sampling)
+Chain 3 Iteration: 1200 / 2000 [ 60\%]  (Sampling)
+Chain 4 Iteration: 1100 / 2000 [ 55\%]  (Sampling)
+Chain 4 Iteration: 1200 / 2000 [ 60\%]  (Sampling)
+Chain 5 Iteration: 1001 / 2000 [ 50\%]  (Sampling)
+Chain 5 Iteration: 1100 / 2000 [ 55\%]  (Sampling)
+Chain 5 Iteration: 1200 / 2000 [ 60\%]  (Sampling)
+Chain 6 Iteration: 1000 / 2000 [ 50\%]  (Warmup)
+Chain 6 Iteration: 1001 / 2000 [ 50\%]  (Sampling)
+Chain 6 Iteration: 1100 / 2000 [ 55\%]  (Sampling)
+Chain 7 Iteration: 1200 / 2000 [ 60\%]  (Sampling)
+Chain 7 Iteration: 1300 / 2000 [ 65\%]  (Sampling)
+Chain 1 Iteration: 1500 / 2000 [ 75\%]  (Sampling)
+Chain 2 Iteration: 1400 / 2000 [ 70\%]  (Sampling)
+Chain 3 Iteration: 1300 / 2000 [ 65\%]  (Sampling)
+Chain 4 Iteration: 1300 / 2000 [ 65\%]  (Sampling)
+Chain 5 Iteration: 1300 / 2000 [ 65\%]  (Sampling)
+Chain 6 Iteration: 1200 / 2000 [ 60\%]  (Sampling)
+Chain 7 Iteration: 1400 / 2000 [ 70\%]  (Sampling)
+Chain 3 Iteration: 1400 / 2000 [ 70\%]  (Sampling)
+Chain 4 Iteration: 1400 / 2000 [ 70\%]  (Sampling)
+Chain 6 Iteration: 1300 / 2000 [ 65\%]  (Sampling)
+Chain 7 Iteration: 1500 / 2000 [ 75\%]  (Sampling)
+Chain 1 Iteration: 1600 / 2000 [ 80\%]  (Sampling)
+Chain 2 Iteration: 1500 / 2000 [ 75\%]  (Sampling)
+Chain 4 Iteration: 1500 / 2000 [ 75\%]  (Sampling)
+Chain 5 Iteration: 1400 / 2000 [ 70\%]  (Sampling)
+Chain 1 Iteration: 1700 / 2000 [ 85\%]  (Sampling)
+Chain 2 Iteration: 1600 / 2000 [ 80\%]  (Sampling)
+Chain 3 Iteration: 1500 / 2000 [ 75\%]  (Sampling)
+Chain 4 Iteration: 1600 / 2000 [ 80\%]  (Sampling)
+Chain 5 Iteration: 1500 / 2000 [ 75\%]  (Sampling)
+Chain 6 Iteration: 1400 / 2000 [ 70\%]  (Sampling)
+Chain 7 Iteration: 1600 / 2000 [ 80\%]  (Sampling)
+Chain 1 Iteration: 1800 / 2000 [ 90\%]  (Sampling)
+Chain 2 Iteration: 1700 / 2000 [ 85\%]  (Sampling)
+Chain 3 Iteration: 1600 / 2000 [ 80\%]  (Sampling)
+Chain 5 Iteration: 1600 / 2000 [ 80\%]  (Sampling)
+Chain 6 Iteration: 1500 / 2000 [ 75\%]  (Sampling)
+Chain 7 Iteration: 1700 / 2000 [ 85\%]  (Sampling)
+Chain 1 Iteration: 1900 / 2000 [ 95\%]  (Sampling)
+Chain 2 Iteration: 1800 / 2000 [ 90\%]  (Sampling)
+Chain 3 Iteration: 1700 / 2000 [ 85\%]  (Sampling)
+Chain 4 Iteration: 1700 / 2000 [ 85\%]  (Sampling)
+Chain 5 Iteration: 1700 / 2000 [ 85\%]  (Sampling)
+Chain 6 Iteration: 1600 / 2000 [ 80\%]  (Sampling)
+Chain 7 Iteration: 1800 / 2000 [ 90\%]  (Sampling)
+Chain 1 Iteration: 2000 / 2000 [100\%]  (Sampling)
+Chain 2 Iteration: 1900 / 2000 [ 95\%]  (Sampling)
+Chain 3 Iteration: 1800 / 2000 [ 90\%]  (Sampling)
+Chain 4 Iteration: 1800 / 2000 [ 90\%]  (Sampling)
+Chain 5 Iteration: 1800 / 2000 [ 90\%]  (Sampling)
+Chain 6 Iteration: 1700 / 2000 [ 85\%]  (Sampling)
+Chain 7 Iteration: 1900 / 2000 [ 95\%]  (Sampling)
+Chain 1 finished in 4.0 seconds.
+Chain 2 Iteration: 2000 / 2000 [100\%]  (Sampling)
+Chain 3 Iteration: 1900 / 2000 [ 95\%]  (Sampling)
+Chain 4 Iteration: 1900 / 2000 [ 95\%]  (Sampling)
+Chain 6 Iteration: 1800 / 2000 [ 90\%]  (Sampling)
+Chain 7 Iteration: 2000 / 2000 [100\%]  (Sampling)
+Chain 2 finished in 4.1 seconds.
+Chain 7 finished in 3.9 seconds.
+Chain 3 Iteration: 2000 / 2000 [100\%]  (Sampling)
+Chain 4 Iteration: 2000 / 2000 [100\%]  (Sampling)
+Chain 5 Iteration: 1900 / 2000 [ 95\%]  (Sampling)
+Chain 6 Iteration: 1900 / 2000 [ 95\%]  (Sampling)
+Chain 3 finished in 4.2 seconds.
+Chain 4 finished in 4.1 seconds.
+Chain 5 Iteration: 2000 / 2000 [100\%]  (Sampling)
+Chain 6 Iteration: 2000 / 2000 [100\%]  (Sampling)
+Chain 5 finished in 4.3 seconds.
+Chain 6 finished in 4.3 seconds.
+
+All 7 chains finished successfully.
+Mean chain execution time: 4.1 seconds.
+Total execution time: 4.5 seconds.
+
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Computing WAIC
+
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{100}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{seq} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{seq}\PY{p}{(}\PY{n}{from} \PY{o}{=} \PY{l+m}{\PYZhy{}6}\PY{p}{,} \PY{n}{to} \PY{o}{=} \PY{l+m}{5}\PY{p}{,} \PY{n}{by} \PY{o}{=} \PY{l+m}{0.1}\PY{p}{)}
+
+\PY{n}{mu} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{link}\PY{p}{(}\PY{n}{model}\PY{p}{,} \PY{n}{data} \PY{o}{=} \PY{n+nf}{list}\PY{p}{(}\PY{n}{logtime} \PY{o}{=} \PY{n}{seq}\PY{p}{)}\PY{p}{)}
+\PY{n}{mu\PYZus{}mean} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{apply}\PY{p}{(}\PY{n}{mu}\PY{p}{,} \PY{l+m}{2}\PY{p}{,} \PY{n}{mean}\PY{p}{)}
+\PY{n}{mu\PYZus{}HPDI} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{apply}\PY{p}{(}\PY{n}{mu}\PY{p}{,} \PY{l+m}{2}\PY{p}{,} \PY{n}{HPDI}\PY{p}{,} \PY{n}{prob} \PY{o}{=} \PY{l+m}{0.91}\PY{p}{)}
+
+\PY{n+nf}{plot}\PY{p}{(}\PY{n}{events} \PY{o}{\PYZti{}} \PY{n}{logtime}\PY{p}{,} \PY{n}{data} \PY{o}{=} \PY{n}{d}\PY{p}{)}
+\PY{n+nf}{lines}\PY{p}{(}\PY{n}{seq}\PY{p}{,} \PY{n}{mu\PYZus{}mean}\PY{p}{)}
+\PY{n+nf}{shade}\PY{p}{(}\PY{n}{mu\PYZus{}HPDI}\PY{p}{,} \PY{n}{seq}\PY{p}{)}
+
+\PY{n}{sim\PYZus{}data} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{sim}\PY{p}{(}\PY{n}{model}\PY{p}{,} \PY{n}{data} \PY{o}{=} \PY{n+nf}{list}\PY{p}{(}\PY{n}{logtime} \PY{o}{=} \PY{n}{seq}\PY{p}{)}\PY{p}{)}
+\PY{n}{sim\PYZus{}HPDI} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{apply}\PY{p}{(}\PY{n}{sim\PYZus{}data}\PY{p}{,} \PY{l+m}{2}\PY{p}{,} \PY{n}{HPDI}\PY{p}{,} \PY{n}{prob} \PY{o}{=} \PY{l+m}{0.91}\PY{p}{)}
+\PY{n+nf}{shade}\PY{p}{(}\PY{n}{sim\PYZus{}HPDI}\PY{p}{,} \PY{n}{seq}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+[ 1000 / 1000 ]
+[ 1000 / 1000 ]
+    \end{Verbatim}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{asmp_exam_immanuel_albrecht_230614_files/asmp_exam_immanuel_albrecht_230614_38_1.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    We see that a Poisson glm with a linear dependence on time has a big
+overdispersion. Lets consider some more models with different
+predictors.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{101}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Linear model with an additional intercept if the experiment has an amplifier}
+\PY{n}{model\PYZus{}amp} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{map2stan}\PY{p}{(}
+    \PY{n+nf}{alist}\PY{p}{(}
+        \PY{n}{events} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{dpois}\PY{p}{(}\PY{n}{lambda}\PY{p}{)}\PY{p}{,}
+        \PY{n+nf}{log}\PY{p}{(}\PY{n}{lambda}\PY{p}{)} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n}{a} \PY{o}{+} \PY{n}{b\PYZus{}logtime} \PY{o}{*} \PY{n}{logtime} \PY{o}{+} \PY{n}{a\PYZus{}amp} \PY{o}{*} \PY{n}{amp}\PY{p}{,}
+        \PY{n}{a} \PY{o}{\PYZti{}} \PY{n+nf}{dnorm}\PY{p}{(}\PY{l+m}{0}\PY{p}{,} \PY{l+m}{10}\PY{p}{)}\PY{p}{,}
+        \PY{n}{b\PYZus{}logtime} \PY{o}{\PYZti{}} \PY{n+nf}{dnorm}\PY{p}{(}\PY{l+m}{0}\PY{p}{,} \PY{l+m}{10}\PY{p}{)}\PY{p}{,}
+        \PY{n}{a\PYZus{}amp} \PY{o}{\PYZti{}} \PY{n+nf}{dnorm}\PY{p}{(}\PY{l+m}{0}\PY{p}{,} \PY{l+m}{10}\PY{p}{)}
+    \PY{p}{)}\PY{p}{,}
+    \PY{n}{data} \PY{o}{=} \PY{n}{d}\PY{p}{,}
+    \PY{n}{chains} \PY{o}{=} \PY{l+m}{7}\PY{p}{,} \PY{n}{cores} \PY{o}{=} \PY{l+m}{7}
+\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Warning message in map2stan(alist(events <- dpois(lambda), log(lambda) <- a +
+b\_logtime * :
+"DEPRECATED: map2stan is no longer supported and may behave unpredictably or
+stop working altogether. Start using ulam instead."
+Warning in
+'C:/Users/immal/AppData/Local/Temp/RtmpaSqGVm/model-3dd82bd84e84.stan', line 4,
+column 4: Declaration
+    of arrays by placing brackets after a variable name is deprecated and
+    will be removed in Stan 2.32.0. Instead use the array keyword before the
+    type. This can be changed automatically using the auto-format flag to
+    stanc
+Warning in
+'C:/Users/immal/AppData/Local/Temp/RtmpaSqGVm/model-3dd82bd84e84.stan', line 5,
+column 4: Declaration
+    of arrays by placing brackets after a variable name is deprecated and
+    will be removed in Stan 2.32.0. Instead use the array keyword before the
+    type. This can be changed automatically using the auto-format flag to
+    stanc
+Warning in
+'C:/Users/immal/AppData/Local/Temp/RtmpaSqGVm/model-3dd82bd84e84.stan', line 6,
+column 4: Declaration
+    of arrays by placing brackets after a variable name is deprecated and
+    will be removed in Stan 2.32.0. Instead use the array keyword before the
+    type. This can be changed automatically using the auto-format flag to
+    stanc
+
+
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Running MCMC with 7 parallel chains{\ldots}
+
+Chain 1 Iteration:    1 / 2000 [  0\%]  (Warmup)
+Chain 2 Iteration:    1 / 2000 [  0\%]  (Warmup)
+Chain 3 Iteration:    1 / 2000 [  0\%]  (Warmup)
+Chain 4 Iteration:    1 / 2000 [  0\%]  (Warmup)
+Chain 5 Iteration:    1 / 2000 [  0\%]  (Warmup)
+Chain 6 Iteration:    1 / 2000 [  0\%]  (Warmup)
+Chain 7 Iteration:    1 / 2000 [  0\%]  (Warmup)
+Chain 1 Iteration:  100 / 2000 [  5\%]  (Warmup)
+Chain 1 Iteration:  200 / 2000 [ 10\%]  (Warmup)
+Chain 1 Iteration:  300 / 2000 [ 15\%]  (Warmup)
+Chain 1 Iteration:  400 / 2000 [ 20\%]  (Warmup)
+Chain 1 Iteration:  500 / 2000 [ 25\%]  (Warmup)
+Chain 2 Iteration:  100 / 2000 [  5\%]  (Warmup)
+Chain 2 Iteration:  200 / 2000 [ 10\%]  (Warmup)
+Chain 2 Iteration:  300 / 2000 [ 15\%]  (Warmup)
+Chain 2 Iteration:  400 / 2000 [ 20\%]  (Warmup)
+Chain 3 Iteration:  100 / 2000 [  5\%]  (Warmup)
+Chain 3 Iteration:  200 / 2000 [ 10\%]  (Warmup)
+Chain 3 Iteration:  300 / 2000 [ 15\%]  (Warmup)
+Chain 3 Iteration:  400 / 2000 [ 20\%]  (Warmup)
+Chain 3 Iteration:  500 / 2000 [ 25\%]  (Warmup)
+Chain 4 Iteration:  100 / 2000 [  5\%]  (Warmup)
+Chain 4 Iteration:  200 / 2000 [ 10\%]  (Warmup)
+Chain 4 Iteration:  300 / 2000 [ 15\%]  (Warmup)
+Chain 4 Iteration:  400 / 2000 [ 20\%]  (Warmup)
+Chain 4 Iteration:  500 / 2000 [ 25\%]  (Warmup)
+Chain 5 Iteration:  100 / 2000 [  5\%]  (Warmup)
+Chain 5 Iteration:  200 / 2000 [ 10\%]  (Warmup)
+Chain 5 Iteration:  300 / 2000 [ 15\%]  (Warmup)
+Chain 5 Iteration:  400 / 2000 [ 20\%]  (Warmup)
+Chain 5 Iteration:  500 / 2000 [ 25\%]  (Warmup)
+Chain 6 Iteration:  100 / 2000 [  5\%]  (Warmup)
+Chain 6 Iteration:  200 / 2000 [ 10\%]  (Warmup)
+Chain 6 Iteration:  300 / 2000 [ 15\%]  (Warmup)
+Chain 6 Iteration:  400 / 2000 [ 20\%]  (Warmup)
+Chain 6 Iteration:  500 / 2000 [ 25\%]  (Warmup)
+Chain 7 Iteration:  100 / 2000 [  5\%]  (Warmup)
+Chain 7 Iteration:  200 / 2000 [ 10\%]  (Warmup)
+Chain 7 Iteration:  300 / 2000 [ 15\%]  (Warmup)
+Chain 7 Iteration:  400 / 2000 [ 20\%]  (Warmup)
+Chain 7 Iteration:  500 / 2000 [ 25\%]  (Warmup)
+Chain 2 Iteration:  500 / 2000 [ 25\%]  (Warmup)
+Chain 4 Iteration:  600 / 2000 [ 30\%]  (Warmup)
+Chain 6 Iteration:  600 / 2000 [ 30\%]  (Warmup)
+Chain 7 Iteration:  600 / 2000 [ 30\%]  (Warmup)
+Chain 1 Iteration:  600 / 2000 [ 30\%]  (Warmup)
+Chain 3 Iteration:  600 / 2000 [ 30\%]  (Warmup)
+Chain 5 Iteration:  600 / 2000 [ 30\%]  (Warmup)
+Chain 2 Iteration:  600 / 2000 [ 30\%]  (Warmup)
+Chain 1 Iteration:  700 / 2000 [ 35\%]  (Warmup)
+Chain 3 Iteration:  700 / 2000 [ 35\%]  (Warmup)
+Chain 4 Iteration:  700 / 2000 [ 35\%]  (Warmup)
+Chain 6 Iteration:  700 / 2000 [ 35\%]  (Warmup)
+Chain 7 Iteration:  700 / 2000 [ 35\%]  (Warmup)
+Chain 2 Iteration:  700 / 2000 [ 35\%]  (Warmup)
+Chain 5 Iteration:  700 / 2000 [ 35\%]  (Warmup)
+Chain 4 Iteration:  800 / 2000 [ 40\%]  (Warmup)
+Chain 6 Iteration:  800 / 2000 [ 40\%]  (Warmup)
+Chain 7 Iteration:  800 / 2000 [ 40\%]  (Warmup)
+Chain 1 Iteration:  800 / 2000 [ 40\%]  (Warmup)
+Chain 3 Iteration:  800 / 2000 [ 40\%]  (Warmup)
+Chain 5 Iteration:  800 / 2000 [ 40\%]  (Warmup)
+Chain 2 Iteration:  800 / 2000 [ 40\%]  (Warmup)
+Chain 4 Iteration:  900 / 2000 [ 45\%]  (Warmup)
+Chain 6 Iteration:  900 / 2000 [ 45\%]  (Warmup)
+Chain 7 Iteration:  900 / 2000 [ 45\%]  (Warmup)
+Chain 1 Iteration:  900 / 2000 [ 45\%]  (Warmup)
+Chain 3 Iteration:  900 / 2000 [ 45\%]  (Warmup)
+Chain 5 Iteration:  900 / 2000 [ 45\%]  (Warmup)
+Chain 2 Iteration:  900 / 2000 [ 45\%]  (Warmup)
+Chain 4 Iteration: 1000 / 2000 [ 50\%]  (Warmup)
+Chain 7 Iteration: 1000 / 2000 [ 50\%]  (Warmup)
+Chain 3 Iteration: 1000 / 2000 [ 50\%]  (Warmup)
+Chain 4 Iteration: 1001 / 2000 [ 50\%]  (Sampling)
+Chain 6 Iteration: 1000 / 2000 [ 50\%]  (Warmup)
+Chain 7 Iteration: 1001 / 2000 [ 50\%]  (Sampling)
+Chain 1 Iteration: 1000 / 2000 [ 50\%]  (Warmup)
+Chain 2 Iteration: 1000 / 2000 [ 50\%]  (Warmup)
+Chain 3 Iteration: 1001 / 2000 [ 50\%]  (Sampling)
+Chain 4 Iteration: 1100 / 2000 [ 55\%]  (Sampling)
+Chain 5 Iteration: 1000 / 2000 [ 50\%]  (Warmup)
+Chain 6 Iteration: 1001 / 2000 [ 50\%]  (Sampling)
+Chain 1 Iteration: 1001 / 2000 [ 50\%]  (Sampling)
+Chain 2 Iteration: 1001 / 2000 [ 50\%]  (Sampling)
+Chain 5 Iteration: 1001 / 2000 [ 50\%]  (Sampling)
+Chain 7 Iteration: 1100 / 2000 [ 55\%]  (Sampling)
+Chain 3 Iteration: 1100 / 2000 [ 55\%]  (Sampling)
+Chain 5 Iteration: 1100 / 2000 [ 55\%]  (Sampling)
+Chain 6 Iteration: 1100 / 2000 [ 55\%]  (Sampling)
+Chain 1 Iteration: 1100 / 2000 [ 55\%]  (Sampling)
+Chain 2 Iteration: 1100 / 2000 [ 55\%]  (Sampling)
+Chain 4 Iteration: 1200 / 2000 [ 60\%]  (Sampling)
+Chain 3 Iteration: 1200 / 2000 [ 60\%]  (Sampling)
+Chain 7 Iteration: 1200 / 2000 [ 60\%]  (Sampling)
+Chain 1 Iteration: 1200 / 2000 [ 60\%]  (Sampling)
+Chain 5 Iteration: 1200 / 2000 [ 60\%]  (Sampling)
+Chain 6 Iteration: 1200 / 2000 [ 60\%]  (Sampling)
+Chain 2 Iteration: 1200 / 2000 [ 60\%]  (Sampling)
+Chain 4 Iteration: 1300 / 2000 [ 65\%]  (Sampling)
+Chain 7 Iteration: 1300 / 2000 [ 65\%]  (Sampling)
+Chain 3 Iteration: 1300 / 2000 [ 65\%]  (Sampling)
+Chain 6 Iteration: 1300 / 2000 [ 65\%]  (Sampling)
+Chain 1 Iteration: 1300 / 2000 [ 65\%]  (Sampling)
+Chain 4 Iteration: 1400 / 2000 [ 70\%]  (Sampling)
+Chain 5 Iteration: 1300 / 2000 [ 65\%]  (Sampling)
+Chain 2 Iteration: 1300 / 2000 [ 65\%]  (Sampling)
+Chain 3 Iteration: 1400 / 2000 [ 70\%]  (Sampling)
+Chain 7 Iteration: 1400 / 2000 [ 70\%]  (Sampling)
+Chain 1 Iteration: 1400 / 2000 [ 70\%]  (Sampling)
+Chain 6 Iteration: 1400 / 2000 [ 70\%]  (Sampling)
+Chain 4 Iteration: 1500 / 2000 [ 75\%]  (Sampling)
+Chain 5 Iteration: 1400 / 2000 [ 70\%]  (Sampling)
+Chain 2 Iteration: 1400 / 2000 [ 70\%]  (Sampling)
+Chain 3 Iteration: 1500 / 2000 [ 75\%]  (Sampling)
+Chain 7 Iteration: 1500 / 2000 [ 75\%]  (Sampling)
+Chain 1 Iteration: 1500 / 2000 [ 75\%]  (Sampling)
+Chain 6 Iteration: 1500 / 2000 [ 75\%]  (Sampling)
+Chain 2 Iteration: 1500 / 2000 [ 75\%]  (Sampling)
+Chain 4 Iteration: 1600 / 2000 [ 80\%]  (Sampling)
+Chain 5 Iteration: 1500 / 2000 [ 75\%]  (Sampling)
+Chain 3 Iteration: 1600 / 2000 [ 80\%]  (Sampling)
+Chain 7 Iteration: 1600 / 2000 [ 80\%]  (Sampling)
+Chain 1 Iteration: 1600 / 2000 [ 80\%]  (Sampling)
+Chain 4 Iteration: 1700 / 2000 [ 85\%]  (Sampling)
+Chain 5 Iteration: 1600 / 2000 [ 80\%]  (Sampling)
+Chain 6 Iteration: 1600 / 2000 [ 80\%]  (Sampling)
+Chain 2 Iteration: 1600 / 2000 [ 80\%]  (Sampling)
+Chain 7 Iteration: 1700 / 2000 [ 85\%]  (Sampling)
+Chain 3 Iteration: 1700 / 2000 [ 85\%]  (Sampling)
+Chain 1 Iteration: 1700 / 2000 [ 85\%]  (Sampling)
+Chain 4 Iteration: 1800 / 2000 [ 90\%]  (Sampling)
+Chain 6 Iteration: 1700 / 2000 [ 85\%]  (Sampling)
+Chain 2 Iteration: 1700 / 2000 [ 85\%]  (Sampling)
+Chain 3 Iteration: 1800 / 2000 [ 90\%]  (Sampling)
+Chain 5 Iteration: 1700 / 2000 [ 85\%]  (Sampling)
+Chain 7 Iteration: 1800 / 2000 [ 90\%]  (Sampling)
+Chain 1 Iteration: 1800 / 2000 [ 90\%]  (Sampling)
+Chain 4 Iteration: 1900 / 2000 [ 95\%]  (Sampling)
+Chain 6 Iteration: 1800 / 2000 [ 90\%]  (Sampling)
+Chain 2 Iteration: 1800 / 2000 [ 90\%]  (Sampling)
+Chain 3 Iteration: 1900 / 2000 [ 95\%]  (Sampling)
+Chain 5 Iteration: 1800 / 2000 [ 90\%]  (Sampling)
+Chain 7 Iteration: 1900 / 2000 [ 95\%]  (Sampling)
+Chain 1 Iteration: 1900 / 2000 [ 95\%]  (Sampling)
+Chain 4 Iteration: 2000 / 2000 [100\%]  (Sampling)
+Chain 6 Iteration: 1900 / 2000 [ 95\%]  (Sampling)
+Chain 4 finished in 7.3 seconds.
+Chain 3 Iteration: 2000 / 2000 [100\%]  (Sampling)
+Chain 5 Iteration: 1900 / 2000 [ 95\%]  (Sampling)
+Chain 3 finished in 7.4 seconds.
+Chain 2 Iteration: 1900 / 2000 [ 95\%]  (Sampling)
+Chain 7 Iteration: 2000 / 2000 [100\%]  (Sampling)
+Chain 7 finished in 7.4 seconds.
+Chain 1 Iteration: 2000 / 2000 [100\%]  (Sampling)
+Chain 5 Iteration: 2000 / 2000 [100\%]  (Sampling)
+Chain 6 Iteration: 2000 / 2000 [100\%]  (Sampling)
+Chain 1 finished in 7.7 seconds.
+Chain 5 finished in 7.7 seconds.
+Chain 6 finished in 7.6 seconds.
+Chain 2 Iteration: 2000 / 2000 [100\%]  (Sampling)
+Chain 2 finished in 7.9 seconds.
+
+All 7 chains finished successfully.
+Mean chain execution time: 7.6 seconds.
+Total execution time: 8.0 seconds.
+
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Computing WAIC
+
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{102}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Linear model with an additional intercept if the experiment is new}
+\PY{n}{model\PYZus{}new} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{map2stan}\PY{p}{(}
+    \PY{n+nf}{alist}\PY{p}{(}
+        \PY{n}{events} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{dpois}\PY{p}{(}\PY{n}{lambda}\PY{p}{)}\PY{p}{,}
+        \PY{n+nf}{log}\PY{p}{(}\PY{n}{lambda}\PY{p}{)} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n}{a} \PY{o}{+} \PY{n}{b\PYZus{}logtime} \PY{o}{*} \PY{n}{logtime} \PY{o}{+} \PY{n}{a\PYZus{}new} \PY{o}{*} \PY{n}{new}\PY{p}{,}
+        \PY{n}{a} \PY{o}{\PYZti{}} \PY{n+nf}{dnorm}\PY{p}{(}\PY{l+m}{0}\PY{p}{,} \PY{l+m}{10}\PY{p}{)}\PY{p}{,}
+        \PY{n}{b\PYZus{}logtime} \PY{o}{\PYZti{}} \PY{n+nf}{dnorm}\PY{p}{(}\PY{l+m}{0}\PY{p}{,} \PY{l+m}{10}\PY{p}{)}\PY{p}{,}
+        \PY{n}{a\PYZus{}new} \PY{o}{\PYZti{}} \PY{n+nf}{dnorm}\PY{p}{(}\PY{l+m}{0}\PY{p}{,} \PY{l+m}{10}\PY{p}{)}
+    \PY{p}{)}\PY{p}{,}
+    \PY{n}{data} \PY{o}{=} \PY{n}{d}\PY{p}{,}
+    \PY{n}{chains} \PY{o}{=} \PY{l+m}{7}\PY{p}{,} \PY{n}{cores} \PY{o}{=} \PY{l+m}{7}
+\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Warning message in map2stan(alist(events <- dpois(lambda), log(lambda) <- a +
+b\_logtime * :
+"DEPRECATED: map2stan is no longer supported and may behave unpredictably or
+stop working altogether. Start using ulam instead."
+Warning in
+'C:/Users/immal/AppData/Local/Temp/RtmpaSqGVm/model-3dd830c217f0.stan', line 4,
+column 4: Declaration
+    of arrays by placing brackets after a variable name is deprecated and
+    will be removed in Stan 2.32.0. Instead use the array keyword before the
+    type. This can be changed automatically using the auto-format flag to
+    stanc
+Warning in
+'C:/Users/immal/AppData/Local/Temp/RtmpaSqGVm/model-3dd830c217f0.stan', line 5,
+column 4: Declaration
+    of arrays by placing brackets after a variable name is deprecated and
+    will be removed in Stan 2.32.0. Instead use the array keyword before the
+    type. This can be changed automatically using the auto-format flag to
+    stanc
+Warning in
+'C:/Users/immal/AppData/Local/Temp/RtmpaSqGVm/model-3dd830c217f0.stan', line 6,
+column 4: Declaration
+    of arrays by placing brackets after a variable name is deprecated and
+    will be removed in Stan 2.32.0. Instead use the array keyword before the
+    type. This can be changed automatically using the auto-format flag to
+    stanc
+
+
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Running MCMC with 7 parallel chains{\ldots}
+
+Chain 1 Iteration:    1 / 2000 [  0\%]  (Warmup)
+Chain 2 Iteration:    1 / 2000 [  0\%]  (Warmup)
+Chain 3 Iteration:    1 / 2000 [  0\%]  (Warmup)
+Chain 4 Iteration:    1 / 2000 [  0\%]  (Warmup)
+Chain 5 Iteration:    1 / 2000 [  0\%]  (Warmup)
+Chain 6 Iteration:    1 / 2000 [  0\%]  (Warmup)
+Chain 7 Iteration:    1 / 2000 [  0\%]  (Warmup)
+Chain 1 Iteration:  100 / 2000 [  5\%]  (Warmup)
+Chain 1 Iteration:  200 / 2000 [ 10\%]  (Warmup)
+Chain 1 Iteration:  300 / 2000 [ 15\%]  (Warmup)
+Chain 1 Iteration:  400 / 2000 [ 20\%]  (Warmup)
+Chain 1 Iteration:  500 / 2000 [ 25\%]  (Warmup)
+Chain 1 Iteration:  600 / 2000 [ 30\%]  (Warmup)
+Chain 1 Iteration:  700 / 2000 [ 35\%]  (Warmup)
+Chain 1 Iteration:  800 / 2000 [ 40\%]  (Warmup)
+Chain 2 Iteration:  100 / 2000 [  5\%]  (Warmup)
+Chain 2 Iteration:  200 / 2000 [ 10\%]  (Warmup)
+Chain 2 Iteration:  300 / 2000 [ 15\%]  (Warmup)
+Chain 2 Iteration:  400 / 2000 [ 20\%]  (Warmup)
+Chain 2 Iteration:  500 / 2000 [ 25\%]  (Warmup)
+Chain 2 Iteration:  600 / 2000 [ 30\%]  (Warmup)
+Chain 2 Iteration:  700 / 2000 [ 35\%]  (Warmup)
+Chain 3 Iteration:  100 / 2000 [  5\%]  (Warmup)
+Chain 3 Iteration:  200 / 2000 [ 10\%]  (Warmup)
+Chain 3 Iteration:  300 / 2000 [ 15\%]  (Warmup)
+Chain 3 Iteration:  400 / 2000 [ 20\%]  (Warmup)
+Chain 3 Iteration:  500 / 2000 [ 25\%]  (Warmup)
+Chain 3 Iteration:  600 / 2000 [ 30\%]  (Warmup)
+Chain 3 Iteration:  700 / 2000 [ 35\%]  (Warmup)
+Chain 4 Iteration:  100 / 2000 [  5\%]  (Warmup)
+Chain 4 Iteration:  200 / 2000 [ 10\%]  (Warmup)
+Chain 4 Iteration:  300 / 2000 [ 15\%]  (Warmup)
+Chain 4 Iteration:  400 / 2000 [ 20\%]  (Warmup)
+Chain 4 Iteration:  500 / 2000 [ 25\%]  (Warmup)
+Chain 4 Iteration:  600 / 2000 [ 30\%]  (Warmup)
+Chain 5 Iteration:  100 / 2000 [  5\%]  (Warmup)
+Chain 5 Iteration:  200 / 2000 [ 10\%]  (Warmup)
+Chain 5 Iteration:  300 / 2000 [ 15\%]  (Warmup)
+Chain 5 Iteration:  400 / 2000 [ 20\%]  (Warmup)
+Chain 5 Iteration:  500 / 2000 [ 25\%]  (Warmup)
+Chain 5 Iteration:  600 / 2000 [ 30\%]  (Warmup)
+Chain 6 Iteration:  100 / 2000 [  5\%]  (Warmup)
+Chain 6 Iteration:  200 / 2000 [ 10\%]  (Warmup)
+Chain 6 Iteration:  300 / 2000 [ 15\%]  (Warmup)
+Chain 6 Iteration:  400 / 2000 [ 20\%]  (Warmup)
+Chain 6 Iteration:  500 / 2000 [ 25\%]  (Warmup)
+Chain 6 Iteration:  600 / 2000 [ 30\%]  (Warmup)
+Chain 7 Iteration:  100 / 2000 [  5\%]  (Warmup)
+Chain 7 Iteration:  200 / 2000 [ 10\%]  (Warmup)
+Chain 7 Iteration:  300 / 2000 [ 15\%]  (Warmup)
+Chain 7 Iteration:  400 / 2000 [ 20\%]  (Warmup)
+Chain 7 Iteration:  500 / 2000 [ 25\%]  (Warmup)
+Chain 7 Iteration:  600 / 2000 [ 30\%]  (Warmup)
+Chain 7 Iteration:  700 / 2000 [ 35\%]  (Warmup)
+Chain 1 Iteration:  900 / 2000 [ 45\%]  (Warmup)
+Chain 2 Iteration:  800 / 2000 [ 40\%]  (Warmup)
+Chain 3 Iteration:  800 / 2000 [ 40\%]  (Warmup)
+Chain 4 Iteration:  700 / 2000 [ 35\%]  (Warmup)
+Chain 5 Iteration:  700 / 2000 [ 35\%]  (Warmup)
+Chain 6 Iteration:  700 / 2000 [ 35\%]  (Warmup)
+Chain 7 Iteration:  800 / 2000 [ 40\%]  (Warmup)
+Chain 1 Iteration: 1000 / 2000 [ 50\%]  (Warmup)
+Chain 1 Iteration: 1001 / 2000 [ 50\%]  (Sampling)
+Chain 3 Iteration:  900 / 2000 [ 45\%]  (Warmup)
+Chain 4 Iteration:  800 / 2000 [ 40\%]  (Warmup)
+Chain 5 Iteration:  800 / 2000 [ 40\%]  (Warmup)
+Chain 6 Iteration:  800 / 2000 [ 40\%]  (Warmup)
+Chain 2 Iteration:  900 / 2000 [ 45\%]  (Warmup)
+Chain 7 Iteration:  900 / 2000 [ 45\%]  (Warmup)
+Chain 1 Iteration: 1100 / 2000 [ 55\%]  (Sampling)
+Chain 3 Iteration: 1000 / 2000 [ 50\%]  (Warmup)
+Chain 4 Iteration:  900 / 2000 [ 45\%]  (Warmup)
+Chain 5 Iteration:  900 / 2000 [ 45\%]  (Warmup)
+Chain 6 Iteration:  900 / 2000 [ 45\%]  (Warmup)
+Chain 2 Iteration: 1000 / 2000 [ 50\%]  (Warmup)
+Chain 3 Iteration: 1001 / 2000 [ 50\%]  (Sampling)
+Chain 1 Iteration: 1200 / 2000 [ 60\%]  (Sampling)
+Chain 2 Iteration: 1001 / 2000 [ 50\%]  (Sampling)
+Chain 3 Iteration: 1100 / 2000 [ 55\%]  (Sampling)
+Chain 7 Iteration: 1000 / 2000 [ 50\%]  (Warmup)
+Chain 2 Iteration: 1100 / 2000 [ 55\%]  (Sampling)
+Chain 5 Iteration: 1000 / 2000 [ 50\%]  (Warmup)
+Chain 6 Iteration: 1000 / 2000 [ 50\%]  (Warmup)
+Chain 7 Iteration: 1001 / 2000 [ 50\%]  (Sampling)
+Chain 4 Iteration: 1000 / 2000 [ 50\%]  (Warmup)
+Chain 5 Iteration: 1001 / 2000 [ 50\%]  (Sampling)
+Chain 6 Iteration: 1001 / 2000 [ 50\%]  (Sampling)
+Chain 7 Iteration: 1100 / 2000 [ 55\%]  (Sampling)
+Chain 1 Iteration: 1300 / 2000 [ 65\%]  (Sampling)
+Chain 2 Iteration: 1200 / 2000 [ 60\%]  (Sampling)
+Chain 3 Iteration: 1200 / 2000 [ 60\%]  (Sampling)
+Chain 4 Iteration: 1001 / 2000 [ 50\%]  (Sampling)
+Chain 5 Iteration: 1100 / 2000 [ 55\%]  (Sampling)
+Chain 6 Iteration: 1100 / 2000 [ 55\%]  (Sampling)
+Chain 4 Iteration: 1100 / 2000 [ 55\%]  (Sampling)
+Chain 1 Iteration: 1400 / 2000 [ 70\%]  (Sampling)
+Chain 5 Iteration: 1200 / 2000 [ 60\%]  (Sampling)
+Chain 6 Iteration: 1200 / 2000 [ 60\%]  (Sampling)
+Chain 7 Iteration: 1200 / 2000 [ 60\%]  (Sampling)
+Chain 2 Iteration: 1300 / 2000 [ 65\%]  (Sampling)
+Chain 3 Iteration: 1300 / 2000 [ 65\%]  (Sampling)
+Chain 4 Iteration: 1200 / 2000 [ 60\%]  (Sampling)
+Chain 1 Iteration: 1500 / 2000 [ 75\%]  (Sampling)
+Chain 3 Iteration: 1400 / 2000 [ 70\%]  (Sampling)
+Chain 5 Iteration: 1300 / 2000 [ 65\%]  (Sampling)
+Chain 6 Iteration: 1300 / 2000 [ 65\%]  (Sampling)
+Chain 7 Iteration: 1300 / 2000 [ 65\%]  (Sampling)
+Chain 1 Iteration: 1600 / 2000 [ 80\%]  (Sampling)
+Chain 2 Iteration: 1400 / 2000 [ 70\%]  (Sampling)
+Chain 4 Iteration: 1300 / 2000 [ 65\%]  (Sampling)
+Chain 6 Iteration: 1400 / 2000 [ 70\%]  (Sampling)
+Chain 3 Iteration: 1500 / 2000 [ 75\%]  (Sampling)
+Chain 4 Iteration: 1400 / 2000 [ 70\%]  (Sampling)
+Chain 5 Iteration: 1400 / 2000 [ 70\%]  (Sampling)
+Chain 7 Iteration: 1400 / 2000 [ 70\%]  (Sampling)
+Chain 1 Iteration: 1700 / 2000 [ 85\%]  (Sampling)
+Chain 2 Iteration: 1500 / 2000 [ 75\%]  (Sampling)
+Chain 5 Iteration: 1500 / 2000 [ 75\%]  (Sampling)
+Chain 6 Iteration: 1500 / 2000 [ 75\%]  (Sampling)
+Chain 3 Iteration: 1600 / 2000 [ 80\%]  (Sampling)
+Chain 4 Iteration: 1500 / 2000 [ 75\%]  (Sampling)
+Chain 7 Iteration: 1500 / 2000 [ 75\%]  (Sampling)
+Chain 1 Iteration: 1800 / 2000 [ 90\%]  (Sampling)
+Chain 2 Iteration: 1600 / 2000 [ 80\%]  (Sampling)
+Chain 6 Iteration: 1600 / 2000 [ 80\%]  (Sampling)
+Chain 4 Iteration: 1600 / 2000 [ 80\%]  (Sampling)
+Chain 5 Iteration: 1600 / 2000 [ 80\%]  (Sampling)
+Chain 7 Iteration: 1600 / 2000 [ 80\%]  (Sampling)
+Chain 1 Iteration: 1900 / 2000 [ 95\%]  (Sampling)
+Chain 2 Iteration: 1700 / 2000 [ 85\%]  (Sampling)
+Chain 3 Iteration: 1700 / 2000 [ 85\%]  (Sampling)
+Chain 6 Iteration: 1700 / 2000 [ 85\%]  (Sampling)
+Chain 5 Iteration: 1700 / 2000 [ 85\%]  (Sampling)
+Chain 7 Iteration: 1700 / 2000 [ 85\%]  (Sampling)
+Chain 1 Iteration: 2000 / 2000 [100\%]  (Sampling)
+Chain 2 Iteration: 1800 / 2000 [ 90\%]  (Sampling)
+Chain 3 Iteration: 1800 / 2000 [ 90\%]  (Sampling)
+Chain 4 Iteration: 1700 / 2000 [ 85\%]  (Sampling)
+Chain 6 Iteration: 1800 / 2000 [ 90\%]  (Sampling)
+Chain 1 finished in 6.0 seconds.
+Chain 4 Iteration: 1800 / 2000 [ 90\%]  (Sampling)
+Chain 5 Iteration: 1800 / 2000 [ 90\%]  (Sampling)
+Chain 7 Iteration: 1800 / 2000 [ 90\%]  (Sampling)
+Chain 2 Iteration: 1900 / 2000 [ 95\%]  (Sampling)
+Chain 3 Iteration: 1900 / 2000 [ 95\%]  (Sampling)
+Chain 5 Iteration: 1900 / 2000 [ 95\%]  (Sampling)
+Chain 6 Iteration: 1900 / 2000 [ 95\%]  (Sampling)
+Chain 2 Iteration: 2000 / 2000 [100\%]  (Sampling)
+Chain 3 Iteration: 2000 / 2000 [100\%]  (Sampling)
+Chain 4 Iteration: 1900 / 2000 [ 95\%]  (Sampling)
+Chain 5 Iteration: 2000 / 2000 [100\%]  (Sampling)
+Chain 6 Iteration: 2000 / 2000 [100\%]  (Sampling)
+Chain 7 Iteration: 1900 / 2000 [ 95\%]  (Sampling)
+Chain 2 finished in 6.3 seconds.
+Chain 3 finished in 6.3 seconds.
+Chain 5 finished in 6.3 seconds.
+Chain 6 finished in 6.2 seconds.
+Chain 4 Iteration: 2000 / 2000 [100\%]  (Sampling)
+Chain 7 Iteration: 2000 / 2000 [100\%]  (Sampling)
+Chain 4 finished in 6.4 seconds.
+Chain 7 finished in 6.3 seconds.
+
+All 7 chains finished successfully.
+Mean chain execution time: 6.3 seconds.
+Total execution time: 6.7 seconds.
+
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Computing WAIC
+
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{103}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Linear model with an additional intercept for both next gen and amplifier}
+\PY{n}{model\PYZus{}amp\PYZus{}new} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{map2stan}\PY{p}{(}
+    \PY{n+nf}{alist}\PY{p}{(}
+        \PY{n}{events} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{dpois}\PY{p}{(}\PY{n}{lambda}\PY{p}{)}\PY{p}{,}
+        \PY{n+nf}{log}\PY{p}{(}\PY{n}{lambda}\PY{p}{)} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n}{a} \PY{o}{+} \PY{n}{b\PYZus{}logtime} \PY{o}{*} \PY{n}{logtime} \PY{o}{+} \PY{n}{a\PYZus{}new} \PY{o}{*} \PY{n}{new} \PY{o}{+} \PY{n}{a\PYZus{}amp} \PY{o}{*} \PY{n}{amp}\PY{p}{,}
+        \PY{n}{a} \PY{o}{\PYZti{}} \PY{n+nf}{dnorm}\PY{p}{(}\PY{l+m}{0}\PY{p}{,} \PY{l+m}{10}\PY{p}{)}\PY{p}{,}
+        \PY{n}{b\PYZus{}logtime} \PY{o}{\PYZti{}} \PY{n+nf}{dnorm}\PY{p}{(}\PY{l+m}{0}\PY{p}{,} \PY{l+m}{10}\PY{p}{)}\PY{p}{,}
+        \PY{n}{a\PYZus{}new} \PY{o}{\PYZti{}} \PY{n+nf}{dnorm}\PY{p}{(}\PY{l+m}{0}\PY{p}{,} \PY{l+m}{10}\PY{p}{)}\PY{p}{,}
+        \PY{n}{a\PYZus{}amp} \PY{o}{\PYZti{}} \PY{n+nf}{dnorm}\PY{p}{(}\PY{l+m}{0}\PY{p}{,} \PY{l+m}{10}\PY{p}{)}
+    \PY{p}{)}\PY{p}{,}
+    \PY{n}{data} \PY{o}{=} \PY{n}{d}\PY{p}{,}
+    \PY{n}{chains} \PY{o}{=} \PY{l+m}{7}\PY{p}{,} \PY{n}{cores} \PY{o}{=} \PY{l+m}{7}
+\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Warning message in map2stan(alist(events <- dpois(lambda), log(lambda) <- a +
+b\_logtime * :
+"DEPRECATED: map2stan is no longer supported and may behave unpredictably or
+stop working altogether. Start using ulam instead."
+Warning in
+'C:/Users/immal/AppData/Local/Temp/RtmpaSqGVm/model-3dd83be14fcb.stan', line 4,
+column 4: Declaration
+    of arrays by placing brackets after a variable name is deprecated and
+    will be removed in Stan 2.32.0. Instead use the array keyword before the
+    type. This can be changed automatically using the auto-format flag to
+    stanc
+Warning in
+'C:/Users/immal/AppData/Local/Temp/RtmpaSqGVm/model-3dd83be14fcb.stan', line 5,
+column 4: Declaration
+    of arrays by placing brackets after a variable name is deprecated and
+    will be removed in Stan 2.32.0. Instead use the array keyword before the
+    type. This can be changed automatically using the auto-format flag to
+    stanc
+Warning in
+'C:/Users/immal/AppData/Local/Temp/RtmpaSqGVm/model-3dd83be14fcb.stan', line 6,
+column 4: Declaration
+    of arrays by placing brackets after a variable name is deprecated and
+    will be removed in Stan 2.32.0. Instead use the array keyword before the
+    type. This can be changed automatically using the auto-format flag to
+    stanc
+Warning in
+'C:/Users/immal/AppData/Local/Temp/RtmpaSqGVm/model-3dd83be14fcb.stan', line 7,
+column 4: Declaration
+    of arrays by placing brackets after a variable name is deprecated and
+    will be removed in Stan 2.32.0. Instead use the array keyword before the
+    type. This can be changed automatically using the auto-format flag to
+    stanc
+
+
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}, frame=single, framerule=2mm, rulecolor=\color{outerrorbackground}]
+\textcolor{ansi-red-intense}{\textbf{Cannot execute code, session has been disposed. Please try restarting the Kernel.}}
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}, frame=single, framerule=2mm, rulecolor=\color{outerrorbackground}]
+\textcolor{ansi-red-intense}{\textbf{The Kernel crashed while executing code in the the current cell or a previous cell. Please review the code in the cell(s) to identify a possible cause of the failure. Click <a href='https://aka.ms/vscodeJupyterKernelCrash'>here</a> for more info. View Jupyter <a href='command:jupyter.viewOutput'>log</a> for further details.}}
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{ }{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nf}{compare}\PY{p}{(}\PY{n}{model}\PY{p}{,} \PY{n}{model\PYZus{}amp}\PY{p}{,} \PY{n}{model\PYZus{}new}\PY{p}{,} \PY{n}{model\PYZus{}amp\PYZus{}new}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    A compareIC: 4 × 6
+\begin{tabular}{r|llllll}
+  & WAIC & SE & dWAIC & dSE & pWAIC & weight\\
+  & <dbl> & <dbl> & <dbl> & <dbl> & <dbl> & <dbl>\\
+\hline
+	model\_amp\_new & 2601.721 & 589.9387 &   0.00000 &       NA & 93.96626 & 9.990118e-01\\
+	model\_amp & 2615.559 & 602.3626 &  13.83722 & 43.15715 & 79.69701 & 9.882285e-04\\
+	model\_new & 2733.576 & 635.3908 & 131.85471 & 67.32632 & 90.14860 & 2.331767e-29\\
+	model & 2750.023 & 645.5433 & 148.30187 & 87.13191 & 77.52037 & 6.255018e-33\\
+\end{tabular}
+
+
+    
+    One predictor that we havent yet included is the number of parallel
+detectors, which, as discussed above, might be as important as the
+running time itself. We include it linearly into the four models above.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{76}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Linear model with numbers of detectors}
+\PY{n}{model\PYZus{}detectors} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{map2stan}\PY{p}{(}
+    \PY{n+nf}{alist}\PY{p}{(}
+        \PY{n}{events} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{dpois}\PY{p}{(}\PY{n}{lambda}\PY{p}{)}\PY{p}{,}
+        \PY{n+nf}{log}\PY{p}{(}\PY{n}{lambda}\PY{p}{)} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n}{a} \PY{o}{+} \PY{n}{b\PYZus{}time} \PY{o}{*} \PY{n}{time} \PY{o}{+} \PY{n}{b\PYZus{}detectors} \PY{o}{*} \PY{n}{detectors}\PY{p}{,}
+        \PY{n}{a} \PY{o}{\PYZti{}} \PY{n+nf}{dnorm}\PY{p}{(}\PY{l+m}{0}\PY{p}{,} \PY{l+m}{10}\PY{p}{)}\PY{p}{,}
+        \PY{n}{b\PYZus{}time} \PY{o}{\PYZti{}} \PY{n+nf}{dnorm}\PY{p}{(}\PY{l+m}{0}\PY{p}{,} \PY{l+m}{10}\PY{p}{)}\PY{p}{,}
+        \PY{n}{b\PYZus{}detectors} \PY{o}{\PYZti{}} \PY{n+nf}{dnorm}\PY{p}{(}\PY{l+m}{0}\PY{p}{,} \PY{l+m}{10}\PY{p}{)}
+    \PY{p}{)}\PY{p}{,}
+    \PY{n}{data} \PY{o}{=} \PY{n}{d}\PY{p}{,}
+    \PY{n}{chains} \PY{o}{=} \PY{l+m}{7}\PY{p}{,} \PY{n}{cores} \PY{o}{=} \PY{l+m}{7}
+\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Warning message in map2stan(alist(events <- dpois(lambda), log(lambda) <- a +
+b\_logtime * :
+"DEPRECATED: map2stan is no longer supported and may behave unpredictably or
+stop working altogether. Start using ulam instead."
+Warning in
+'C:/Users/immal/AppData/Local/Temp/RtmpaSqGVm/model-3dd82d8b3498.stan', line 4,
+column 4: Declaration
+    of arrays by placing brackets after a variable name is deprecated and
+    will be removed in Stan 2.32.0. Instead use the array keyword before the
+    type. This can be changed automatically using the auto-format flag to
+    stanc
+Warning in
+'C:/Users/immal/AppData/Local/Temp/RtmpaSqGVm/model-3dd82d8b3498.stan', line 5,
+column 4: Declaration
+    of arrays by placing brackets after a variable name is deprecated and
+    will be removed in Stan 2.32.0. Instead use the array keyword before the
+    type. This can be changed automatically using the auto-format flag to
+    stanc
+Warning in
+'C:/Users/immal/AppData/Local/Temp/RtmpaSqGVm/model-3dd82d8b3498.stan', line 6,
+column 4: Declaration
+    of arrays by placing brackets after a variable name is deprecated and
+    will be removed in Stan 2.32.0. Instead use the array keyword before the
+    type. This can be changed automatically using the auto-format flag to
+    stanc
+
+
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Running MCMC with 7 parallel chains{\ldots}
+
+Chain 1 Iteration:    1 / 2000 [  0\%]  (Warmup)
+Chain 2 Iteration:    1 / 2000 [  0\%]  (Warmup)
+Chain 3 Iteration:    1 / 2000 [  0\%]  (Warmup)
+Chain 4 Iteration:    1 / 2000 [  0\%]  (Warmup)
+Chain 5 Iteration:    1 / 2000 [  0\%]  (Warmup)
+Chain 6 Iteration:    1 / 2000 [  0\%]  (Warmup)
+Chain 7 Iteration:    1 / 2000 [  0\%]  (Warmup)
+Chain 1 Iteration:  100 / 2000 [  5\%]  (Warmup)
+Chain 1 Iteration:  200 / 2000 [ 10\%]  (Warmup)
+Chain 1 Iteration:  300 / 2000 [ 15\%]  (Warmup)
+Chain 1 Iteration:  400 / 2000 [ 20\%]  (Warmup)
+Chain 1 Iteration:  500 / 2000 [ 25\%]  (Warmup)
+Chain 1 Iteration:  600 / 2000 [ 30\%]  (Warmup)
+Chain 2 Iteration:  100 / 2000 [  5\%]  (Warmup)
+Chain 2 Iteration:  200 / 2000 [ 10\%]  (Warmup)
+Chain 2 Iteration:  300 / 2000 [ 15\%]  (Warmup)
+Chain 2 Iteration:  400 / 2000 [ 20\%]  (Warmup)
+Chain 2 Iteration:  500 / 2000 [ 25\%]  (Warmup)
+Chain 2 Iteration:  600 / 2000 [ 30\%]  (Warmup)
+Chain 3 Iteration:  100 / 2000 [  5\%]  (Warmup)
+Chain 3 Iteration:  200 / 2000 [ 10\%]  (Warmup)
+Chain 3 Iteration:  300 / 2000 [ 15\%]  (Warmup)
+Chain 3 Iteration:  400 / 2000 [ 20\%]  (Warmup)
+Chain 3 Iteration:  500 / 2000 [ 25\%]  (Warmup)
+Chain 3 Iteration:  600 / 2000 [ 30\%]  (Warmup)
+Chain 4 Iteration:  100 / 2000 [  5\%]  (Warmup)
+Chain 4 Iteration:  200 / 2000 [ 10\%]  (Warmup)
+Chain 4 Iteration:  300 / 2000 [ 15\%]  (Warmup)
+Chain 4 Iteration:  400 / 2000 [ 20\%]  (Warmup)
+Chain 4 Iteration:  500 / 2000 [ 25\%]  (Warmup)
+Chain 4 Iteration:  600 / 2000 [ 30\%]  (Warmup)
+Chain 5 Iteration:  100 / 2000 [  5\%]  (Warmup)
+Chain 5 Iteration:  200 / 2000 [ 10\%]  (Warmup)
+Chain 5 Iteration:  300 / 2000 [ 15\%]  (Warmup)
+Chain 5 Iteration:  400 / 2000 [ 20\%]  (Warmup)
+Chain 5 Iteration:  500 / 2000 [ 25\%]  (Warmup)
+Chain 5 Iteration:  600 / 2000 [ 30\%]  (Warmup)
+Chain 6 Iteration:  100 / 2000 [  5\%]  (Warmup)
+Chain 6 Iteration:  200 / 2000 [ 10\%]  (Warmup)
+Chain 6 Iteration:  300 / 2000 [ 15\%]  (Warmup)
+Chain 6 Iteration:  400 / 2000 [ 20\%]  (Warmup)
+Chain 6 Iteration:  500 / 2000 [ 25\%]  (Warmup)
+Chain 6 Iteration:  600 / 2000 [ 30\%]  (Warmup)
+Chain 7 Iteration:  100 / 2000 [  5\%]  (Warmup)
+Chain 7 Iteration:  200 / 2000 [ 10\%]  (Warmup)
+Chain 7 Iteration:  300 / 2000 [ 15\%]  (Warmup)
+Chain 7 Iteration:  400 / 2000 [ 20\%]  (Warmup)
+Chain 7 Iteration:  500 / 2000 [ 25\%]  (Warmup)
+Chain 1 Iteration:  700 / 2000 [ 35\%]  (Warmup)
+Chain 2 Iteration:  700 / 2000 [ 35\%]  (Warmup)
+Chain 3 Iteration:  700 / 2000 [ 35\%]  (Warmup)
+Chain 3 Iteration:  800 / 2000 [ 40\%]  (Warmup)
+Chain 4 Iteration:  700 / 2000 [ 35\%]  (Warmup)
+Chain 5 Iteration:  700 / 2000 [ 35\%]  (Warmup)
+Chain 6 Iteration:  700 / 2000 [ 35\%]  (Warmup)
+Chain 7 Iteration:  600 / 2000 [ 30\%]  (Warmup)
+Chain 7 Iteration:  700 / 2000 [ 35\%]  (Warmup)
+Chain 1 Iteration:  800 / 2000 [ 40\%]  (Warmup)
+Chain 2 Iteration:  800 / 2000 [ 40\%]  (Warmup)
+Chain 4 Iteration:  800 / 2000 [ 40\%]  (Warmup)
+Chain 5 Iteration:  800 / 2000 [ 40\%]  (Warmup)
+Chain 6 Iteration:  800 / 2000 [ 40\%]  (Warmup)
+Chain 2 Iteration:  900 / 2000 [ 45\%]  (Warmup)
+Chain 3 Iteration:  900 / 2000 [ 45\%]  (Warmup)
+Chain 4 Iteration:  900 / 2000 [ 45\%]  (Warmup)
+Chain 7 Iteration:  800 / 2000 [ 40\%]  (Warmup)
+Chain 1 Iteration:  900 / 2000 [ 45\%]  (Warmup)
+Chain 5 Iteration:  900 / 2000 [ 45\%]  (Warmup)
+Chain 6 Iteration:  900 / 2000 [ 45\%]  (Warmup)
+Chain 7 Iteration:  900 / 2000 [ 45\%]  (Warmup)
+Chain 1 Iteration: 1000 / 2000 [ 50\%]  (Warmup)
+Chain 1 Iteration: 1001 / 2000 [ 50\%]  (Sampling)
+Chain 2 Iteration: 1000 / 2000 [ 50\%]  (Warmup)
+Chain 3 Iteration: 1000 / 2000 [ 50\%]  (Warmup)
+Chain 4 Iteration: 1000 / 2000 [ 50\%]  (Warmup)
+Chain 6 Iteration: 1000 / 2000 [ 50\%]  (Warmup)
+Chain 6 Iteration: 1001 / 2000 [ 50\%]  (Sampling)
+Chain 2 Iteration: 1001 / 2000 [ 50\%]  (Sampling)
+Chain 3 Iteration: 1001 / 2000 [ 50\%]  (Sampling)
+Chain 4 Iteration: 1001 / 2000 [ 50\%]  (Sampling)
+Chain 5 Iteration: 1000 / 2000 [ 50\%]  (Warmup)
+Chain 2 Iteration: 1100 / 2000 [ 55\%]  (Sampling)
+Chain 3 Iteration: 1100 / 2000 [ 55\%]  (Sampling)
+Chain 4 Iteration: 1100 / 2000 [ 55\%]  (Sampling)
+Chain 5 Iteration: 1001 / 2000 [ 50\%]  (Sampling)
+Chain 6 Iteration: 1100 / 2000 [ 55\%]  (Sampling)
+Chain 7 Iteration: 1000 / 2000 [ 50\%]  (Warmup)
+Chain 1 Iteration: 1100 / 2000 [ 55\%]  (Sampling)
+Chain 2 Iteration: 1200 / 2000 [ 60\%]  (Sampling)
+Chain 5 Iteration: 1100 / 2000 [ 55\%]  (Sampling)
+Chain 7 Iteration: 1001 / 2000 [ 50\%]  (Sampling)
+Chain 3 Iteration: 1200 / 2000 [ 60\%]  (Sampling)
+Chain 4 Iteration: 1200 / 2000 [ 60\%]  (Sampling)
+Chain 6 Iteration: 1200 / 2000 [ 60\%]  (Sampling)
+Chain 7 Iteration: 1100 / 2000 [ 55\%]  (Sampling)
+Chain 1 Iteration: 1200 / 2000 [ 60\%]  (Sampling)
+Chain 2 Iteration: 1300 / 2000 [ 65\%]  (Sampling)
+Chain 5 Iteration: 1200 / 2000 [ 60\%]  (Sampling)
+Chain 3 Iteration: 1300 / 2000 [ 65\%]  (Sampling)
+Chain 4 Iteration: 1300 / 2000 [ 65\%]  (Sampling)
+Chain 1 Iteration: 1300 / 2000 [ 65\%]  (Sampling)
+Chain 2 Iteration: 1400 / 2000 [ 70\%]  (Sampling)
+Chain 5 Iteration: 1300 / 2000 [ 65\%]  (Sampling)
+Chain 6 Iteration: 1300 / 2000 [ 65\%]  (Sampling)
+Chain 7 Iteration: 1200 / 2000 [ 60\%]  (Sampling)
+Chain 3 Iteration: 1400 / 2000 [ 70\%]  (Sampling)
+Chain 4 Iteration: 1400 / 2000 [ 70\%]  (Sampling)
+Chain 6 Iteration: 1400 / 2000 [ 70\%]  (Sampling)
+Chain 1 Iteration: 1400 / 2000 [ 70\%]  (Sampling)
+Chain 2 Iteration: 1500 / 2000 [ 75\%]  (Sampling)
+Chain 5 Iteration: 1400 / 2000 [ 70\%]  (Sampling)
+Chain 7 Iteration: 1300 / 2000 [ 65\%]  (Sampling)
+Chain 3 Iteration: 1500 / 2000 [ 75\%]  (Sampling)
+Chain 4 Iteration: 1500 / 2000 [ 75\%]  (Sampling)
+Chain 6 Iteration: 1500 / 2000 [ 75\%]  (Sampling)
+Chain 1 Iteration: 1500 / 2000 [ 75\%]  (Sampling)
+Chain 2 Iteration: 1600 / 2000 [ 80\%]  (Sampling)
+Chain 5 Iteration: 1500 / 2000 [ 75\%]  (Sampling)
+Chain 3 Iteration: 1600 / 2000 [ 80\%]  (Sampling)
+Chain 7 Iteration: 1400 / 2000 [ 70\%]  (Sampling)
+Chain 2 Iteration: 1700 / 2000 [ 85\%]  (Sampling)
+Chain 4 Iteration: 1600 / 2000 [ 80\%]  (Sampling)
+Chain 5 Iteration: 1600 / 2000 [ 80\%]  (Sampling)
+Chain 6 Iteration: 1600 / 2000 [ 80\%]  (Sampling)
+Chain 1 Iteration: 1600 / 2000 [ 80\%]  (Sampling)
+Chain 3 Iteration: 1700 / 2000 [ 85\%]  (Sampling)
+Chain 7 Iteration: 1500 / 2000 [ 75\%]  (Sampling)
+Chain 1 Iteration: 1700 / 2000 [ 85\%]  (Sampling)
+Chain 2 Iteration: 1800 / 2000 [ 90\%]  (Sampling)
+Chain 4 Iteration: 1700 / 2000 [ 85\%]  (Sampling)
+Chain 5 Iteration: 1700 / 2000 [ 85\%]  (Sampling)
+Chain 6 Iteration: 1700 / 2000 [ 85\%]  (Sampling)
+Chain 2 Iteration: 1900 / 2000 [ 95\%]  (Sampling)
+Chain 3 Iteration: 1800 / 2000 [ 90\%]  (Sampling)
+Chain 6 Iteration: 1800 / 2000 [ 90\%]  (Sampling)
+Chain 1 Iteration: 1800 / 2000 [ 90\%]  (Sampling)
+Chain 4 Iteration: 1800 / 2000 [ 90\%]  (Sampling)
+Chain 5 Iteration: 1800 / 2000 [ 90\%]  (Sampling)
+Chain 7 Iteration: 1600 / 2000 [ 80\%]  (Sampling)
+Chain 2 Iteration: 2000 / 2000 [100\%]  (Sampling)
+Chain 3 Iteration: 1900 / 2000 [ 95\%]  (Sampling)
+Chain 6 Iteration: 1900 / 2000 [ 95\%]  (Sampling)
+Chain 2 finished in 5.3 seconds.
+Chain 1 Iteration: 1900 / 2000 [ 95\%]  (Sampling)
+Chain 4 Iteration: 1900 / 2000 [ 95\%]  (Sampling)
+Chain 5 Iteration: 1900 / 2000 [ 95\%]  (Sampling)
+Chain 7 Iteration: 1700 / 2000 [ 85\%]  (Sampling)
+Chain 3 Iteration: 2000 / 2000 [100\%]  (Sampling)
+Chain 6 Iteration: 2000 / 2000 [100\%]  (Sampling)
+Chain 3 finished in 5.6 seconds.
+Chain 6 finished in 5.5 seconds.
+Chain 1 Iteration: 2000 / 2000 [100\%]  (Sampling)
+Chain 4 Iteration: 2000 / 2000 [100\%]  (Sampling)
+Chain 5 Iteration: 2000 / 2000 [100\%]  (Sampling)
+Chain 7 Iteration: 1800 / 2000 [ 90\%]  (Sampling)
+Chain 1 finished in 5.8 seconds.
+Chain 4 finished in 5.7 seconds.
+Chain 5 finished in 5.6 seconds.
+Chain 7 Iteration: 1900 / 2000 [ 95\%]  (Sampling)
+Chain 7 Iteration: 2000 / 2000 [100\%]  (Sampling)
+Chain 7 finished in 6.0 seconds.
+
+All 7 chains finished successfully.
+Mean chain execution time: 5.6 seconds.
+Total execution time: 6.3 seconds.
+
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Computing WAIC
+
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{77}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Linear model with an additional intercept if the experiment has an amplifier}
+\PY{n}{model\PYZus{}amp\PYZus{}detectors} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{map2stan}\PY{p}{(}
+    \PY{n+nf}{alist}\PY{p}{(}
+        \PY{n}{events} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{dpois}\PY{p}{(}\PY{n}{lambda}\PY{p}{)}\PY{p}{,}
+        \PY{n+nf}{log}\PY{p}{(}\PY{n}{lambda}\PY{p}{)} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n}{a} \PY{o}{+} \PY{n}{b\PYZus{}time} \PY{o}{*} \PY{n}{time} \PY{o}{+} \PY{n}{a\PYZus{}amp} \PY{o}{*} \PY{n}{amp} \PY{o}{+} \PY{n}{b\PYZus{}detectors} \PY{o}{*} \PY{n}{detectors}\PY{p}{,}
+        \PY{n}{a} \PY{o}{\PYZti{}} \PY{n+nf}{dnorm}\PY{p}{(}\PY{l+m}{0}\PY{p}{,} \PY{l+m}{10}\PY{p}{)}\PY{p}{,}
+        \PY{n}{b\PYZus{}time} \PY{o}{\PYZti{}} \PY{n+nf}{dnorm}\PY{p}{(}\PY{l+m}{0}\PY{p}{,} \PY{l+m}{10}\PY{p}{)}\PY{p}{,}
+        \PY{n}{a\PYZus{}amp} \PY{o}{\PYZti{}} \PY{n+nf}{dnorm}\PY{p}{(}\PY{l+m}{0}\PY{p}{,} \PY{l+m}{10}\PY{p}{)}\PY{p}{,}
+        \PY{n}{b\PYZus{}detectors} \PY{o}{\PYZti{}} \PY{n+nf}{dnorm}\PY{p}{(}\PY{l+m}{0}\PY{p}{,} \PY{l+m}{10}\PY{p}{)}
+    \PY{p}{)}\PY{p}{,}
+    \PY{n}{data} \PY{o}{=} \PY{n}{d}\PY{p}{,}
+    \PY{n}{chains} \PY{o}{=} \PY{l+m}{7}\PY{p}{,} \PY{n}{cores} \PY{o}{=} \PY{l+m}{7}
+\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Warning message in map2stan(alist(events <- dpois(lambda), log(lambda) <- a +
+b\_logtime * :
+"DEPRECATED: map2stan is no longer supported and may behave unpredictably or
+stop working altogether. Start using ulam instead."
+Warning in 'C:/Users/immal/AppData/Local/Temp/RtmpaSqGVm/model-3dd865e8d0.stan',
+line 4, column 4: Declaration
+    of arrays by placing brackets after a variable name is deprecated and
+    will be removed in Stan 2.32.0. Instead use the array keyword before the
+    type. This can be changed automatically using the auto-format flag to
+    stanc
+Warning in 'C:/Users/immal/AppData/Local/Temp/RtmpaSqGVm/model-3dd865e8d0.stan',
+line 5, column 4: Declaration
+    of arrays by placing brackets after a variable name is deprecated and
+    will be removed in Stan 2.32.0. Instead use the array keyword before the
+    type. This can be changed automatically using the auto-format flag to
+    stanc
+Warning in 'C:/Users/immal/AppData/Local/Temp/RtmpaSqGVm/model-3dd865e8d0.stan',
+line 6, column 4: Declaration
+    of arrays by placing brackets after a variable name is deprecated and
+    will be removed in Stan 2.32.0. Instead use the array keyword before the
+    type. This can be changed automatically using the auto-format flag to
+    stanc
+Warning in 'C:/Users/immal/AppData/Local/Temp/RtmpaSqGVm/model-3dd865e8d0.stan',
+line 7, column 4: Declaration
+    of arrays by placing brackets after a variable name is deprecated and
+    will be removed in Stan 2.32.0. Instead use the array keyword before the
+    type. This can be changed automatically using the auto-format flag to
+    stanc
+
+
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Running MCMC with 7 parallel chains{\ldots}
+
+Chain 1 Iteration:    1 / 2000 [  0\%]  (Warmup)
+Chain 2 Iteration:    1 / 2000 [  0\%]  (Warmup)
+Chain 3 Iteration:    1 / 2000 [  0\%]  (Warmup)
+Chain 4 Iteration:    1 / 2000 [  0\%]  (Warmup)
+Chain 5 Iteration:    1 / 2000 [  0\%]  (Warmup)
+Chain 6 Iteration:    1 / 2000 [  0\%]  (Warmup)
+Chain 7 Iteration:    1 / 2000 [  0\%]  (Warmup)
+Chain 1 Iteration:  100 / 2000 [  5\%]  (Warmup)
+Chain 1 Iteration:  200 / 2000 [ 10\%]  (Warmup)
+Chain 1 Iteration:  300 / 2000 [ 15\%]  (Warmup)
+Chain 1 Iteration:  400 / 2000 [ 20\%]  (Warmup)
+Chain 2 Iteration:  100 / 2000 [  5\%]  (Warmup)
+Chain 2 Iteration:  200 / 2000 [ 10\%]  (Warmup)
+Chain 2 Iteration:  300 / 2000 [ 15\%]  (Warmup)
+Chain 2 Iteration:  400 / 2000 [ 20\%]  (Warmup)
+Chain 3 Iteration:  100 / 2000 [  5\%]  (Warmup)
+Chain 3 Iteration:  200 / 2000 [ 10\%]  (Warmup)
+Chain 3 Iteration:  300 / 2000 [ 15\%]  (Warmup)
+Chain 3 Iteration:  400 / 2000 [ 20\%]  (Warmup)
+Chain 4 Iteration:  100 / 2000 [  5\%]  (Warmup)
+Chain 4 Iteration:  200 / 2000 [ 10\%]  (Warmup)
+Chain 4 Iteration:  300 / 2000 [ 15\%]  (Warmup)
+Chain 5 Iteration:  100 / 2000 [  5\%]  (Warmup)
+Chain 5 Iteration:  200 / 2000 [ 10\%]  (Warmup)
+Chain 5 Iteration:  300 / 2000 [ 15\%]  (Warmup)
+Chain 5 Iteration:  400 / 2000 [ 20\%]  (Warmup)
+Chain 6 Iteration:  100 / 2000 [  5\%]  (Warmup)
+Chain 6 Iteration:  200 / 2000 [ 10\%]  (Warmup)
+Chain 6 Iteration:  300 / 2000 [ 15\%]  (Warmup)
+Chain 6 Iteration:  400 / 2000 [ 20\%]  (Warmup)
+Chain 7 Iteration:  100 / 2000 [  5\%]  (Warmup)
+Chain 7 Iteration:  200 / 2000 [ 10\%]  (Warmup)
+Chain 7 Iteration:  300 / 2000 [ 15\%]  (Warmup)
+Chain 7 Iteration:  400 / 2000 [ 20\%]  (Warmup)
+Chain 4 Iteration:  400 / 2000 [ 20\%]  (Warmup)
+Chain 3 Iteration:  500 / 2000 [ 25\%]  (Warmup)
+Chain 7 Iteration:  500 / 2000 [ 25\%]  (Warmup)
+Chain 1 Iteration:  500 / 2000 [ 25\%]  (Warmup)
+Chain 2 Iteration:  500 / 2000 [ 25\%]  (Warmup)
+Chain 5 Iteration:  500 / 2000 [ 25\%]  (Warmup)
+Chain 6 Iteration:  500 / 2000 [ 25\%]  (Warmup)
+Chain 4 Iteration:  500 / 2000 [ 25\%]  (Warmup)
+Chain 3 Iteration:  600 / 2000 [ 30\%]  (Warmup)
+Chain 7 Iteration:  600 / 2000 [ 30\%]  (Warmup)
+Chain 1 Iteration:  600 / 2000 [ 30\%]  (Warmup)
+Chain 2 Iteration:  600 / 2000 [ 30\%]  (Warmup)
+Chain 4 Iteration:  600 / 2000 [ 30\%]  (Warmup)
+Chain 5 Iteration:  600 / 2000 [ 30\%]  (Warmup)
+Chain 6 Iteration:  600 / 2000 [ 30\%]  (Warmup)
+Chain 3 Iteration:  700 / 2000 [ 35\%]  (Warmup)
+Chain 7 Iteration:  700 / 2000 [ 35\%]  (Warmup)
+Chain 5 Iteration:  700 / 2000 [ 35\%]  (Warmup)
+Chain 1 Iteration:  700 / 2000 [ 35\%]  (Warmup)
+Chain 2 Iteration:  700 / 2000 [ 35\%]  (Warmup)
+Chain 4 Iteration:  700 / 2000 [ 35\%]  (Warmup)
+Chain 6 Iteration:  700 / 2000 [ 35\%]  (Warmup)
+Chain 3 Iteration:  800 / 2000 [ 40\%]  (Warmup)
+Chain 7 Iteration:  800 / 2000 [ 40\%]  (Warmup)
+Chain 5 Iteration:  800 / 2000 [ 40\%]  (Warmup)
+Chain 6 Iteration:  800 / 2000 [ 40\%]  (Warmup)
+Chain 1 Iteration:  800 / 2000 [ 40\%]  (Warmup)
+Chain 2 Iteration:  800 / 2000 [ 40\%]  (Warmup)
+Chain 4 Iteration:  800 / 2000 [ 40\%]  (Warmup)
+Chain 3 Iteration:  900 / 2000 [ 45\%]  (Warmup)
+Chain 7 Iteration:  900 / 2000 [ 45\%]  (Warmup)
+Chain 4 Iteration:  900 / 2000 [ 45\%]  (Warmup)
+Chain 5 Iteration:  900 / 2000 [ 45\%]  (Warmup)
+Chain 6 Iteration:  900 / 2000 [ 45\%]  (Warmup)
+Chain 1 Iteration:  900 / 2000 [ 45\%]  (Warmup)
+Chain 2 Iteration:  900 / 2000 [ 45\%]  (Warmup)
+Chain 3 Iteration: 1000 / 2000 [ 50\%]  (Warmup)
+Chain 7 Iteration: 1000 / 2000 [ 50\%]  (Warmup)
+Chain 2 Iteration: 1000 / 2000 [ 50\%]  (Warmup)
+Chain 3 Iteration: 1001 / 2000 [ 50\%]  (Sampling)
+Chain 4 Iteration: 1000 / 2000 [ 50\%]  (Warmup)
+Chain 5 Iteration: 1000 / 2000 [ 50\%]  (Warmup)
+Chain 6 Iteration: 1000 / 2000 [ 50\%]  (Warmup)
+Chain 7 Iteration: 1001 / 2000 [ 50\%]  (Sampling)
+Chain 1 Iteration: 1000 / 2000 [ 50\%]  (Warmup)
+Chain 2 Iteration: 1001 / 2000 [ 50\%]  (Sampling)
+Chain 4 Iteration: 1001 / 2000 [ 50\%]  (Sampling)
+Chain 5 Iteration: 1001 / 2000 [ 50\%]  (Sampling)
+Chain 6 Iteration: 1001 / 2000 [ 50\%]  (Sampling)
+Chain 1 Iteration: 1001 / 2000 [ 50\%]  (Sampling)
+Chain 7 Iteration: 1100 / 2000 [ 55\%]  (Sampling)
+Chain 2 Iteration: 1100 / 2000 [ 55\%]  (Sampling)
+Chain 3 Iteration: 1100 / 2000 [ 55\%]  (Sampling)
+Chain 4 Iteration: 1100 / 2000 [ 55\%]  (Sampling)
+Chain 5 Iteration: 1100 / 2000 [ 55\%]  (Sampling)
+Chain 6 Iteration: 1100 / 2000 [ 55\%]  (Sampling)
+Chain 1 Iteration: 1100 / 2000 [ 55\%]  (Sampling)
+Chain 7 Iteration: 1200 / 2000 [ 60\%]  (Sampling)
+Chain 2 Iteration: 1200 / 2000 [ 60\%]  (Sampling)
+Chain 4 Iteration: 1200 / 2000 [ 60\%]  (Sampling)
+Chain 5 Iteration: 1200 / 2000 [ 60\%]  (Sampling)
+Chain 1 Iteration: 1200 / 2000 [ 60\%]  (Sampling)
+Chain 3 Iteration: 1200 / 2000 [ 60\%]  (Sampling)
+Chain 6 Iteration: 1200 / 2000 [ 60\%]  (Sampling)
+Chain 2 Iteration: 1300 / 2000 [ 65\%]  (Sampling)
+Chain 5 Iteration: 1300 / 2000 [ 65\%]  (Sampling)
+Chain 7 Iteration: 1300 / 2000 [ 65\%]  (Sampling)
+Chain 1 Iteration: 1300 / 2000 [ 65\%]  (Sampling)
+Chain 3 Iteration: 1300 / 2000 [ 65\%]  (Sampling)
+Chain 4 Iteration: 1300 / 2000 [ 65\%]  (Sampling)
+Chain 6 Iteration: 1300 / 2000 [ 65\%]  (Sampling)
+Chain 5 Iteration: 1400 / 2000 [ 70\%]  (Sampling)
+Chain 7 Iteration: 1400 / 2000 [ 70\%]  (Sampling)
+Chain 1 Iteration: 1400 / 2000 [ 70\%]  (Sampling)
+Chain 2 Iteration: 1400 / 2000 [ 70\%]  (Sampling)
+Chain 4 Iteration: 1400 / 2000 [ 70\%]  (Sampling)
+Chain 6 Iteration: 1400 / 2000 [ 70\%]  (Sampling)
+Chain 3 Iteration: 1400 / 2000 [ 70\%]  (Sampling)
+Chain 5 Iteration: 1500 / 2000 [ 75\%]  (Sampling)
+Chain 7 Iteration: 1500 / 2000 [ 75\%]  (Sampling)
+Chain 1 Iteration: 1500 / 2000 [ 75\%]  (Sampling)
+Chain 2 Iteration: 1500 / 2000 [ 75\%]  (Sampling)
+Chain 6 Iteration: 1500 / 2000 [ 75\%]  (Sampling)
+Chain 4 Iteration: 1500 / 2000 [ 75\%]  (Sampling)
+Chain 3 Iteration: 1500 / 2000 [ 75\%]  (Sampling)
+Chain 7 Iteration: 1600 / 2000 [ 80\%]  (Sampling)
+Chain 1 Iteration: 1600 / 2000 [ 80\%]  (Sampling)
+Chain 5 Iteration: 1600 / 2000 [ 80\%]  (Sampling)
+Chain 2 Iteration: 1600 / 2000 [ 80\%]  (Sampling)
+Chain 6 Iteration: 1600 / 2000 [ 80\%]  (Sampling)
+Chain 4 Iteration: 1600 / 2000 [ 80\%]  (Sampling)
+Chain 3 Iteration: 1600 / 2000 [ 80\%]  (Sampling)
+Chain 5 Iteration: 1700 / 2000 [ 85\%]  (Sampling)
+Chain 7 Iteration: 1700 / 2000 [ 85\%]  (Sampling)
+Chain 1 Iteration: 1700 / 2000 [ 85\%]  (Sampling)
+Chain 2 Iteration: 1700 / 2000 [ 85\%]  (Sampling)
+Chain 6 Iteration: 1700 / 2000 [ 85\%]  (Sampling)
+Chain 4 Iteration: 1700 / 2000 [ 85\%]  (Sampling)
+Chain 1 Iteration: 1800 / 2000 [ 90\%]  (Sampling)
+Chain 3 Iteration: 1700 / 2000 [ 85\%]  (Sampling)
+Chain 5 Iteration: 1800 / 2000 [ 90\%]  (Sampling)
+Chain 7 Iteration: 1800 / 2000 [ 90\%]  (Sampling)
+Chain 2 Iteration: 1800 / 2000 [ 90\%]  (Sampling)
+Chain 6 Iteration: 1800 / 2000 [ 90\%]  (Sampling)
+Chain 1 Iteration: 1900 / 2000 [ 95\%]  (Sampling)
+Chain 4 Iteration: 1800 / 2000 [ 90\%]  (Sampling)
+Chain 7 Iteration: 1900 / 2000 [ 95\%]  (Sampling)
+Chain 3 Iteration: 1800 / 2000 [ 90\%]  (Sampling)
+Chain 5 Iteration: 1900 / 2000 [ 95\%]  (Sampling)
+Chain 6 Iteration: 1900 / 2000 [ 95\%]  (Sampling)
+Chain 2 Iteration: 1900 / 2000 [ 95\%]  (Sampling)
+Chain 1 Iteration: 2000 / 2000 [100\%]  (Sampling)
+Chain 4 Iteration: 1900 / 2000 [ 95\%]  (Sampling)
+Chain 7 Iteration: 2000 / 2000 [100\%]  (Sampling)
+Chain 1 finished in 9.0 seconds.
+Chain 7 finished in 8.9 seconds.
+Chain 2 Iteration: 2000 / 2000 [100\%]  (Sampling)
+Chain 3 Iteration: 1900 / 2000 [ 95\%]  (Sampling)
+Chain 5 Iteration: 2000 / 2000 [100\%]  (Sampling)
+Chain 6 Iteration: 2000 / 2000 [100\%]  (Sampling)
+Chain 2 finished in 9.2 seconds.
+Chain 5 finished in 9.0 seconds.
+Chain 6 finished in 9.0 seconds.
+Chain 4 Iteration: 2000 / 2000 [100\%]  (Sampling)
+Chain 4 finished in 9.2 seconds.
+Chain 3 Iteration: 2000 / 2000 [100\%]  (Sampling)
+Chain 3 finished in 9.3 seconds.
+
+All 7 chains finished successfully.
+Mean chain execution time: 9.1 seconds.
+Total execution time: 9.5 seconds.
+
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Computing WAIC
+
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{78}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Linear model with detectors with an additional intercept if the experiment is new}
+\PY{n}{model\PYZus{}new\PYZus{}detectors} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{map2stan}\PY{p}{(}
+    \PY{n+nf}{alist}\PY{p}{(}
+        \PY{n}{events} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{dpois}\PY{p}{(}\PY{n}{lambda}\PY{p}{)}\PY{p}{,}
+        \PY{n+nf}{log}\PY{p}{(}\PY{n}{lambda}\PY{p}{)} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n}{a} \PY{o}{+} \PY{n}{b\PYZus{}logtime} \PY{o}{*} \PY{n}{logtime} \PY{o}{+} \PY{n}{a\PYZus{}new} \PY{o}{*} \PY{n}{new} \PY{o}{+} \PY{n}{b\PYZus{}detectors} \PY{o}{*} \PY{n}{detectors}\PY{p}{,}
+        \PY{n}{a} \PY{o}{\PYZti{}} \PY{n+nf}{dnorm}\PY{p}{(}\PY{l+m}{0}\PY{p}{,} \PY{l+m}{10}\PY{p}{)}\PY{p}{,}
+        \PY{n}{b\PYZus{}logtime} \PY{o}{\PYZti{}} \PY{n+nf}{dnorm}\PY{p}{(}\PY{l+m}{0}\PY{p}{,} \PY{l+m}{10}\PY{p}{)}\PY{p}{,}
+        \PY{n}{a\PYZus{}new} \PY{o}{\PYZti{}} \PY{n+nf}{dnorm}\PY{p}{(}\PY{l+m}{0}\PY{p}{,} \PY{l+m}{10}\PY{p}{)}\PY{p}{,}
+        \PY{n}{b\PYZus{}detectors} \PY{o}{\PYZti{}} \PY{n+nf}{dnorm}\PY{p}{(}\PY{l+m}{0}\PY{p}{,} \PY{l+m}{10}\PY{p}{)}
+    \PY{p}{)}\PY{p}{,}
+    \PY{n}{data} \PY{o}{=} \PY{n}{d}\PY{p}{,}
+    \PY{n}{chains} \PY{o}{=} \PY{l+m}{7}\PY{p}{,} \PY{n}{cores} \PY{o}{=} \PY{l+m}{7}
+\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Warning message in map2stan(alist(events <- dpois(lambda), log(lambda) <- a +
+b\_logtime * :
+"DEPRECATED: map2stan is no longer supported and may behave unpredictably or
+stop working altogether. Start using ulam instead."
+Warning in
+'C:/Users/immal/AppData/Local/Temp/RtmpaSqGVm/model-3dd86cbc2916.stan', line 4,
+column 4: Declaration
+    of arrays by placing brackets after a variable name is deprecated and
+    will be removed in Stan 2.32.0. Instead use the array keyword before the
+    type. This can be changed automatically using the auto-format flag to
+    stanc
+Warning in
+'C:/Users/immal/AppData/Local/Temp/RtmpaSqGVm/model-3dd86cbc2916.stan', line 5,
+column 4: Declaration
+    of arrays by placing brackets after a variable name is deprecated and
+    will be removed in Stan 2.32.0. Instead use the array keyword before the
+    type. This can be changed automatically using the auto-format flag to
+    stanc
+Warning in
+'C:/Users/immal/AppData/Local/Temp/RtmpaSqGVm/model-3dd86cbc2916.stan', line 6,
+column 4: Declaration
+    of arrays by placing brackets after a variable name is deprecated and
+    will be removed in Stan 2.32.0. Instead use the array keyword before the
+    type. This can be changed automatically using the auto-format flag to
+    stanc
+Warning in
+'C:/Users/immal/AppData/Local/Temp/RtmpaSqGVm/model-3dd86cbc2916.stan', line 7,
+column 4: Declaration
+    of arrays by placing brackets after a variable name is deprecated and
+    will be removed in Stan 2.32.0. Instead use the array keyword before the
+    type. This can be changed automatically using the auto-format flag to
+    stanc
+
+
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Running MCMC with 7 parallel chains{\ldots}
+
+Chain 1 Iteration:    1 / 2000 [  0\%]  (Warmup)
+Chain 2 Iteration:    1 / 2000 [  0\%]  (Warmup)
+Chain 3 Iteration:    1 / 2000 [  0\%]  (Warmup)
+Chain 4 Iteration:    1 / 2000 [  0\%]  (Warmup)
+Chain 5 Iteration:    1 / 2000 [  0\%]  (Warmup)
+Chain 6 Iteration:    1 / 2000 [  0\%]  (Warmup)
+Chain 7 Iteration:    1 / 2000 [  0\%]  (Warmup)
+Chain 1 Iteration:  100 / 2000 [  5\%]  (Warmup)
+Chain 1 Iteration:  200 / 2000 [ 10\%]  (Warmup)
+Chain 1 Iteration:  300 / 2000 [ 15\%]  (Warmup)
+Chain 1 Iteration:  400 / 2000 [ 20\%]  (Warmup)
+Chain 1 Iteration:  500 / 2000 [ 25\%]  (Warmup)
+Chain 1 Iteration:  600 / 2000 [ 30\%]  (Warmup)
+Chain 2 Iteration:  100 / 2000 [  5\%]  (Warmup)
+Chain 2 Iteration:  200 / 2000 [ 10\%]  (Warmup)
+Chain 2 Iteration:  300 / 2000 [ 15\%]  (Warmup)
+Chain 2 Iteration:  400 / 2000 [ 20\%]  (Warmup)
+Chain 2 Iteration:  500 / 2000 [ 25\%]  (Warmup)
+Chain 3 Iteration:  100 / 2000 [  5\%]  (Warmup)
+Chain 3 Iteration:  200 / 2000 [ 10\%]  (Warmup)
+Chain 3 Iteration:  300 / 2000 [ 15\%]  (Warmup)
+Chain 3 Iteration:  400 / 2000 [ 20\%]  (Warmup)
+Chain 3 Iteration:  500 / 2000 [ 25\%]  (Warmup)
+Chain 4 Iteration:  100 / 2000 [  5\%]  (Warmup)
+Chain 4 Iteration:  200 / 2000 [ 10\%]  (Warmup)
+Chain 4 Iteration:  300 / 2000 [ 15\%]  (Warmup)
+Chain 4 Iteration:  400 / 2000 [ 20\%]  (Warmup)
+Chain 4 Iteration:  500 / 2000 [ 25\%]  (Warmup)
+Chain 4 Iteration:  600 / 2000 [ 30\%]  (Warmup)
+Chain 5 Iteration:  100 / 2000 [  5\%]  (Warmup)
+Chain 5 Iteration:  200 / 2000 [ 10\%]  (Warmup)
+Chain 5 Iteration:  300 / 2000 [ 15\%]  (Warmup)
+Chain 5 Iteration:  400 / 2000 [ 20\%]  (Warmup)
+Chain 5 Iteration:  500 / 2000 [ 25\%]  (Warmup)
+Chain 6 Iteration:  100 / 2000 [  5\%]  (Warmup)
+Chain 6 Iteration:  200 / 2000 [ 10\%]  (Warmup)
+Chain 6 Iteration:  300 / 2000 [ 15\%]  (Warmup)
+Chain 6 Iteration:  400 / 2000 [ 20\%]  (Warmup)
+Chain 7 Iteration:  100 / 2000 [  5\%]  (Warmup)
+Chain 7 Iteration:  200 / 2000 [ 10\%]  (Warmup)
+Chain 7 Iteration:  300 / 2000 [ 15\%]  (Warmup)
+Chain 7 Iteration:  400 / 2000 [ 20\%]  (Warmup)
+Chain 7 Iteration:  500 / 2000 [ 25\%]  (Warmup)
+Chain 1 Iteration:  700 / 2000 [ 35\%]  (Warmup)
+Chain 2 Iteration:  600 / 2000 [ 30\%]  (Warmup)
+Chain 3 Iteration:  600 / 2000 [ 30\%]  (Warmup)
+Chain 4 Iteration:  700 / 2000 [ 35\%]  (Warmup)
+Chain 5 Iteration:  600 / 2000 [ 30\%]  (Warmup)
+Chain 6 Iteration:  500 / 2000 [ 25\%]  (Warmup)
+Chain 7 Iteration:  600 / 2000 [ 30\%]  (Warmup)
+Chain 6 Iteration:  600 / 2000 [ 30\%]  (Warmup)
+Chain 7 Iteration:  700 / 2000 [ 35\%]  (Warmup)
+Chain 1 Iteration:  800 / 2000 [ 40\%]  (Warmup)
+Chain 5 Iteration:  700 / 2000 [ 35\%]  (Warmup)
+Chain 2 Iteration:  700 / 2000 [ 35\%]  (Warmup)
+Chain 3 Iteration:  700 / 2000 [ 35\%]  (Warmup)
+Chain 4 Iteration:  800 / 2000 [ 40\%]  (Warmup)
+Chain 6 Iteration:  700 / 2000 [ 35\%]  (Warmup)
+Chain 7 Iteration:  800 / 2000 [ 40\%]  (Warmup)
+Chain 1 Iteration:  900 / 2000 [ 45\%]  (Warmup)
+Chain 5 Iteration:  800 / 2000 [ 40\%]  (Warmup)
+Chain 2 Iteration:  800 / 2000 [ 40\%]  (Warmup)
+Chain 3 Iteration:  800 / 2000 [ 40\%]  (Warmup)
+Chain 4 Iteration:  900 / 2000 [ 45\%]  (Warmup)
+Chain 6 Iteration:  800 / 2000 [ 40\%]  (Warmup)
+Chain 7 Iteration:  900 / 2000 [ 45\%]  (Warmup)
+Chain 1 Iteration: 1000 / 2000 [ 50\%]  (Warmup)
+Chain 5 Iteration:  900 / 2000 [ 45\%]  (Warmup)
+Chain 1 Iteration: 1001 / 2000 [ 50\%]  (Sampling)
+Chain 2 Iteration:  900 / 2000 [ 45\%]  (Warmup)
+Chain 3 Iteration:  900 / 2000 [ 45\%]  (Warmup)
+Chain 4 Iteration: 1000 / 2000 [ 50\%]  (Warmup)
+Chain 6 Iteration:  900 / 2000 [ 45\%]  (Warmup)
+Chain 4 Iteration: 1001 / 2000 [ 50\%]  (Sampling)
+Chain 7 Iteration: 1000 / 2000 [ 50\%]  (Warmup)
+Chain 1 Iteration: 1100 / 2000 [ 55\%]  (Sampling)
+Chain 2 Iteration: 1000 / 2000 [ 50\%]  (Warmup)
+Chain 3 Iteration: 1000 / 2000 [ 50\%]  (Warmup)
+Chain 5 Iteration: 1000 / 2000 [ 50\%]  (Warmup)
+Chain 7 Iteration: 1001 / 2000 [ 50\%]  (Sampling)
+Chain 2 Iteration: 1001 / 2000 [ 50\%]  (Sampling)
+Chain 3 Iteration: 1001 / 2000 [ 50\%]  (Sampling)
+Chain 4 Iteration: 1100 / 2000 [ 55\%]  (Sampling)
+Chain 5 Iteration: 1001 / 2000 [ 50\%]  (Sampling)
+Chain 6 Iteration: 1000 / 2000 [ 50\%]  (Warmup)
+Chain 7 Iteration: 1100 / 2000 [ 55\%]  (Sampling)
+Chain 1 Iteration: 1200 / 2000 [ 60\%]  (Sampling)
+Chain 3 Iteration: 1100 / 2000 [ 55\%]  (Sampling)
+Chain 6 Iteration: 1001 / 2000 [ 50\%]  (Sampling)
+Chain 2 Iteration: 1100 / 2000 [ 55\%]  (Sampling)
+Chain 4 Iteration: 1200 / 2000 [ 60\%]  (Sampling)
+Chain 1 Iteration: 1300 / 2000 [ 65\%]  (Sampling)
+Chain 5 Iteration: 1100 / 2000 [ 55\%]  (Sampling)
+Chain 6 Iteration: 1100 / 2000 [ 55\%]  (Sampling)
+Chain 7 Iteration: 1200 / 2000 [ 60\%]  (Sampling)
+Chain 2 Iteration: 1200 / 2000 [ 60\%]  (Sampling)
+Chain 3 Iteration: 1200 / 2000 [ 60\%]  (Sampling)
+Chain 4 Iteration: 1300 / 2000 [ 65\%]  (Sampling)
+Chain 5 Iteration: 1200 / 2000 [ 60\%]  (Sampling)
+Chain 7 Iteration: 1300 / 2000 [ 65\%]  (Sampling)
+Chain 1 Iteration: 1400 / 2000 [ 70\%]  (Sampling)
+Chain 6 Iteration: 1200 / 2000 [ 60\%]  (Sampling)
+Chain 2 Iteration: 1300 / 2000 [ 65\%]  (Sampling)
+Chain 3 Iteration: 1300 / 2000 [ 65\%]  (Sampling)
+Chain 4 Iteration: 1400 / 2000 [ 70\%]  (Sampling)
+Chain 1 Iteration: 1500 / 2000 [ 75\%]  (Sampling)
+Chain 5 Iteration: 1300 / 2000 [ 65\%]  (Sampling)
+Chain 6 Iteration: 1300 / 2000 [ 65\%]  (Sampling)
+Chain 7 Iteration: 1400 / 2000 [ 70\%]  (Sampling)
+Chain 2 Iteration: 1400 / 2000 [ 70\%]  (Sampling)
+Chain 3 Iteration: 1400 / 2000 [ 70\%]  (Sampling)
+Chain 4 Iteration: 1500 / 2000 [ 75\%]  (Sampling)
+Chain 1 Iteration: 1600 / 2000 [ 80\%]  (Sampling)
+Chain 5 Iteration: 1400 / 2000 [ 70\%]  (Sampling)
+Chain 6 Iteration: 1400 / 2000 [ 70\%]  (Sampling)
+Chain 7 Iteration: 1500 / 2000 [ 75\%]  (Sampling)
+Chain 2 Iteration: 1500 / 2000 [ 75\%]  (Sampling)
+Chain 3 Iteration: 1500 / 2000 [ 75\%]  (Sampling)
+Chain 1 Iteration: 1700 / 2000 [ 85\%]  (Sampling)
+Chain 4 Iteration: 1600 / 2000 [ 80\%]  (Sampling)
+Chain 5 Iteration: 1500 / 2000 [ 75\%]  (Sampling)
+Chain 6 Iteration: 1500 / 2000 [ 75\%]  (Sampling)
+Chain 7 Iteration: 1600 / 2000 [ 80\%]  (Sampling)
+Chain 2 Iteration: 1600 / 2000 [ 80\%]  (Sampling)
+Chain 3 Iteration: 1600 / 2000 [ 80\%]  (Sampling)
+Chain 1 Iteration: 1800 / 2000 [ 90\%]  (Sampling)
+Chain 4 Iteration: 1700 / 2000 [ 85\%]  (Sampling)
+Chain 6 Iteration: 1600 / 2000 [ 80\%]  (Sampling)
+Chain 7 Iteration: 1700 / 2000 [ 85\%]  (Sampling)
+Chain 2 Iteration: 1700 / 2000 [ 85\%]  (Sampling)
+Chain 5 Iteration: 1600 / 2000 [ 80\%]  (Sampling)
+Chain 1 Iteration: 1900 / 2000 [ 95\%]  (Sampling)
+Chain 3 Iteration: 1700 / 2000 [ 85\%]  (Sampling)
+Chain 4 Iteration: 1800 / 2000 [ 90\%]  (Sampling)
+Chain 2 Iteration: 1800 / 2000 [ 90\%]  (Sampling)
+Chain 5 Iteration: 1700 / 2000 [ 85\%]  (Sampling)
+Chain 6 Iteration: 1700 / 2000 [ 85\%]  (Sampling)
+Chain 7 Iteration: 1800 / 2000 [ 90\%]  (Sampling)
+Chain 1 Iteration: 2000 / 2000 [100\%]  (Sampling)
+Chain 3 Iteration: 1800 / 2000 [ 90\%]  (Sampling)
+Chain 1 finished in 6.3 seconds.
+Chain 4 Iteration: 1900 / 2000 [ 95\%]  (Sampling)
+Chain 5 Iteration: 1800 / 2000 [ 90\%]  (Sampling)
+Chain 6 Iteration: 1800 / 2000 [ 90\%]  (Sampling)
+Chain 7 Iteration: 1900 / 2000 [ 95\%]  (Sampling)
+Chain 2 Iteration: 1900 / 2000 [ 95\%]  (Sampling)
+Chain 3 Iteration: 1900 / 2000 [ 95\%]  (Sampling)
+Chain 4 Iteration: 2000 / 2000 [100\%]  (Sampling)
+Chain 5 Iteration: 1900 / 2000 [ 95\%]  (Sampling)
+Chain 6 Iteration: 1900 / 2000 [ 95\%]  (Sampling)
+Chain 7 Iteration: 2000 / 2000 [100\%]  (Sampling)
+Chain 4 finished in 6.7 seconds.
+Chain 7 finished in 6.7 seconds.
+Chain 2 Iteration: 2000 / 2000 [100\%]  (Sampling)
+Chain 3 Iteration: 2000 / 2000 [100\%]  (Sampling)
+Chain 2 finished in 6.9 seconds.
+Chain 3 finished in 6.9 seconds.
+Chain 5 Iteration: 2000 / 2000 [100\%]  (Sampling)
+Chain 6 Iteration: 2000 / 2000 [100\%]  (Sampling)
+Chain 5 finished in 7.0 seconds.
+Chain 6 finished in 6.9 seconds.
+
+All 7 chains finished successfully.
+Mean chain execution time: 6.8 seconds.
+Total execution time: 7.2 seconds.
+
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Computing WAIC
+
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{79}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Linear model with detectors with an additional intercept for both next gen and amplifier}
+\PY{n}{model\PYZus{}amp\PYZus{}new\PYZus{}detectors} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{map2stan}\PY{p}{(}
+    \PY{n+nf}{alist}\PY{p}{(}
+        \PY{n}{events} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{dpois}\PY{p}{(}\PY{n}{lambda}\PY{p}{)}\PY{p}{,}
+        \PY{n+nf}{log}\PY{p}{(}\PY{n}{lambda}\PY{p}{)} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n}{a} \PY{o}{+} \PY{n}{b\PYZus{}logtime} \PY{o}{*} \PY{n}{logtime} \PY{o}{+} \PY{n}{a\PYZus{}new} \PY{o}{*} \PY{n}{new} \PY{o}{+} \PY{n}{a\PYZus{}amp} \PY{o}{*} \PY{n}{amp} \PY{o}{+} \PY{n}{b\PYZus{}detectors} \PY{o}{*} \PY{n}{detectors}\PY{p}{,}
+        \PY{n}{a} \PY{o}{\PYZti{}} \PY{n+nf}{dnorm}\PY{p}{(}\PY{l+m}{0}\PY{p}{,} \PY{l+m}{10}\PY{p}{)}\PY{p}{,}
+        \PY{n}{b\PYZus{}logtime} \PY{o}{\PYZti{}} \PY{n+nf}{dnorm}\PY{p}{(}\PY{l+m}{0}\PY{p}{,} \PY{l+m}{10}\PY{p}{)}\PY{p}{,}
+        \PY{n}{a\PYZus{}new} \PY{o}{\PYZti{}} \PY{n+nf}{dnorm}\PY{p}{(}\PY{l+m}{0}\PY{p}{,} \PY{l+m}{10}\PY{p}{)}\PY{p}{,}
+        \PY{n}{a\PYZus{}amp} \PY{o}{\PYZti{}} \PY{n+nf}{dnorm}\PY{p}{(}\PY{l+m}{0}\PY{p}{,} \PY{l+m}{10}\PY{p}{)}\PY{p}{,}
+        \PY{n}{b\PYZus{}detectors} \PY{o}{\PYZti{}} \PY{n+nf}{dnorm}\PY{p}{(}\PY{l+m}{0}\PY{p}{,} \PY{l+m}{10}\PY{p}{)}
+    \PY{p}{)}\PY{p}{,}
+    \PY{n}{data} \PY{o}{=} \PY{n}{d}\PY{p}{,}
+    \PY{n}{chains} \PY{o}{=} \PY{l+m}{7}\PY{p}{,} \PY{n}{cores} \PY{o}{=} \PY{l+m}{7}
+\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Warning message in map2stan(alist(events <- dpois(lambda), log(lambda) <- a +
+b\_logtime * :
+"DEPRECATED: map2stan is no longer supported and may behave unpredictably or
+stop working altogether. Start using ulam instead."
+Warning in
+'C:/Users/immal/AppData/Local/Temp/RtmpaSqGVm/model-3dd81ec38df.stan', line 4,
+column 4: Declaration
+    of arrays by placing brackets after a variable name is deprecated and
+    will be removed in Stan 2.32.0. Instead use the array keyword before the
+    type. This can be changed automatically using the auto-format flag to
+    stanc
+Warning in
+'C:/Users/immal/AppData/Local/Temp/RtmpaSqGVm/model-3dd81ec38df.stan', line 5,
+column 4: Declaration
+    of arrays by placing brackets after a variable name is deprecated and
+    will be removed in Stan 2.32.0. Instead use the array keyword before the
+    type. This can be changed automatically using the auto-format flag to
+    stanc
+Warning in
+'C:/Users/immal/AppData/Local/Temp/RtmpaSqGVm/model-3dd81ec38df.stan', line 6,
+column 4: Declaration
+    of arrays by placing brackets after a variable name is deprecated and
+    will be removed in Stan 2.32.0. Instead use the array keyword before the
+    type. This can be changed automatically using the auto-format flag to
+    stanc
+Warning in
+'C:/Users/immal/AppData/Local/Temp/RtmpaSqGVm/model-3dd81ec38df.stan', line 7,
+column 4: Declaration
+    of arrays by placing brackets after a variable name is deprecated and
+    will be removed in Stan 2.32.0. Instead use the array keyword before the
+    type. This can be changed automatically using the auto-format flag to
+    stanc
+Warning in
+'C:/Users/immal/AppData/Local/Temp/RtmpaSqGVm/model-3dd81ec38df.stan', line 8,
+column 4: Declaration
+    of arrays by placing brackets after a variable name is deprecated and
+    will be removed in Stan 2.32.0. Instead use the array keyword before the
+    type. This can be changed automatically using the auto-format flag to
+    stanc
+
+
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Running MCMC with 7 parallel chains{\ldots}
+
+Chain 1 Iteration:    1 / 2000 [  0\%]  (Warmup)
+Chain 2 Iteration:    1 / 2000 [  0\%]  (Warmup)
+Chain 3 Iteration:    1 / 2000 [  0\%]  (Warmup)
+Chain 4 Iteration:    1 / 2000 [  0\%]  (Warmup)
+Chain 5 Iteration:    1 / 2000 [  0\%]  (Warmup)
+Chain 6 Iteration:    1 / 2000 [  0\%]  (Warmup)
+Chain 7 Iteration:    1 / 2000 [  0\%]  (Warmup)
+Chain 1 Iteration:  100 / 2000 [  5\%]  (Warmup)
+Chain 1 Iteration:  200 / 2000 [ 10\%]  (Warmup)
+Chain 1 Iteration:  300 / 2000 [ 15\%]  (Warmup)
+Chain 2 Iteration:  100 / 2000 [  5\%]  (Warmup)
+Chain 2 Iteration:  200 / 2000 [ 10\%]  (Warmup)
+Chain 2 Iteration:  300 / 2000 [ 15\%]  (Warmup)
+Chain 3 Iteration:  100 / 2000 [  5\%]  (Warmup)
+Chain 3 Iteration:  200 / 2000 [ 10\%]  (Warmup)
+Chain 4 Iteration:  100 / 2000 [  5\%]  (Warmup)
+Chain 4 Iteration:  200 / 2000 [ 10\%]  (Warmup)
+Chain 5 Iteration:  100 / 2000 [  5\%]  (Warmup)
+Chain 5 Iteration:  200 / 2000 [ 10\%]  (Warmup)
+Chain 5 Iteration:  300 / 2000 [ 15\%]  (Warmup)
+Chain 6 Iteration:  100 / 2000 [  5\%]  (Warmup)
+Chain 6 Iteration:  200 / 2000 [ 10\%]  (Warmup)
+Chain 7 Iteration:  100 / 2000 [  5\%]  (Warmup)
+Chain 7 Iteration:  200 / 2000 [ 10\%]  (Warmup)
+Chain 3 Iteration:  300 / 2000 [ 15\%]  (Warmup)
+Chain 4 Iteration:  300 / 2000 [ 15\%]  (Warmup)
+Chain 1 Iteration:  400 / 2000 [ 20\%]  (Warmup)
+Chain 6 Iteration:  300 / 2000 [ 15\%]  (Warmup)
+Chain 2 Iteration:  400 / 2000 [ 20\%]  (Warmup)
+Chain 3 Iteration:  400 / 2000 [ 20\%]  (Warmup)
+Chain 5 Iteration:  400 / 2000 [ 20\%]  (Warmup)
+Chain 4 Iteration:  400 / 2000 [ 20\%]  (Warmup)
+Chain 7 Iteration:  300 / 2000 [ 15\%]  (Warmup)
+Chain 6 Iteration:  400 / 2000 [ 20\%]  (Warmup)
+Chain 1 Iteration:  500 / 2000 [ 25\%]  (Warmup)
+Chain 3 Iteration:  500 / 2000 [ 25\%]  (Warmup)
+Chain 4 Iteration:  500 / 2000 [ 25\%]  (Warmup)
+Chain 5 Iteration:  500 / 2000 [ 25\%]  (Warmup)
+Chain 2 Iteration:  500 / 2000 [ 25\%]  (Warmup)
+Chain 7 Iteration:  400 / 2000 [ 20\%]  (Warmup)
+Chain 6 Iteration:  500 / 2000 [ 25\%]  (Warmup)
+Chain 1 Iteration:  600 / 2000 [ 30\%]  (Warmup)
+Chain 3 Iteration:  600 / 2000 [ 30\%]  (Warmup)
+Chain 4 Iteration:  600 / 2000 [ 30\%]  (Warmup)
+Chain 5 Iteration:  600 / 2000 [ 30\%]  (Warmup)
+Chain 2 Iteration:  600 / 2000 [ 30\%]  (Warmup)
+Chain 7 Iteration:  500 / 2000 [ 25\%]  (Warmup)
+Chain 6 Iteration:  600 / 2000 [ 30\%]  (Warmup)
+Chain 1 Iteration:  700 / 2000 [ 35\%]  (Warmup)
+Chain 3 Iteration:  700 / 2000 [ 35\%]  (Warmup)
+Chain 4 Iteration:  700 / 2000 [ 35\%]  (Warmup)
+Chain 5 Iteration:  700 / 2000 [ 35\%]  (Warmup)
+Chain 2 Iteration:  700 / 2000 [ 35\%]  (Warmup)
+Chain 7 Iteration:  600 / 2000 [ 30\%]  (Warmup)
+Chain 4 Iteration:  800 / 2000 [ 40\%]  (Warmup)
+Chain 5 Iteration:  800 / 2000 [ 40\%]  (Warmup)
+Chain 6 Iteration:  700 / 2000 [ 35\%]  (Warmup)
+Chain 1 Iteration:  800 / 2000 [ 40\%]  (Warmup)
+Chain 3 Iteration:  800 / 2000 [ 40\%]  (Warmup)
+Chain 2 Iteration:  800 / 2000 [ 40\%]  (Warmup)
+Chain 7 Iteration:  700 / 2000 [ 35\%]  (Warmup)
+Chain 4 Iteration:  900 / 2000 [ 45\%]  (Warmup)
+Chain 5 Iteration:  900 / 2000 [ 45\%]  (Warmup)
+Chain 6 Iteration:  800 / 2000 [ 40\%]  (Warmup)
+Chain 1 Iteration:  900 / 2000 [ 45\%]  (Warmup)
+Chain 3 Iteration:  900 / 2000 [ 45\%]  (Warmup)
+Chain 2 Iteration:  900 / 2000 [ 45\%]  (Warmup)
+Chain 7 Iteration:  800 / 2000 [ 40\%]  (Warmup)
+Chain 6 Iteration:  900 / 2000 [ 45\%]  (Warmup)
+Chain 4 Iteration: 1000 / 2000 [ 50\%]  (Warmup)
+Chain 5 Iteration: 1000 / 2000 [ 50\%]  (Warmup)
+Chain 1 Iteration: 1000 / 2000 [ 50\%]  (Warmup)
+Chain 3 Iteration: 1000 / 2000 [ 50\%]  (Warmup)
+Chain 4 Iteration: 1001 / 2000 [ 50\%]  (Sampling)
+Chain 5 Iteration: 1001 / 2000 [ 50\%]  (Sampling)
+Chain 7 Iteration:  900 / 2000 [ 45\%]  (Warmup)
+Chain 1 Iteration: 1001 / 2000 [ 50\%]  (Sampling)
+Chain 3 Iteration: 1001 / 2000 [ 50\%]  (Sampling)
+Chain 2 Iteration: 1000 / 2000 [ 50\%]  (Warmup)
+Chain 2 Iteration: 1001 / 2000 [ 50\%]  (Sampling)
+Chain 4 Iteration: 1100 / 2000 [ 55\%]  (Sampling)
+Chain 6 Iteration: 1000 / 2000 [ 50\%]  (Warmup)
+Chain 1 Iteration: 1100 / 2000 [ 55\%]  (Sampling)
+Chain 3 Iteration: 1100 / 2000 [ 55\%]  (Sampling)
+Chain 6 Iteration: 1001 / 2000 [ 50\%]  (Sampling)
+Chain 5 Iteration: 1100 / 2000 [ 55\%]  (Sampling)
+Chain 2 Iteration: 1100 / 2000 [ 55\%]  (Sampling)
+Chain 6 Iteration: 1100 / 2000 [ 55\%]  (Sampling)
+Chain 7 Iteration: 1000 / 2000 [ 50\%]  (Warmup)
+Chain 7 Iteration: 1001 / 2000 [ 50\%]  (Sampling)
+Chain 1 Iteration: 1200 / 2000 [ 60\%]  (Sampling)
+Chain 4 Iteration: 1200 / 2000 [ 60\%]  (Sampling)
+Chain 3 Iteration: 1200 / 2000 [ 60\%]  (Sampling)
+Chain 5 Iteration: 1200 / 2000 [ 60\%]  (Sampling)
+Chain 2 Iteration: 1200 / 2000 [ 60\%]  (Sampling)
+Chain 6 Iteration: 1200 / 2000 [ 60\%]  (Sampling)
+Chain 7 Iteration: 1100 / 2000 [ 55\%]  (Sampling)
+Chain 1 Iteration: 1300 / 2000 [ 65\%]  (Sampling)
+Chain 4 Iteration: 1300 / 2000 [ 65\%]  (Sampling)
+Chain 3 Iteration: 1300 / 2000 [ 65\%]  (Sampling)
+Chain 5 Iteration: 1300 / 2000 [ 65\%]  (Sampling)
+Chain 6 Iteration: 1300 / 2000 [ 65\%]  (Sampling)
+Chain 7 Iteration: 1200 / 2000 [ 60\%]  (Sampling)
+Chain 2 Iteration: 1300 / 2000 [ 65\%]  (Sampling)
+Chain 1 Iteration: 1400 / 2000 [ 70\%]  (Sampling)
+Chain 4 Iteration: 1400 / 2000 [ 70\%]  (Sampling)
+Chain 3 Iteration: 1400 / 2000 [ 70\%]  (Sampling)
+Chain 6 Iteration: 1400 / 2000 [ 70\%]  (Sampling)
+Chain 5 Iteration: 1400 / 2000 [ 70\%]  (Sampling)
+Chain 7 Iteration: 1300 / 2000 [ 65\%]  (Sampling)
+Chain 1 Iteration: 1500 / 2000 [ 75\%]  (Sampling)
+Chain 2 Iteration: 1400 / 2000 [ 70\%]  (Sampling)
+Chain 4 Iteration: 1500 / 2000 [ 75\%]  (Sampling)
+Chain 6 Iteration: 1500 / 2000 [ 75\%]  (Sampling)
+Chain 3 Iteration: 1500 / 2000 [ 75\%]  (Sampling)
+Chain 1 Iteration: 1600 / 2000 [ 80\%]  (Sampling)
+Chain 5 Iteration: 1500 / 2000 [ 75\%]  (Sampling)
+Chain 7 Iteration: 1400 / 2000 [ 70\%]  (Sampling)
+Chain 2 Iteration: 1500 / 2000 [ 75\%]  (Sampling)
+Chain 6 Iteration: 1600 / 2000 [ 80\%]  (Sampling)
+Chain 3 Iteration: 1600 / 2000 [ 80\%]  (Sampling)
+Chain 4 Iteration: 1600 / 2000 [ 80\%]  (Sampling)
+Chain 1 Iteration: 1700 / 2000 [ 85\%]  (Sampling)
+Chain 5 Iteration: 1600 / 2000 [ 80\%]  (Sampling)
+Chain 7 Iteration: 1500 / 2000 [ 75\%]  (Sampling)
+Chain 2 Iteration: 1600 / 2000 [ 80\%]  (Sampling)
+Chain 6 Iteration: 1700 / 2000 [ 85\%]  (Sampling)
+Chain 4 Iteration: 1700 / 2000 [ 85\%]  (Sampling)
+Chain 1 Iteration: 1800 / 2000 [ 90\%]  (Sampling)
+Chain 3 Iteration: 1700 / 2000 [ 85\%]  (Sampling)
+Chain 5 Iteration: 1700 / 2000 [ 85\%]  (Sampling)
+Chain 6 Iteration: 1800 / 2000 [ 90\%]  (Sampling)
+Chain 7 Iteration: 1600 / 2000 [ 80\%]  (Sampling)
+Chain 2 Iteration: 1700 / 2000 [ 85\%]  (Sampling)
+Chain 1 Iteration: 1900 / 2000 [ 95\%]  (Sampling)
+Chain 3 Iteration: 1800 / 2000 [ 90\%]  (Sampling)
+Chain 4 Iteration: 1800 / 2000 [ 90\%]  (Sampling)
+Chain 6 Iteration: 1900 / 2000 [ 95\%]  (Sampling)
+Chain 5 Iteration: 1800 / 2000 [ 90\%]  (Sampling)
+Chain 7 Iteration: 1700 / 2000 [ 85\%]  (Sampling)
+Chain 1 Iteration: 2000 / 2000 [100\%]  (Sampling)
+Chain 2 Iteration: 1800 / 2000 [ 90\%]  (Sampling)
+Chain 4 Iteration: 1900 / 2000 [ 95\%]  (Sampling)
+Chain 1 finished in 10.3 seconds.
+Chain 3 Iteration: 1900 / 2000 [ 95\%]  (Sampling)
+Chain 6 Iteration: 2000 / 2000 [100\%]  (Sampling)
+Chain 6 finished in 10.4 seconds.
+Chain 5 Iteration: 1900 / 2000 [ 95\%]  (Sampling)
+Chain 2 Iteration: 1900 / 2000 [ 95\%]  (Sampling)
+Chain 3 Iteration: 2000 / 2000 [100\%]  (Sampling)
+Chain 4 Iteration: 2000 / 2000 [100\%]  (Sampling)
+Chain 7 Iteration: 1800 / 2000 [ 90\%]  (Sampling)
+Chain 3 finished in 10.8 seconds.
+Chain 4 finished in 10.8 seconds.
+Chain 5 Iteration: 2000 / 2000 [100\%]  (Sampling)
+Chain 7 Iteration: 1900 / 2000 [ 95\%]  (Sampling)
+Chain 5 finished in 11.0 seconds.
+Chain 2 Iteration: 2000 / 2000 [100\%]  (Sampling)
+Chain 2 finished in 11.2 seconds.
+Chain 7 Iteration: 2000 / 2000 [100\%]  (Sampling)
+Chain 7 finished in 11.2 seconds.
+
+All 7 chains finished successfully.
+Mean chain execution time: 10.8 seconds.
+Total execution time: 11.4 seconds.
+
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Computing WAIC
+
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{80}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nf}{compare}\PY{p}{(}\PY{n}{model}\PY{p}{,} \PY{n}{model\PYZus{}amp}\PY{p}{,} \PY{n}{model\PYZus{}new}\PY{p}{,} \PY{n}{model\PYZus{}amp\PYZus{}new}\PY{p}{,}
+\PY{n}{model\PYZus{}detectors}\PY{p}{,} \PY{n}{model\PYZus{}amp\PYZus{}detectors}\PY{p}{,} \PY{n}{model\PYZus{}new\PYZus{}detectors}\PY{p}{,} \PY{n}{model\PYZus{}amp\PYZus{}new\PYZus{}detectors}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    A compareIC: 8 × 6
+\begin{tabular}{r|llllll}
+  & WAIC & SE & dWAIC & dSE & pWAIC & weight\\
+  & <dbl> & <dbl> & <dbl> & <dbl> & <dbl> & <dbl>\\
+\hline
+	model\_amp\_new & 2601.721 & 589.9387 &   0.00000 &        NA &  93.96626 & 9.990111e-01\\
+	model\_amp & 2615.559 & 602.3626 &  13.83722 &  43.15715 &  79.69701 & 9.882279e-04\\
+	model\_amp\_new\_detectors & 2630.218 & 620.1889 &  28.49700 &  52.84808 & 118.65744 & 6.479249e-07\\
+	model\_amp\_detectors & 2639.565 & 619.7414 &  37.84400 &  52.40265 &  99.14544 & 6.051325e-09\\
+	model\_new & 2733.576 & 635.3908 & 131.85471 &  67.32632 &  90.14860 & 2.331766e-29\\
+	model & 2750.023 & 645.5433 & 148.30187 &  87.13191 &  77.52037 & 6.255014e-33\\
+	model\_new\_detectors & 2757.100 & 662.7414 & 155.37852 &  98.75010 & 118.01507 & 1.817830e-34\\
+	model\_detectors & 2779.550 & 667.6218 & 177.82841 & 103.89882 &  98.28124 & 2.424495e-39\\
+\end{tabular}
+
+
+    
+    Interestingly, including the detectors doesnt seem carry the weight we
+assumed it to have, and the WAIC for only the model with amp and new
+seems to be the best to fit the data.
+
+    \begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{2}
+\tightlist
+\item
+  Run the model and discuss your findings.
+\end{enumerate}
+
+    Taking the best performing model, we now consider the posterior
+distribution.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{92}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{model} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n}{model\PYZus{}amp\PYZus{}new}
+\PY{n}{post} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{extract.samples}\PY{p}{(}\PY{n}{model}\PY{p}{)}
+\PY{n}{seq} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{seq}\PY{p}{(}\PY{n}{from} \PY{o}{=} \PY{l+m}{\PYZhy{}6}\PY{p}{,} \PY{n}{to} \PY{o}{=} \PY{l+m}{5}\PY{p}{,} \PY{n}{by} \PY{o}{=} \PY{l+m}{0.1}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} make a plot window with three panels in a single row }
+\PY{n+nf}{par}\PY{p}{(}\PY{n}{mfrow}\PY{o}{=}\PY{n+nf}{c}\PY{p}{(}\PY{l+m}{2}\PY{p}{,}\PY{l+m}{2}\PY{p}{)}\PY{p}{)} \PY{c+c1}{\PYZsh{} 1 row, 4 columns}
+
+\PY{n+nf}{for }\PY{p}{(}\PY{n}{new} \PY{n}{in} \PY{l+m}{0}\PY{o}{:}\PY{l+m}{1}\PY{p}{)} \PY{n+nf}{for }\PY{p}{(}\PY{n}{amp} \PY{n}{in} \PY{l+m}{0}\PY{o}{:}\PY{l+m}{1}\PY{p}{)} \PY{p}{\PYZob{}}
+\PY{n+nf}{plot}\PY{p}{(}\PY{n}{events} \PY{o}{\PYZti{}} \PY{n}{logtime}\PY{p}{,} \PY{n}{data} \PY{o}{=} \PY{n}{d}\PY{p}{)}
+\PY{c+c1}{\PYZsh{} points(d\PYZdl{}logtime[d\PYZdl{}new == new \PYZam{}\PYZam{} d\PYZdl{}amp == amp], d\PYZdl{}events[d\PYZdl{}new == new \PYZam{}\PYZam{} d\PYZdl{}amp == amp], col = \PYZdq{}red\PYZdq{})}
+\PY{n+nf}{title}\PY{p}{(}\PY{n+nf}{paste}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{new =\PYZdq{}}\PY{p}{,} \PY{n}{new}\PY{p}{,} \PY{l+s}{\PYZdq{}}\PY{l+s}{, amp =\PYZdq{}}\PY{p}{,} \PY{n}{amp}\PY{p}{)}\PY{p}{)}
+
+\PY{n}{mu} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{link}\PY{p}{(}\PY{n}{model}\PY{p}{,} \PY{n}{data} \PY{o}{=} \PY{n+nf}{list}\PY{p}{(}\PY{n}{logtime} \PY{o}{=} \PY{n}{seq}\PY{p}{,} \PY{n}{new} \PY{o}{=} \PY{n}{new}\PY{p}{,} \PY{n}{amp} \PY{o}{=} \PY{n}{amp}\PY{p}{)}\PY{p}{)}
+\PY{n}{mu\PYZus{}mean} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{apply}\PY{p}{(}\PY{n}{mu}\PY{p}{,} \PY{l+m}{2}\PY{p}{,} \PY{n}{mean}\PY{p}{)}
+\PY{n}{mu\PYZus{}HPDI} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{apply}\PY{p}{(}\PY{n}{mu}\PY{p}{,} \PY{l+m}{2}\PY{p}{,} \PY{n}{HPDI}\PY{p}{,} \PY{n}{prob} \PY{o}{=} \PY{l+m}{0.91}\PY{p}{)}
+\PY{n+nf}{lines}\PY{p}{(}\PY{n}{seq}\PY{p}{,} \PY{n}{mu\PYZus{}mean}\PY{p}{)}
+\PY{n+nf}{shade}\PY{p}{(}\PY{n}{mu\PYZus{}HPDI}\PY{p}{,} \PY{n}{seq}\PY{p}{)}
+
+\PY{n}{sim\PYZus{}data} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{sim}\PY{p}{(}\PY{n}{model}\PY{p}{,} \PY{n}{data} \PY{o}{=} \PY{n+nf}{list}\PY{p}{(}\PY{n}{logtime} \PY{o}{=} \PY{n}{seq}\PY{p}{,} \PY{n}{new} \PY{o}{=} \PY{n}{new}\PY{p}{,} \PY{n}{amp} \PY{o}{=} \PY{n}{amp}\PY{p}{)}\PY{p}{)}
+\PY{n}{sim\PYZus{}HPDI} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{apply}\PY{p}{(}\PY{n}{sim\PYZus{}data}\PY{p}{,} \PY{l+m}{2}\PY{p}{,} \PY{n}{HPDI}\PY{p}{,} \PY{n}{prob} \PY{o}{=} \PY{l+m}{0.91}\PY{p}{)}
+\PY{n+nf}{shade}\PY{p}{(}\PY{n}{sim\PYZus{}HPDI}\PY{p}{,} \PY{n}{seq}\PY{p}{)}
+\PY{p}{\PYZcb{}}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+[ 1000 / 1000 ]
+[ 1000 / 1000 ]
+[ 1000 / 1000 ]
+[ 1000 / 1000 ]
+[ 1000 / 1000 ]
+[ 1000 / 1000 ]
+[ 1000 / 1000 ]
+[ 1000 / 1000 ]
+    \end{Verbatim}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{asmp_exam_immanuel_albrecht_230614_files/asmp_exam_immanuel_albrecht_230614_53_1.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    We see that the amp and new variables have an enormous impact on the
+distribution.
+
+
+    % Add a bibliography block to the postdoc
+    
+    
+    
+\end{document}
